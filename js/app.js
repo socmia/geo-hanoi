@@ -15,7 +15,8 @@ const el = {
   detailBody: document.getElementById("detail-body"),
   cityUnits: document.getElementById("city-units"),
   panelTab: document.getElementById("panel-tab"),
-  sheetHandle: document.getElementById("sheet-handle"),
+  menuBtn: document.getElementById("menu-btn"),
+  backdrop: document.getElementById("drawer-backdrop"),
   chips: document.getElementById("chips"),
   layersBtn: document.getElementById("layers-btn"),
   layersThumb: document.getElementById("layers-thumb"),
@@ -177,10 +178,7 @@ function shapeSvg(feature, color) {
 
 /* ---------- layout state ---------- */
 function mapPadding() {
-  if (MOBILE_MQ.matches) {
-    const sheet = el.detail.closest(".panel").getBoundingClientRect().height;
-    return { paddingTopLeft: [24, 190], paddingBottomRight: [24, sheet + 24] };
-  }
+  if (MOBILE_MQ.matches) return { paddingTopLeft: [24, 190], paddingBottomRight: [24, 32] };
   const left = document.body.classList.contains("panel-collapsed") ? 0 : 408;
   return { paddingTopLeft: [left + 40, 70], paddingBottomRight: [80, 40] };
 }
@@ -192,81 +190,17 @@ function setCollapsed(collapsed) {
 }
 el.panelTab.addEventListener("click", () => setCollapsed(!document.body.classList.contains("panel-collapsed")));
 
-/* ---------- mobile bottom sheet: drag between peek / half / full ---------- */
-const SHEET_STATES = ["peek", "half", "full"];
-let sheetState = "half";
-
-function setSheet(state) {
-  sheetState = state;
-  document.body.classList.toggle("sheet-peek", state === "peek");
-  document.body.classList.toggle("sheet-full", state === "full");
-  document.body.style.removeProperty("--sheet-h");
-  el.sheetHandle.setAttribute("aria-label", state === "full" ? "Thu nhỏ bảng" : "Mở rộng bảng");
-  el.sheetHandle.setAttribute("aria-expanded", String(state !== "peek"));
-  document.getElementById("sheet-restore-label").textContent = selectedKey ? "Thông tin tổ" : "Danh sách tổ";
+/* ---------- mobile: left drawer opened by the ☰ button in the search bar ---------- */
+function setDrawer(open) {
+  document.body.classList.toggle("drawer-open", open);
+  el.menuBtn.setAttribute("aria-expanded", String(open));
+  el.menuBtn.setAttribute("aria-label", open ? "Đóng danh sách" : "Mở danh sách tổ");
 }
-document.getElementById("sheet-restore").addEventListener("click", () => setSheet("half"));
-
-function sheetHeights() {
-  const panel = el.detail.closest(".panel");
-  const probe = (cls) => {
-    const prev = sheetState;
-    setSheet(cls);
-    const h = panel.getBoundingClientRect().height;
-    setSheet(prev);
-    return h;
-  };
-  return { peek: probe("peek"), half: probe("half"), full: probe("full") };
-}
-
-(function initSheetDrag() {
-  const panel = el.detail.closest(".panel");
-  let drag = null;
-  panel.addEventListener("pointerdown", (e) => {
-    if (!MOBILE_MQ.matches) return;
-    const grip = e.target.closest(".sheet-handle, .list-hd, .d-head");
-    if (!grip || e.target.closest("button:not(.sheet-handle), a, input")) return;
-    drag = { y0: e.clientY, h0: panel.getBoundingClientRect().height, moved: false, id: e.pointerId };
-  });
-  window.addEventListener("pointermove", (e) => {
-    if (!drag || e.pointerId !== drag.id) return;
-    const dy = e.clientY - drag.y0;
-    if (!drag.moved && Math.abs(dy) < 6) return;
-    if (!drag.moved) {
-      drag.moved = true;
-      document.body.classList.add("sheet-dragging"); // no transition, so probes read final heights
-      drag.snaps = sheetHeights();
-    }
-    const h = Math.min(drag.snaps.full, Math.max(drag.snaps.peek, drag.h0 - dy));
-    document.body.style.setProperty("--sheet-h", `${h}px`);
-  });
-  const end = (e) => {
-    if (!drag || e.pointerId !== drag.id) return;
-    const d = drag;
-    drag = null;
-    if (!d.moved) return;
-    document.body.classList.remove("sheet-dragging");
-    const h = panel.getBoundingClientRect().height;
-    const flick = e.clientY - d.y0;
-    let next = SHEET_STATES.reduce((a, b) => (Math.abs(d.snaps[b] - h) < Math.abs(d.snaps[a] - h) ? b : a));
-    // a quick flick moves one step even if it didn't pass the midpoint
-    if (next === sheetState && Math.abs(flick) > 40) {
-      const i = SHEET_STATES.indexOf(sheetState) + (flick > 0 ? -1 : 1);
-      next = SHEET_STATES[Math.max(0, Math.min(2, i))];
-    }
-    setSheet(next);
-    el.sheetHandle.dataset.dragged = "1";
-    setTimeout(() => delete el.sheetHandle.dataset.dragged, 0);
-  };
-  window.addEventListener("pointerup", end);
-  window.addEventListener("pointercancel", end);
-})();
-
-el.sheetHandle.addEventListener("click", () => {
-  if (el.sheetHandle.dataset.dragged) return;
-  // tap cycles: peek → half → full → half
-  setSheet(sheetState === "peek" ? "half" : sheetState === "half" ? "full" : "half");
-});
+const drawerOpen = () => document.body.classList.contains("drawer-open");
+el.menuBtn.addEventListener("click", () => setDrawer(!drawerOpen()));
+el.backdrop.addEventListener("click", () => setDrawer(false));
+/** On phones, hand the screen back to the map (no-op on desktop). */
+const showMapOnMobile = () => { if (MOBILE_MQ.matches) setDrawer(false); };
 
 /* ---------- detail ---------- */
 function renderDetail(entry) {
@@ -330,7 +264,7 @@ el.detailBody.addEventListener("click", async (e) => {
   const tab = t.closest(".tab");
   const poiLi = t.closest("[data-poi-idx]");
   if (act === "back") clearSelection();
-  else if (act === "zoom") focusOnLayer(byKey.get(selectedKey)?.layer);
+  else if (act === "zoom") { showMapOnMobile(); focusOnLayer(byKey.get(selectedKey)?.layer); }
   else if (act === "share") {
     const url = location.href.split("#")[0] + `#tdp-${byKey.get(selectedKey)?.props.to_dan_pho}`;
     await shareLink(url, byKey.get(selectedKey)?.name || document.title, toast);
@@ -343,7 +277,7 @@ el.detailBody.addEventListener("click", async (e) => {
   } else if (poiLi) {
     const p = pois[Number(poiLi.getAttribute("data-poi-idx"))];
     const [lng, lat] = p.geometry.coordinates;
-    if (MOBILE_MQ.matches) setSheet("peek"); // uncover the map so the place is visible
+    showMapOnMobile();
     map.flyTo([lat, lng], Math.max(map.getZoom(), 18), { duration: 0.4 });
     p.marker?.openTooltip();
   }
@@ -378,7 +312,7 @@ function setSelection(key, { fly = true } = {}) {
   });
   entry.layer.bringToFront();
   document.body.classList.add("has-sel");
-  setSheet("half");
+  if (MOBILE_MQ.matches) setDrawer(true);
   renderDetail(entry);
   setPin(entry.layer.getCenter());
   history.replaceState(null, "", `#tdp-${entry.props.to_dan_pho}`);
@@ -392,7 +326,6 @@ function clearSelection() {
     e.layer.setStyle(baseStyle(e.color));
   });
   document.body.classList.remove("has-sel");
-  setSheet(sheetState === "full" ? "half" : sheetState); // also refreshes the restore label
   el.detail.hidden = true;
   el.listView.hidden = false;
   if (pinMarker) { map.removeLayer(pinMarker); pinMarker = null; }
@@ -429,6 +362,7 @@ function applyFilter(q) {
 }
 
 el.search.addEventListener("input", () => {
+  if (MOBILE_MQ.matches) setDrawer(true); // results live in the drawer
   if (selectedKey) clearSelection();
   applyFilter(el.search.value);
 });

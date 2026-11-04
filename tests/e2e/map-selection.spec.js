@@ -200,55 +200,43 @@ test.describe("Geo Hà Nội handover checks", () => {
   });
 });
 
-test.describe("mobile bottom sheet", () => {
+test.describe("mobile left drawer", () => {
   test.use({ viewport: { width: 375, height: 812 }, hasTouch: true });
 
-  test("drag handle snaps sheet to peek, half and full", async ({ page }) => {
-    await page.goto("/?v=pw#tdp-1");
+  const boot = async (page, hash = "") => {
+    await page.goto(`/?v=pw${hash}`);
     await page.waitForFunction(() => window.__GEO_TEST__?.byKey?.size > 0, null, { timeout: 20_000 });
-    const dragTo = (y1) =>
-      page.evaluate(async (y1) => {
-        const panel = document.getElementById("panel");
-        const h = document.getElementById("sheet-handle");
-        const y0 = panel.getBoundingClientRect().top + 14;
-        const ev = (t, y, tgt) =>
-          (tgt || window).dispatchEvent(new PointerEvent(t, { bubbles: true, clientX: 187, clientY: y, pointerId: 7, pointerType: "touch", isPrimary: true }));
-        ev("pointerdown", y0, h);
-        for (let i = 1; i <= 10; i++) {
-          ev("pointermove", y0 + ((y1 - y0) * i) / 10);
-          await new Promise((r) => setTimeout(r, 16));
-        }
-        ev("pointerup", y1);
-        await new Promise((r) => setTimeout(r, 300));
-        return { cls: document.body.className, h: Math.round(panel.getBoundingClientRect().height) };
-      }, y1);
+  };
 
-    const peek = await dragTo(790);
-    expect(peek.cls).toContain("sheet-peek");
-    expect(peek.h).toBeLessThan(160);
-    await expect(page.locator("#sheet-restore")).toBeVisible();
-    await expect(page.locator(".d-head h2")).toBeInViewport();
-
-    const half = await dragTo(420);
-    expect(half.cls).not.toContain("sheet-peek");
-    expect(half.cls).not.toContain("sheet-full");
-
-    const full = await dragTo(90);
-    expect(full.cls).toContain("sheet-full");
+  test("menu button opens and closes the drawer; it can always be reopened", async ({ page }) => {
+    await boot(page);
+    await expect(page.locator("#menu-btn")).toBeVisible();
+    await expect(page.locator("#panel")).not.toBeInViewport();
+    for (let i = 0; i < 2; i++) {
+      await page.click("#menu-btn");
+      await expect(page.locator("#panel")).toBeInViewport();
+      await page.click("#drawer-backdrop", { position: { x: 360, y: 500 } });
+      await expect(page.locator("#panel")).not.toBeInViewport();
+      await expect(page.locator("#menu-btn")).toBeVisible();
+    }
   });
-});
 
-test.describe("mobile restore button", () => {
-  test.use({ viewport: { width: 375, height: 812 }, hasTouch: true });
-  test("restore pill brings a collapsed sheet back", async ({ page }) => {
-    await page.goto("/?v=pw#tdp-1");
-    await page.waitForFunction(() => window.__GEO_TEST__?.byKey?.size > 0, null, { timeout: 20_000 });
-    await expect(page.locator("#sheet-restore")).toBeHidden();
-    await page.click(".poi-list li"); // jumping to a place collapses the sheet
-    await expect(page.locator("body")).toHaveClass(/sheet-peek/);
-    await expect(page.locator("#sheet-restore")).toHaveText(/Thông tin tổ/);
-    await page.click("#sheet-restore");
-    await expect(page.locator("body")).not.toHaveClass(/sheet-peek/);
-    await expect(page.locator("#sheet-restore")).toBeHidden();
+  test("picking a tổ shows detail in the drawer; Phóng tới hands the screen to the map", async ({ page }) => {
+    await boot(page);
+    await page.click("#menu-btn");
+    await page.locator("#ward-list li").nth(2).click();
+    await expect(page.locator("#detail h2")).toHaveText("Tổ dân phố số 3");
+    await expect(page.locator("#panel")).toBeInViewport();
+    await page.click('[data-act="zoom"]');
+    await expect(page.locator("#panel")).not.toBeInViewport();
+    await page.click("#menu-btn");
+    await expect(page.locator("#detail h2")).toHaveText("Tổ dân phố số 3");
+  });
+
+  test("typing in search opens the drawer with results", async ({ page }) => {
+    await boot(page);
+    await page.fill("#search", "2");
+    await expect(page.locator("#panel")).toBeInViewport();
+    await expect(page.locator("#ward-list li:not(.hidden)")).toHaveCount(5);
   });
 });

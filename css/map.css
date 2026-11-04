@@ -19,7 +19,6 @@
   --poi-school: #e37400;
   --poi-health: #c5221f;
   --poi-office: #5f6368;
-  --sheet-h: 0px;
   color-scheme: light;
 }
 
@@ -113,7 +112,7 @@ svg { display: block; }
   transition: transform 0.2s ease;
 }
 body.panel-collapsed .panel { transform: translateX(-100%); }
-.sheet-handle, .sheet-restore { display: none; }
+.menu-btn, .drawer-backdrop { display: none; }
 
 .list-view { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .list-view[hidden] { display: none; }
@@ -267,23 +266,9 @@ body.panel-collapsed .layers-btn { left: 16px; }
 }
 .toast[hidden] { display: none; }
 
-/* ---------- mobile: floating search + bottom sheet ---------- */
+/* ---------- mobile: floating search + left drawer (☰ in the search bar) ---------- */
 @media (max-width: 768px) {
-  :root { --brand-h: 96px; }
-  body { --sheet-h: max(260px, 38vh); }
-  body.has-sel { --sheet-h: max(360px, 52vh); }
-  body.sheet-full { --sheet-h: calc(100% - 140px); }
-  /* taller than the title alone: some in-app browsers (iOS) cover the bottom of an embedded page */
-  body.sheet-peek { --sheet-h: 132px; }
-  /* always-visible way back when the sheet is collapsed */
-  body.sheet-peek .sheet-restore { display: inline-flex; }
-  .sheet-restore {
-    position: fixed; top: 176px; left: 12px; z-index: 950; height: 44px; padding: 0 16px 0 12px;
-    border-radius: 22px; border: 1px solid var(--line); background: var(--surface); color: var(--accent);
-    font-size: 14px; font-weight: 500; align-items: center; gap: 8px;
-  }
-  .sheet-restore svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-  body.sheet-dragging .panel, body.sheet-dragging .map-ctrls { transition: none; }
+  :root { --brand-h: 96px; --drawer-top: 128px; }
 
   .topbar { width: auto; right: 0; background: transparent; border: 0; }
   .brand { padding: 0 16px 24px; gap: 12px; }
@@ -291,31 +276,40 @@ body.panel-collapsed .layers-btn { left: 16px; }
   .brand h1 { font-size: 18px; line-height: 24px; }
   .brand p { font-size: 12px; }
   .search-wrap { position: absolute; top: 72px; left: 12px; right: 12px; padding: 0; }
-  .search input { font-size: 16px; }
+  .search { padding-left: 4px; }
+  .search input { font-size: 16px; padding-left: 4px; }
+  .menu-btn { display: grid; }
+  body.drawer-open .menu-btn { background: var(--accent-tint); }
+  body.drawer-open .menu-btn svg { stroke: var(--accent); }
 
   .chips { top: 130px; left: 0; right: 0; padding: 0 12px; }
   body.panel-collapsed .chips { left: 0; }
 
+  /* drawer: slides in from the left under the search bar, never fully unreachable */
   .panel {
-    top: auto; width: auto; right: 0; height: var(--sheet-h); padding-top: 0;
-    border-right: 0; border-top: 1px solid var(--line); border-radius: 16px 16px 0 0;
-    transition: height 0.2s ease; transform: none !important;
+    top: var(--drawer-top); bottom: 0; width: min(360px, 88vw); padding-top: 0;
+    border-top: 1px solid var(--line); border-radius: 0 16px 0 0;
+    transform: translateX(calc(-100% - 2px)); transition: transform 0.2s ease;
   }
-  .sheet-handle { display: flex; justify-content: center; align-items: center; height: 28px; flex: none; width: 100%; cursor: grab; }
-  /* grips: dragging these resizes the sheet instead of scrolling the page */
-  .sheet-handle, .list-hd, .d-head { touch-action: none; }
+  body.drawer-open .panel { transform: none; }
+  body.panel-collapsed .panel { transform: translateX(calc(-100% - 2px)); }
+  body.drawer-open.panel-collapsed .panel { transform: none; }
+  .drawer-backdrop {
+    display: block; position: fixed; left: 0; right: 0; bottom: 0; top: var(--drawer-top); z-index: 990;
+    background: rgba(32, 33, 36, 0.32); opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+  }
+  body.drawer-open .drawer-backdrop { opacity: 1; pointer-events: auto; }
   .d-head { position: sticky; top: 0; z-index: 2; background: var(--surface); padding-bottom: 8px !important; }
   /* room to scroll the last rows above an in-app browser's bottom toolbar */
   .list, .detail { padding-bottom: 88px; }
-  .sheet-handle span { width: 36px; height: 4px; border-radius: 2px; background: var(--line); }
-  .list-hd { padding: 2px 20px 10px; }
+  .list-hd { padding: 12px 20px 10px; }
   .list-hd h2 { font-size: 20px; line-height: 26px; }
   .list li { padding: 10px 20px; gap: 14px; min-height: 60px; }
   .tdp-thumb { width: 40px; height: 40px; font-size: 15px; }
   .list .chev { display: none; }
 
   .d-hero { display: none; }
-  .d-head { display: flex; gap: 8px; align-items: flex-start; padding: 4px 12px 0 20px; }
+  .d-head { display: flex; gap: 8px; align-items: flex-start; padding: 14px 12px 0 20px; }
   .d-head > div { flex: 1; min-width: 0; }
   .d-close-m {
     display: grid; place-items: center; width: 44px; height: 44px; flex: none;
@@ -337,12 +331,12 @@ body.panel-collapsed .layers-btn { left: 16px; }
   }
   body.panel-collapsed .layers-btn { left: auto; }
   .layers-label { display: none; }
-  .map-ctrls { bottom: calc(var(--sheet-h) + 12px); right: 12px; transition: bottom 0.2s ease; }
+  .map-ctrls { bottom: 100px; right: 12px; } /* clear of in-app browser toolbars */
   .map-ctrls .ctrl-group { display: none; }
   .map-ctrls .ctrl { width: 52px; height: 52px; border-radius: 16px; }
   .map-ctrls .ctrl svg { stroke: var(--accent); }
   .map-ctrls .ctrl svg .fill { fill: var(--accent); }
-  .toast { bottom: calc(var(--sheet-h) + 16px); }
+  .toast { bottom: 110px; }
   .leaflet-control-attribution { display: none; }
 }
 
