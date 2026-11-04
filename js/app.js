@@ -238,18 +238,17 @@ function focusOnLayer(layer) {
   if (!bounds.isValid()) return;
 
   const mobile = window.matchMedia("(max-width: 768px)").matches;
-  // Keep selected polygon visually centered in the free map area
-  // (detail card right on desktop, bottom sheet on mobile).
-  const padTL = mobile ? [24, 56] : [48, 48];
+  // Fit địa giới khít khung map (chừa tối thiểu cho card/sheet).
+  const padTL = mobile ? [8, 40] : [12, 12];
   const padBR = mobile
-    ? [24, Math.round(window.innerHeight * 0.42)]
-    : [360, 48];
+    ? [8, Math.round(window.innerHeight * 0.28)]
+    : [300, 12];
 
   map.flyToBounds(bounds, {
     paddingTopLeft: padTL,
     paddingBottomRight: padBR,
-    maxZoom: 18,
-    duration: 0.55,
+    maxZoom: 20,
+    duration: 0.5,
   });
 }
 
