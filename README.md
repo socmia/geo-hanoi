@@ -48,7 +48,7 @@ Sửa `data/xa-extra.json` theo `maxa` (string). Field flat merge vào props.
 
 ## Logo
 
-Thay `assets/logo.svg` (hoặc đổi `src` trong `index.html`).
+Thay `assets/logo.png` (hoặc đổi `src` trong `index.html`).
 
 ## Test
 

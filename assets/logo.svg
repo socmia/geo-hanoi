@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Hà NÙi">
-  <circle cx="32" cy="32" r="30" fill="#9B1C1C"/>
-  <circle cx="32" cy="32" r="24" fill="none" stroke="#F3D98A" stroke-width="2"/>
-  <circle cx="32" cy="32" r="18" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/>
-  <text x="32" y="38" text-anchor="middle" fill="#fff" font-family="Be Vietnam Pro, Arial, sans-serif" font-size="14" font-weight="700">HN</text>
-</svg>
