@@ -45,6 +45,8 @@ el.cityPop.textContent = CITY.popLabel;
 const byKey = new Map();
 let selectedKey = null;
 let geoLayer = null;
+let maskLayer = null;
+let wardLayer = null;
 let mode = "tdp"; // tdp | wards
 
 const map = L.map("map", { zoomControl: true }).setView([21.01, 105.825], 14);
@@ -104,34 +106,74 @@ function isDongDaProps(props) {
   return blob.includes("dong da") && (blob.includes("phuong") || blob.includes("to dan"));
 }
 
-/** Transparent outline — OSM remains readable */
+/** TDP: viền rõ, fill nhẹ — OSM bên trong vẫn đọc được */
 function baseStyle() {
   return {
     color: "#9b1c1c",
-    weight: 2,
-    opacity: 0.9,
-    fillColor: "#9b1c1c",
-    fillOpacity: 0.04,
+    weight: 2.2,
+    opacity: 1,
+    fillColor: "#e85d4c",
+    fillOpacity: 0.14,
   };
 }
 
 function selectedStyle() {
   return {
     color: "#c45c00",
-    weight: 2.5,
+    weight: 3,
     opacity: 1,
     fillColor: "#f0a05a",
-    fillOpacity: 0.12,
+    fillOpacity: 0.28,
   };
 }
 
-function dimStyle() {
+function wardOutlineStyle() {
   return {
-    color: "#9aa3ad",
-    weight: 0.8,
-    opacity: 0.35,
-    fillColor: "#9aa3ad",
-    fillOpacity: 0.02,
+    color: "#6e1010",
+    weight: 4,
+    opacity: 1,
+    fillColor: "#f3d98a",
+    fillOpacity: 0.12,
+    interactive: false,
+  };
+}
+
+function maskStyle() {
+  return {
+    stroke: false,
+    fillColor: "#1a1a1a",
+    fillOpacity: 0.48,
+    interactive: false,
+  };
+}
+
+/** GeoJSON mask: thế giới có lỗ = địa giới phường → làm mờ ngoài Đống Đa */
+function maskFeatureFromWard(wardFeature) {
+  const WORLD = [
+    [-180, 90],
+    [180, 90],
+    [180, -90],
+    [-180, -90],
+    [-180, 90],
+  ];
+  const geom = wardFeature.geometry;
+  let outers = [];
+  if (geom?.type === "Polygon") outers = [geom.coordinates[0]];
+  else if (geom?.type === "MultiPolygon") outers = geom.coordinates.map((p) => p[0]);
+
+  const holes = outers
+    .filter((ring) => ring && ring.length >= 4)
+    .map((ring) => {
+      const hole = ring.map((c) => [...c]);
+      // lỗ cần chiều ngược outer (GeoJSON)
+      hole.reverse();
+      return hole;
+    });
+
+  return {
+    type: "Feature",
+    properties: {},
+    geometry: { type: "Polygon", coordinates: [WORLD, ...holes] },
   };
 }
 
@@ -316,14 +358,44 @@ map.on("click", () => clearSelection());
 window.addEventListener("resize", () => map.invalidateSize());
 
 function clearLayers() {
-  if (geoLayer) {
-    map.removeLayer(geoLayer);
-    geoLayer = null;
-  }
+  [geoLayer, maskLayer, wardLayer].forEach((layer) => {
+    if (layer) map.removeLayer(layer);
+  });
+  geoLayer = null;
+  maskLayer = null;
+  wardLayer = null;
   byKey.clear();
   el.list.innerHTML = "";
   selectedKey = null;
   el.detail.classList.remove("open");
+}
+
+async function fetchDongDaWard() {
+  const geo = await fetch("data/hanoi.geojson", { cache: "no-store" }).then((r) => r.json());
+  return (geo.features || []).find((f) => Number(f.properties?.maxa) === DONG_DA_MAXA) || null;
+}
+
+function highlightDongDaWard(wardFeature) {
+  if (!wardFeature) return null;
+
+  maskLayer = L.geoJSON(maskFeatureFromWard(wardFeature), {
+    style: maskStyle,
+    interactive: false,
+  }).addTo(map);
+
+  wardLayer = L.geoJSON(wardFeature, {
+    style: wardOutlineStyle,
+    interactive: false,
+  }).addTo(map);
+
+  wardLayer.bindTooltip("Phường Đống Đa", {
+    permanent: true,
+    direction: "center",
+    className: "poly-label ward-label",
+    opacity: 1,
+  });
+
+  return wardLayer;
 }
 
 function addFeature(feature, extra, key, opts = {}) {
@@ -347,13 +419,7 @@ async function loadTdpLayer(extra) {
   if (!res.ok) return null;
   const geo = await res.json();
   const all = geo.features || [];
-  const features = all.filter((f) => isDongDaProps(f.properties || {}));
-  // If file has features but none tagged Đống Đa, and all look like TDP, keep those with no phuong filter miss — prefer explicit filter
-  const use = features.length ? features : all.filter((f) => {
-    // empty file → nothing
-    return false;
-  });
-
+  const use = all.filter((f) => isDongDaProps(f.properties || {}));
   if (!use.length) return { count: 0, totalInFile: all.length };
 
   let i = 0;
@@ -375,53 +441,46 @@ async function loadTdpLayer(extra) {
   return { count: byKey.size, totalInFile: all.length };
 }
 
-async function loadDongDaWardOnly(extra) {
-  const geo = await fetch("data/hanoi.geojson", { cache: "no-store" }).then((r) => r.json());
-  const features = (geo.features || []).filter((f) => Number(f.properties?.maxa) === DONG_DA_MAXA);
-  let i = 0;
-  geoLayer = L.geoJSON({ type: "FeatureCollection", features }, {
-    style: () => baseStyle(),
-    onEachFeature(feature, layer) {
-      const key = `ward-${i++}`;
-      const meta = addFeature(feature, extra, key);
-      bindLabel(layer, meta.name, meta.props);
-      layer.setStyle(baseStyle());
-      byKey.set(key, { feature, layer, ...meta });
-      layer.on("click", (e) => {
-        L.DomEvent.stopPropagation(e);
-        setSelection(key);
-      });
-    },
-  }).addTo(map);
-}
-
 async function boot() {
   const extra = await fetch("data/xa-extra.json", { cache: "no-store" })
     .then((r) => r.json())
     .catch(() => ({}));
 
   clearLayers();
+
+  const ward = await fetchDongDaWard().catch(() => null);
+  highlightDongDaWard(ward);
+
   const tdp = await loadTdpLayer(extra).catch(() => null);
 
   if (tdp && tdp.count > 0) {
     mode = "tdp";
     el.cityUnits.textContent = `${tdp.count} tổ dân phố · Đống Đa`;
-    el.layerNote.textContent = "Đang hiện Tổ dân phố thuộc phường Đống Đa (fill trong suốt).";
+    el.layerNote.textContent =
+      "Phường Đống Đa nổi bật (ngoài phường bị làm mờ). Bên trong: các tổ dân phố.";
     el.search.placeholder = "Tìm tổ dân phố…";
   } else {
     mode = "ward-fallback";
-    await loadDongDaWardOnly(extra);
     el.cityUnits.textContent = "Phường Đống Đa";
-    const emptyMsg =
-      tdp && tdp.totalInFile === 0
-        ? "Chưa có dữ liệu Tổ dân phố. Thêm polygon vào data/to-dan-pho.geojson (lọc Đống Đa). Tạm hiện ranh phường."
-        : "File to-dan-pho.geojson chưa có feature thuộc Đống Đa. Tạm hiện ranh phường.";
-    el.layerNote.textContent = emptyMsg;
+    el.layerNote.textContent =
+      "Chưa có Tổ dân phố trong data/to-dan-pho.geojson — đang hiện ranh phường Đống Đa.";
     el.search.placeholder = "Tìm…";
+    if (ward) {
+      const key = "ward-0";
+      const meta = addFeature(ward, extra, key);
+      byKey.set(key, {
+        feature: ward,
+        layer: wardLayer,
+        ...meta,
+      });
+      // click on map empty still clears; list selects ward via fly
+      meta.li.addEventListener("click", () => setSelection(key));
+    }
   }
 
-  if (geoLayer?.getLayers?.().length) {
-    map.fitBounds(geoLayer.getBounds(), { padding: [36, 36], maxZoom: 15 });
+  const fitTarget = wardLayer || geoLayer;
+  if (fitTarget?.getBounds) {
+    map.fitBounds(fitTarget.getBounds(), { padding: [28, 28], maxZoom: 15 });
   }
   requestAnimationFrame(() => map.invalidateSize());
 }
