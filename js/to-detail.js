@@ -132,7 +132,7 @@ async function boot() {
   const props = feature.properties || {};
   const num = props.to_dan_pho ?? n;
   const more = extra[n] || extra[String(Number(n))] || {};
-  const name = props.ten || `Tổ dân phố số ${n}`;
+  const name = `Tổ dân phố số ${num}`; // source "ten" is inconsistent ("Tổ dân phố 20")
   const color = colorForTdp(num);
   const mapHref = `index.html#tdp-${encodeURIComponent(n)}`;
   const inTdp = (poiGeo?.features || []).filter(

@@ -114,15 +114,29 @@ test.describe("Geo Hà Nội handover checks", () => {
     expect(after.zoom).toBeGreaterThanOrEqual(16);
   });
 
-  test("accent-insensitive search finds Đống Đa tổ", async ({ page }) => {
-    await waitApp(page);
-    await page.fill("#search", "to dan pho so 1");
-    const visible = await page.evaluate(() =>
+  const visibleNames = (page) =>
+    page.evaluate(() =>
       [...document.querySelectorAll("#ward-list li")]
         .filter((li) => !li.classList.contains("hidden"))
         .map((li) => li.querySelector(".li-name").textContent.trim())
     );
-    expect(visible).toEqual(["Tổ dân phố số 1"]);
+
+  test("accent-insensitive search finds Đống Đa tổ", async ({ page }) => {
+    await waitApp(page);
+    await page.fill("#search", "to dan pho so 12");
+    expect(await visibleNames(page)).toEqual(["Tổ dân phố số 12"]);
+  });
+
+  test("number search matches tổ numbers by prefix", async ({ page }) => {
+    await waitApp(page);
+    await page.fill("#search", "2");
+    expect(await visibleNames(page)).toEqual([2, 20, 21, 22, 23].map((n) => `Tổ dân phố số ${n}`));
+  });
+
+  test("old tổ number finds the merged tổ", async ({ page }) => {
+    await waitApp(page);
+    await page.fill("#search", "38a");
+    expect(await visibleNames(page)).toEqual(["Tổ dân phố số 10"]);
   });
 
   test("POI layers load inside the ward and chips toggle them", async ({ page }) => {

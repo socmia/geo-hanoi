@@ -93,6 +93,8 @@ function escapeHtml(s) {
 }
 
 function featureName(props) {
+  // Source names are inconsistent ("Tổ dân phố 20" vs "Tổ dân phố số 2") — derive from the number
+  if (props.to_dan_pho != null && props.to_dan_pho !== "") return `Tổ dân phố số ${props.to_dan_pho}`;
   return String(props.ten || props.name || props.ten_chi_tiet || props.to_dan_pho || `Mã ${props.maxa ?? ""}`).trim();
 }
 
@@ -324,20 +326,26 @@ function clearSelection() {
 }
 
 /* ---------- search ---------- */
-function matchesSearch(blob, query) {
+/**
+ * Every token must match. A number matches the tổ number as a prefix ("2" → 2, 20–23),
+ * or an old tổ number in mo_ta exactly ("38" → the tổ merged from 38, not 38A).
+ */
+function matchesSearch(entry, query) {
   const needle = foldVi(query);
   if (!needle) return true;
-  // Mỗi token phải khớp; số phải đúng số (tránh "1" khớp "10")
+  const num = String(entry.props.to_dan_pho ?? "");
   return needle.split(/\s+/).filter(Boolean).every((tok) => {
-    if (/^\d+[a-z]?$/.test(tok)) return new RegExp(`(?:^|\\D)${tok}(?:[^\\da-z]|$)`).test(blob);
-    return blob.includes(tok);
+    if (/^\d+[a-z]?$/.test(tok)) {
+      return num.startsWith(tok) || new RegExp(`(?:^|\\D)${tok}(?:[^\\da-z]|$)`).test(entry.extraBlob);
+    }
+    return entry.searchBlob.includes(tok);
   });
 }
 
 function applyFilter(q) {
   let shown = 0;
   byKey.forEach((entry) => {
-    const match = matchesSearch(entry.searchBlob, q);
+    const match = matchesSearch(entry, q);
     entry.li.classList.toggle("hidden", !match);
     if (match) shown += 1;
   });
@@ -443,7 +451,8 @@ async function loadTdpLayer() {
       bindLabel(layer, props);
       const li = addListItem(key, props, name, color);
       const searchBlob = foldVi([name, props.phuong, props.mo_ta].filter(Boolean).join(" "));
-      byKey.set(key, { key, feature, layer, props, name, li, searchBlob, color });
+      const extraBlob = foldVi(props.mo_ta || "");
+      byKey.set(key, { key, feature, layer, props, name, li, searchBlob, extraBlob, color });
       layer.on("click", (e) => {
         L.DomEvent.stopPropagation(e);
         setSelection(key);
