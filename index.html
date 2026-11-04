@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <link rel="stylesheet" href="css/map.css?v=4" />
+  <link rel="stylesheet" href="css/map.css?v=5" />
 </head>
 <body>
   <div id="map" role="application" aria-label="Bản đồ tổ dân phố phường Đống Đa"></div>
@@ -70,10 +70,6 @@
     <button type="button" class="chip" data-poi="office" aria-pressed="true">
       <span class="poi-dot poi-dot--office" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 20V4h12v16M10 8h1M13 8h1M10 12h1M13 12h1M11 20v-3h2v3" /></svg></span>Công sở
     </button>
-    <button type="button" class="chip" id="labels-chip" aria-pressed="true">
-      <svg class="chip-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V5h16v2M9 19h6M12 5v14" /></svg>
-      Số tổ
-    </button>
   </div>
 
   <button type="button" class="layers-btn" id="layers-btn" aria-label="Đổi lớp bản đồ">
@@ -98,6 +94,6 @@
   <div class="toast" id="toast" role="status" hidden></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script type="module" src="js/app.js?v=31"></script>
+  <script type="module" src="js/app.js?v=32"></script>
 </body>
 </html>

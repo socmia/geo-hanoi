@@ -17,7 +17,6 @@ const el = {
   panelTab: document.getElementById("panel-tab"),
   sheetHandle: document.getElementById("sheet-handle"),
   chips: document.getElementById("chips"),
-  labelsChip: document.getElementById("labels-chip"),
   layersBtn: document.getElementById("layers-btn"),
   layersThumb: document.getElementById("layers-thumb"),
   layersLabel: document.getElementById("layers-label"),
@@ -377,7 +376,6 @@ el.chips.addEventListener("click", (e) => {
   const kind = chip.dataset.poi;
   if (kind && poiLayers[kind]) on ? poiLayers[kind].addTo(map) : map.removeLayer(poiLayers[kind]);
   if (chip.dataset.layer === "tdp" && geoLayer) on ? geoLayer.addTo(map) : map.removeLayer(geoLayer);
-  if (chip === el.labelsChip) map.getContainer().classList.toggle("labels-off", !on);
 });
 
 el.zoomIn.addEventListener("click", () => map.zoomIn());
@@ -405,7 +403,7 @@ window.addEventListener("resize", () => map.invalidateSize());
 
 /* ---------- data ---------- */
 function bindLabel(layer, props) {
-  layer.bindTooltip(props.to_dan_pho != null ? String(props.to_dan_pho) : featureName(props), {
+  layer.bindTooltip(props.to_dan_pho != null ? `TDP số ${props.to_dan_pho}` : featureName(props), {
     permanent: true, direction: "center", className: "poly-label", opacity: 1, interactive: false,
   });
   const sync = () => layer.getTooltip()?.getElement?.()?.classList.toggle("poly-label--dim", map.getZoom() < 15);
