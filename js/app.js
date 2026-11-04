@@ -113,14 +113,25 @@ function baseStyle() {
     weight: 2,
     opacity: 1,
     fillColor: "#ffffff",
-    fillOpacity: 0.35,
+    fillOpacity: 0.32,
+  };
+}
+
+/** Khi đang chọn 1 tổ: các tổ khác làm mờ để khỏi nhầm (địa giới chồng nhau) */
+function idleStyle() {
+  return {
+    color: "#ffffff",
+    weight: 1.5,
+    opacity: 0.55,
+    fillColor: "#ffffff",
+    fillOpacity: 0.08,
   };
 }
 
 function selectedStyle() {
   return {
-    color: "#ffffff",
-    weight: 3,
+    color: "#ffeb3b",
+    weight: 3.5,
     opacity: 1,
     fillColor: "#ffffff",
     fillOpacity: 0.55,
@@ -301,7 +312,7 @@ function setSelection(key, { fly = true } = {}) {
     const active = k === key;
     entry.li.classList.toggle("active", active);
     if (!entry.visible) return;
-    entry.layer?.setStyle?.(active ? selectedStyle() : baseStyle());
+    entry.layer?.setStyle?.(active ? selectedStyle() : idleStyle());
     if (active) entry.layer.bringToFront();
   });
 
@@ -402,7 +413,7 @@ function highlightDongDaWard(wardFeature) {
 function addFeature(feature, extra, key, opts = {}) {
   const props = mergeProps(feature, extra);
   const name = featureName(props);
-  const colorDot = opts.dot || "#9b1c1c";
+  const colorDot = opts.dot || "#ffffff";
 
   const li = document.createElement("li");
   li.innerHTML = `<i class="dot" style="background:${colorDot}"></i><span></span>`;

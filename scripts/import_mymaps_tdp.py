@@ -44,6 +44,66 @@ def is_tdp_name(name: str) -> bool:
     return "tổ dân phố" in n or "to dan pho" in n
 
 
+def coord_count(geom: dict) -> int:
+    n = 0
+
+    def walk(c):
+        nonlocal n
+        if isinstance(c[0], (int, float)):
+            n += 1
+            return
+        for x in c:
+            walk(x)
+
+    walk(geom["coordinates"])
+    return n
+
+
+def bbox(geom: dict) -> tuple[float, float, float, float]:
+    pts: list[list[float]] = []
+
+    def walk(c):
+        if isinstance(c[0], (int, float)):
+            pts.append(c)
+            return
+        for x in c:
+            walk(x)
+
+    walk(geom["coordinates"])
+    lons = [p[0] for p in pts]
+    lats = [p[1] for p in pts]
+    return min(lons), min(lats), max(lons), max(lats)
+
+
+def near_same_bbox(a: dict, b: dict, eps: float = 1e-4) -> bool:
+    ba, bb = bbox(a), bbox(b)
+    return all(abs(ba[i] - bb[i]) < eps for i in range(4))
+
+
+def dedupe_by_number(features: list[dict]) -> list[dict]:
+    """Keep one feature per to_dan_pho; if near-duplicate geometry, keep denser ring."""
+    best: dict[int | str, dict] = {}
+    passthrough: list[dict] = []
+    for f in features:
+        num = f["properties"].get("to_dan_pho")
+        if num is None:
+            passthrough.append(f)
+            continue
+        prev = best.get(num)
+        if prev is None:
+            best[num] = f
+            continue
+        if near_same_bbox(prev["geometry"], f["geometry"]):
+            if coord_count(f["geometry"]) > coord_count(prev["geometry"]):
+                best[num] = f
+            print(f"dedupe tổ {num}: drop near-duplicate polygon")
+        else:
+            # same number, different places — keep both under unique keys later
+            passthrough.append(f)
+            print(f"warn: tổ {num} has two different geometries; keeping both")
+    return list(best.values()) + passthrough
+
+
 def extract_number(name: str) -> int | None:
     m = re.search(r"(?:số\s*)?(\d+)\s*$", fold_spaces(name), flags=re.I)
     if m:
@@ -99,7 +159,16 @@ def main() -> None:
         )
         features.append({"type": "Feature", "properties": props, "geometry": geom})
 
-    features.sort(key=lambda f: (f["properties"].get("to_dan_pho") is None, f["properties"].get("to_dan_pho") or 0, f["properties"]["ten"]))
+    # My Maps đôi khi có 2 polygon trùng số (vd. tổ 6) gần như cùng bbox → giữ bản nhiều điểm hơn
+    features = dedupe_by_number(features)
+
+    features.sort(
+        key=lambda f: (
+            f["properties"].get("to_dan_pho") is None,
+            f["properties"].get("to_dan_pho") or 0,
+            f["properties"]["ten"],
+        )
+    )
     OUT.write_text(
         json.dumps({"type": "FeatureCollection", "features": features}, ensure_ascii=False),
         encoding="utf-8",
