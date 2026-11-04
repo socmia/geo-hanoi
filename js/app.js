@@ -138,10 +138,10 @@ function darkenHex(hex, amount = 0.35) {
 function baseStyle(color) {
   return {
     color: "#ffffff",
-    weight: 3,
+    weight: 2.5,
     opacity: 1,
     fillColor: color,
-    fillOpacity: 0.72,
+    fillOpacity: 0.38,
   };
 }
 
@@ -149,20 +149,20 @@ function baseStyle(color) {
 function idleStyle(color) {
   return {
     color: "#ffffff",
-    weight: 2,
-    opacity: 0.85,
+    weight: 1.5,
+    opacity: 0.8,
     fillColor: color,
-    fillOpacity: 0.32,
+    fillOpacity: 0.18,
   };
 }
 
 function selectedStyle(color) {
   return {
     color: "#111111",
-    weight: 5,
+    weight: 4.5,
     opacity: 1,
     fillColor: color,
-    fillOpacity: 0.88,
+    fillOpacity: 0.55,
   };
 }
 
