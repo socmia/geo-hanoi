@@ -8,6 +8,8 @@ _Last updated: 2026-11-04_
   - Mobile (≤768px): brand header + floating search, chips row, bottom sheet (list → detail; tap the handle to expand).
   - Map: chips for Tổ dân phố / Trường học / Y tế / Công sở / Số tổ; selected tổ = red dashed outline + red pin, others dimmed; layers button toggles light map ↔ satellite (Esri); locate + zoom controls; `#tdp-<n>` deep links (also on hashchange).
 - `scripts/fetch_poi.py` → `data/poi.geojson`: 42 POIs (22 school, 7 health, 13 office) inside the TDP polygons, deduped by kind+name.
+- Detail page `to.html` redesigned to match (approved mock): red header, static mini Leaflet map with POIs, Giới thiệu / Liên hệ cards, side column Thông tin (area computed from polygon) / Địa điểm trong tổ / Tổ lân cận. Own stylesheet `css/to.css`.
+- Removed "Bản đồ gốc" action from the map detail card.
 - Removed the old Hà Nội ward/xã mode and city stats from the UI (only Đống Đa TDP shown).
 
 ## 🔄 Currently Working On
@@ -16,12 +18,11 @@ _Last updated: 2026-11-04_
 ## ⚠️ Known Issues
 - OSM POI names still carry pre-merger ward names (e.g. "UBND phường Nam Đồng") — that is OSM data, not ours.
 - `tdp-extra.json` is mostly empty → Giới thiệu / Liên hệ tabs show placeholders.
-- `to.html` still uses the old glass style (`css/app.css`); not restyled yet.
+- `css/app.css` is now unused (kept for reference); delete when sure.
 - `designs/` holds older static mocks (v1–v3), unused by the app.
 
 ## 🎯 Next Steps
-- Fill `data/tdp-extra.json` (gioi_thieu, lien_he, sections) per tổ.
-- Restyle `to.html` to match the new map page.
+- Fill `data/tdp-extra.json` per tổ (gioi_thieu, to_truong, dien_thoai, dia_diem_sinh_hoat, sections).
 - Optionally curate `data/poi.geojson` by hand (add missing schools/offices, fix names).
 
 ## 📜 Key Files

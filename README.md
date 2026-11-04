@@ -33,6 +33,9 @@ Mỗi tổ một màu pastel; chọn tổ → sheet chi tiết → **Xem chi ti�
 {
   "1": {
     "gioi_thieu": "…",
+    "to_truong": "…",
+    "dien_thoai": "…",
+    "dia_diem_sinh_hoat": "…",
     "lien_he": "…",
     "ghi_chu": "…",
     "sections": [{ "title": "Lịch sử", "body": "…" }]
@@ -40,7 +43,7 @@ Mỗi tổ một màu pastel; chọn tổ → sheet chi tiết → **Xem chi ti�
 }
 ```
 
-Để trống thì trang hiện placeholder — bổ sung sau không cần đổi HTML.
+Để trống thì trang hiện "Đang cập nhật" — bổ sung sau không cần đổi HTML. Diện tích tính từ ranh giới; "Địa điểm trong tổ" lấy từ `data/poi.geojson`.
 
 ## Bổ sung thông tin xã (legacy)
 

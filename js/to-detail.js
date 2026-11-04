@@ -1,3 +1,4 @@
+// Detail page for one tổ dân phố: to.html?n=<to_dan_pho>
 const TDP_COLORS = [
   "#1E88E5", "#43A047", "#8E24AA", "#E53935", "#FB8C00",
   "#00897B", "#F9A825", "#3949AB", "#7CB342", "#D81B60",
@@ -6,6 +7,23 @@ const TDP_COLORS = [
   "#FF8A65", "#8D6E63", "#66BB6A",
 ];
 
+const POI_KINDS = {
+  school: { label: "Trường học", icon: '<path d="M3 10l9-4 9 4-9 4z"/><path d="M7 12v4c3 2 7 2 10 0v-4"/>' },
+  health: { label: "Y tế", icon: '<path d="M12 5v14M5 12h14"/>' },
+  office: { label: "Công sở", icon: '<path d="M6 20V4h12v16M10 8h1M13 8h1M10 12h1M13 12h1M11 20v-3h2v3"/>' },
+};
+
+const ICON = {
+  pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  share: '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>',
+  home: '<path d="M3 10l9-6 9 6M5 9v11h14V9M10 20v-6h4v6"/>',
+  note: '<path d="M4 5h16M4 12h16M4 19h10"/>',
+};
+const svg = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[name]}</svg>`;
+const poiHtml = (kind) => `<span class="poi poi--${kind}"><svg viewBox="0 0 24 24" aria-hidden="true">${POI_KINDS[kind].icon}</svg></span>`;
+
 function colorForTdp(num) {
   if (num != null && Number.isFinite(Number(num))) {
     return TDP_COLORS[(Number(num) - 1 + TDP_COLORS.length) % TDP_COLORS.length];
@@ -13,12 +31,13 @@ function colorForTdp(num) {
   return TDP_COLORS[0];
 }
 
+function rgba(hex, a) {
+  const n = parseInt(hex.replace("#", ""), 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+
 function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
 function paramN() {
@@ -26,13 +45,71 @@ function paramN() {
   return n == null || n === "" ? null : String(n);
 }
 
-function emptyCard(title, hint) {
-  return `<section class="card"><h2>${escapeHtml(title)}</h2><p class="empty">${escapeHtml(hint)}</p></section>`;
+/** Planar area (m²) on a local equirectangular projection — fine at ward scale. */
+function areaM2(geometry) {
+  const R = 6371008.8;
+  const polys = geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates;
+  let total = 0;
+  for (const poly of polys) {
+    poly.forEach((ring, i) => {
+      const lat0 = (ring.reduce((s, c) => s + c[1], 0) / ring.length) * (Math.PI / 180);
+      const pts = ring.map(([x, y]) => [x * (Math.PI / 180) * R * Math.cos(lat0), y * (Math.PI / 180) * R]);
+      let a = 0;
+      for (let j = 0; j < pts.length; j++) {
+        const [x1, y1] = pts[j];
+        const [x2, y2] = pts[(j + 1) % pts.length];
+        a += x1 * y2 - x2 * y1;
+      }
+      total += (i === 0 ? 1 : -1) * Math.abs(a / 2); // holes subtract
+    });
+  }
+  return total;
 }
 
-function sectionCard(title, body) {
-  if (!body) return emptyCard(title, "Chưa có nội dung — bổ sung trong data/tdp-extra.json");
-  return `<section class="card"><h2>${escapeHtml(title)}</h2><div class="body">${escapeHtml(body)}</div></section>`;
+function formatArea(m2) {
+  return `≈ ${(m2 / 10000).toLocaleString("vi-VN", { maximumFractionDigits: 1 })} ha`;
+}
+
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.hidden = false;
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => (el.hidden = true), 2200);
+}
+
+function contactRow(icon, value, label) {
+  return `<div class="row">${svg(icon)}<span class="row-text">${
+    value ? escapeHtml(value) : '<span class="muted">Đang cập nhật</span>'
+  }<small>${escapeHtml(label)}</small></span></div>`;
+}
+
+function mountMiniMap(geo, feature, color, inTdp) {
+  const map = L.map("mini-map", {
+    zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
+    boxZoom: false, keyboard: false, touchZoom: false, tap: false, zoomSnap: 0.25,
+  });
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+    maxZoom: 20, maxNativeZoom: 16, attribution: "© OpenStreetMap · Esri",
+  }).addTo(map);
+  L.geoJSON(geo, {
+    interactive: false,
+    filter: (f) => f !== feature,
+    style: (f) => ({ color: "#fff", weight: 1.5, fillColor: colorForTdp(f.properties?.to_dan_pho), fillOpacity: 0.14 }),
+  }).addTo(map);
+  const sel = L.geoJSON(feature, {
+    interactive: false,
+    style: { color: "#D93025", weight: 3, dashArray: "8 6", fillColor: color, fillOpacity: 0.35 },
+  }).addTo(map);
+  inTdp.forEach((p) => {
+    const [lng, lat] = p.geometry.coordinates;
+    L.marker([lat, lng], {
+      interactive: false, keyboard: false,
+      icon: L.divIcon({ className: "map-poi", html: poiHtml(p.properties.kind), iconSize: [24, 24], iconAnchor: [12, 12] }),
+    }).addTo(map);
+  });
+  map.fitBounds(sel.getBounds(), { padding: [28, 28], maxZoom: 18 });
+  return { map, center: sel.getBounds().getCenter() };
 }
 
 async function boot() {
@@ -45,68 +122,114 @@ async function boot() {
     return;
   }
 
-  const [geo, extra] = await Promise.all([
+  const [geo, extra, poiGeo] = await Promise.all([
     fetch("data/to-dan-pho.geojson", { cache: "no-store" }).then((r) => r.json()),
-    fetch("data/tdp-extra.json", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : {}))
-      .catch(() => ({})),
+    fetch("data/tdp-extra.json", { cache: "no-store" }).then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
+    fetch("data/poi.geojson", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
   ]);
 
-  const feature = (geo.features || []).find(
-    (f) => String(f.properties?.to_dan_pho) === n
-  );
-
+  const features = geo.features || [];
+  const feature = features.find((f) => String(f.properties?.to_dan_pho) === n);
   if (!feature) {
     status.textContent = `Không tìm thấy tổ dân phố số ${n}.`;
     return;
   }
 
   const props = feature.properties || {};
+  const num = props.to_dan_pho ?? n;
   const more = extra[n] || extra[String(Number(n))] || {};
   const name = props.ten || `Tổ dân phố số ${n}`;
-  const color = colorForTdp(props.to_dan_pho);
+  const color = colorForTdp(num);
   const mapHref = `index.html#tdp-${encodeURIComponent(n)}`;
+  const inTdp = (poiGeo?.features || []).filter(
+    (p) => POI_KINDS[p.properties?.kind] && String(p.properties.to_dan_pho) === String(num)
+  );
+  const sections = Array.isArray(more.sections) ? more.sections.filter((s) => s && (s.title || s.body)) : [];
+  const introHtml = [
+    more.gioi_thieu || more.mo_ta_dai ? escapeHtml(more.gioi_thieu || more.mo_ta_dai) : "",
+    ...sections.map((s) => `<h3>${escapeHtml(s.title || "")}</h3>${escapeHtml(s.body || "")}`),
+  ].filter(Boolean).join("\n");
 
-  document.title = `${name} · Đống Đa`;
-
-  const sections = Array.isArray(more.sections) ? more.sections : [];
-  const sectionHtml = sections.length
-    ? sections
-        .map((s) => sectionCard(s.title || "Mục", s.body || ""))
-        .join("")
-    : [
-        sectionCard("Giới thiệu", more.gioi_thieu || more.mo_ta_dai || ""),
-        sectionCard("Liên hệ", more.lien_he || ""),
-        sectionCard("Ghi chú", more.ghi_chu || ""),
-      ].join("");
+  document.title = `${name} · Phường Đống Đa`;
+  document.getElementById("back-link").href = mapHref;
 
   root.innerHTML = `
-    <div class="topbar">
-      <a class="back" href="index.html">← Bản đồ</a>
-      <a class="btn btn-ghost" href="${escapeHtml(mapHref)}" style="min-height:36px;padding:0 0.85rem;font-size:0.85rem">Mở trên bản đồ</a>
+    <div class="col-main">
+      <section class="card hero">
+        <div class="mini-map" id="mini-map" role="img" aria-label="Bản đồ ranh giới ${escapeHtml(name)}"></div>
+        <div class="hero-body">
+          <div>
+            <h1>${escapeHtml(name)}</h1>
+            <p class="hero-sub">Tổ dân phố · Phường ${escapeHtml(props.phuong || "Đống Đa")}, Hà Nội</p>
+          </div>
+          <div class="actions">
+            <a class="btn btn-primary" href="${escapeHtml(mapHref)}">${svg("pin")}Xem trên bản đồ</a>
+            <button type="button" class="btn" id="share-btn">${svg("share")}Chia sẻ</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Giới thiệu</h2>
+        ${introHtml ? `<div class="prose">${introHtml}</div>` : '<p class="muted">Thông tin giới thiệu về tổ đang được cập nhật.</p>'}
+      </section>
+
+      <section class="card rows">
+        <h2>Liên hệ</h2>
+        ${contactRow("user", more.to_truong, "Tổ trưởng")}
+        ${contactRow("phone", more.dien_thoai || more.lien_he, more.dien_thoai || !more.lien_he ? "Điện thoại" : "Liên hệ")}
+        ${contactRow("home", more.dia_diem_sinh_hoat, "Nhà văn hoá / điểm sinh hoạt")}
+        ${more.ghi_chu ? `<div class="row">${svg("note")}<span class="row-text">${escapeHtml(more.ghi_chu)}<small>Ghi chú</small></span></div>` : ""}
+      </section>
     </div>
-    <header class="hero">
-      <div class="hero-swatch" style="background:${escapeHtml(color)}" aria-hidden="true"></div>
-      <div>
-        <h1>${escapeHtml(name)}</h1>
-        <p>Phường ${escapeHtml(props.phuong || "Đống Đa")} · Tổ ${escapeHtml(String(props.to_dan_pho ?? n))}</p>
-      </div>
-    </header>
-    <section class="card">
-      <h2>Thông tin bản đồ</h2>
-      <div class="kv">
-        <div><span>Số tổ</span><strong>${escapeHtml(String(props.to_dan_pho ?? n))}</strong></div>
-        <div><span>Phường</span><strong>${escapeHtml(props.phuong || "—")}</strong></div>
-        <div><span>Mã xã</span><strong>${escapeHtml(String(props.maxa ?? "—"))}</strong></div>
-        ${
-          props.mo_ta
-            ? `<div><span>Ghi chú KML</span><strong>${escapeHtml(props.mo_ta)}</strong></div>`
-            : ""
-        }
-      </div>
-    </section>
-    ${sectionHtml}
+
+    <aside class="col-side">
+      <section class="card">
+        <h2>Thông tin</h2>
+        <div class="kv">
+          <div><span>Số tổ</span><strong>${escapeHtml(String(num))}</strong></div>
+          <div><span>Phường</span><strong>${escapeHtml(props.phuong || "Đống Đa")}</strong></div>
+          ${props.mo_ta ? `<div><span>Gộp từ</span><strong>${escapeHtml(props.mo_ta)}</strong></div>` : ""}
+          <div><span>Diện tích</span><strong>${formatArea(areaM2(feature.geometry))}</strong></div>
+          <div><span>Địa điểm trong tổ</span><strong>${inTdp.length}</strong></div>
+          <div><span>Nguồn ranh giới</span><strong>${escapeHtml(props.nguon || "Google My Maps")}</strong></div>
+        </div>
+      </section>
+
+      ${inTdp.length ? `<section class="card places">
+        <h2>Địa điểm trong tổ</h2>
+        ${inTdp.map((p) => `<div class="place">${poiHtml(p.properties.kind)}<span class="place-text"><span>${escapeHtml(p.properties.name)}</span><small>${POI_KINDS[p.properties.kind].label}</small></span></div>`).join("")}
+      </section>` : ""}
+
+      <section class="card">
+        <h2>Tổ lân cận</h2>
+        <div class="chips" id="near"></div>
+      </section>
+    </aside>
   `;
+
+  document.getElementById("share-btn").addEventListener("click", async () => {
+    try {
+      if (navigator.share) await navigator.share({ title: name, url: location.href });
+      else { await navigator.clipboard.writeText(location.href); toast("Đã sao chép liên kết"); }
+    } catch { /* cancelled */ }
+  });
+
+  const { map, center } = mountMiniMap(geo, feature, color, inTdp);
+
+  // Nearest tổ by centre distance
+  const near = features
+    .filter((f) => f !== feature && f.properties?.to_dan_pho != null)
+    .map((f) => ({ f, d: map.distance(center, L.geoJSON(f).getBounds().getCenter()) }))
+    .sort((a, b) => a.d - b.d)
+    .slice(0, 3);
+  document.getElementById("near").innerHTML = near
+    .map(({ f }) => {
+      const k = f.properties.to_dan_pho;
+      const c = colorForTdp(k);
+      return `<a class="chip" href="to.html?n=${encodeURIComponent(k)}"><span class="sw" style="background:${rgba(c, 0.22)};border-color:${c}"></span>Tổ ${escapeHtml(String(k))}</a>`;
+    })
+    .join("");
 }
 
 boot().catch((err) => {

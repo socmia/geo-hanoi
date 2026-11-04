@@ -176,7 +176,9 @@ test.describe("Geo Hà Nội handover checks", () => {
 
     await page.goto("/to.html?n=3");
     await expect(page.locator("h1")).toContainText("Tổ dân phố số 3");
-    await expect(page.locator(".hero-swatch")).toBeVisible();
-    await expect(page.locator(".card").first()).toContainText("Thông tin bản đồ");
+    await expect(page.locator("#mini-map .leaflet-overlay-pane path").first()).toBeVisible();
+    await expect(page.locator(".col-side .card").first()).toContainText("Diện tích");
+    await expect(page.locator("#near .chip")).toHaveCount(3);
+    await expect(page.locator(".brand-back")).toHaveAttribute("href", "index.html#tdp-3");
   });
 });
