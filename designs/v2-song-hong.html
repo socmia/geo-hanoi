@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>V2 · Sông Hồng — Geo Hà Nội</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --river: #0e3a4a;
+      --river-mid: #1a5568;
+      --mist: #eef3f1;
+      --panel: #f7faf8;
+      --silt: #c9d6cf;
+      --ink: #102028;
+      --mute: #4d646c;
+      --accent: #c46b2b;
+      --accent-soft: #f0c9a8;
+      --line: #c5d2cc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--mist);
+      height: 100vh;
+      display: grid;
+      grid-template-rows: 52px 1fr;
+      overflow: hidden;
+    }
+    .top {
+      background: var(--river);
+      color: #e8f2ef;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.1rem;
+      gap: 1rem;
+    }
+    .top h1 {
+      font-family: "IBM Plex Serif", Georgia, serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .city-stats {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.78rem;
+      font-variant-numeric: tabular-nums;
+      opacity: 0.92;
+    }
+    .city-stats b { font-weight: 600; margin-left: 0.35rem; }
+    .shell {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      min-height: 0;
+    }
+    .rail {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .rail .search {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .rail input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 0.5rem 0.65rem;
+      font: inherit;
+      font-size: 0.86rem;
+      border-radius: 0;
+      outline: none;
+    }
+    .rail input:focus { border-color: var(--river-mid); }
+    .list { list-style: none; overflow: auto; flex: 1; }
+    .list li {
+      display: grid;
+      grid-template-columns: 10px 1fr auto;
+      gap: 0.6rem;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.86rem;
+      border-bottom: 1px solid #e4ebe7;
+      cursor: default;
+    }
+    .list li.active {
+      background: #e4eef0;
+      box-shadow: inset 3px 0 0 var(--accent);
+      font-weight: 600;
+    }
+    .list .code {
+      font-size: 0.72rem;
+      color: var(--mute);
+      font-variant-numeric: tabular-nums;
+    }
+    .swatch { width: 10px; height: 10px; }
+    .map-pane {
+      position: relative;
+      background:
+        linear-gradient(90deg, rgba(14,58,74,.04) 1px, transparent 1px) 0 0 / 28px 28px,
+        linear-gradient(rgba(14,58,74,.04) 1px, transparent 1px) 0 0 / 28px 28px,
+        #d9e4df;
+    }
+    .map { width: 100%; height: 100%; display: block; }
+    .scale {
+      position: absolute;
+      left: 0.85rem; bottom: 0.85rem;
+      background: rgba(247,250,248,.92);
+      border: 1px solid var(--line);
+      padding: 0.3rem 0.5rem;
+      font-size: 0.68rem;
+      color: var(--mute);
+      font-variant-numeric: tabular-nums;
+    }
+    .detail {
+      background: var(--panel);
+      border-left: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: auto;
+    }
+    .detail .hd {
+      padding: 1.1rem 1rem 0.9rem;
+      background: var(--river);
+      color: #eef6f3;
+    }
+    .detail .hd .eyebrow {
+      font-size: 0.7rem;
+      opacity: 0.75;
+      margin-bottom: 0.25rem;
+    }
+    .detail .hd h2 {
+      font-family: "IBM Plex Serif", Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .nums {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .nums > div { padding: 0.9rem 1rem; }
+    .nums > div + div { border-left: 1px solid var(--line); }
+    .nums small { display: block; color: var(--mute); font-size: 0.7rem; margin-bottom: 0.15rem; }
+    .nums strong {
+      font-size: 1.45rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em;
+      color: var(--river);
+    }
+    .sec { padding: 0.9rem 1rem; border-bottom: 1px solid var(--line); font-size: 0.86rem; }
+    .sec h3 {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--mute);
+      margin-bottom: 0.4rem;
+    }
+    .row { display: flex; justify-content: space-between; gap: 0.75rem; margin: 0.25rem 0; }
+    .row span { color: var(--mute); }
+    .sec p { color: var(--mute); line-height: 1.45; }
+    .detail a {
+      margin: 0.9rem 1rem 1.1rem;
+      text-align: center;
+      padding: 0.55rem;
+      background: var(--river);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+    .detail a:hover { background: var(--river-mid); }
+    .badge {
+      position: absolute;
+      top: 0.75rem; left: 0.75rem;
+      font-size: 0.68rem;
+      background: rgba(247,250,248,.9);
+      border: 1px solid var(--line);
+      padding: 0.25rem 0.45rem;
+      color: var(--mute);
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <h1>Bản đồ đơn vị hành chính · Hà Nội</h1>
+    <div class="city-stats">
+      <div>Diện tích<b>3.359,8 km²</b></div>
+      <div>Dân số<b>8.718.000</b></div>
+      <div>Đơn vị<b>127</b></div>
+    </div>
+  </header>
+  <div class="shell">
+    <aside class="rail">
+      <div class="search"><input type="search" placeholder="Tìm theo tên hoặc mã xã…" value="Đống Đa" /></div>
+      <ul class="list">
+        <li><i class="swatch" style="background:#7f9aa3"></i><span>Phường Ba Đình</span><span class="code">994</span></li>
+        <li><i class="swatch" style="background:#9bb5a3"></i><span>Phường Định Công</span><span class="code">1067</span></li>
+        <li class="active"><i class="swatch" style="background:var(--accent)"></i><span>Phường Đống Đa</span><span class="code">922</span></li>
+        <li><i class="swatch" style="background:#8aa8b0"></i><span>Phường Giảng Võ</span><span class="code">966</span></li>
+        <li><i class="swatch" style="background:#a3b59b"></i><span>Phường Cửa Nam</span><span class="code">1093</span></li>
+        <li><i class="swatch" style="background:#6f8f99"></i><span>Phường Hoàn Kiếm</span><span class="code">886</span></li>
+      </ul>
+    </aside>
+    <section class="map-pane">
+      <div class="badge">V2 · Sông Hồng — mockup tĩnh</div>
+      <svg class="map" viewBox="0 0 900 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <path d="M110 90 L270 55 L310 175 L190 215 Z" fill="#7f9aa3" stroke="#0e3a4a" stroke-width="1"/>
+        <path d="M290 65 L455 85 L475 205 L325 185 Z" fill="#9bb5a3" stroke="#0e3a4a" stroke-width="1"/>
+        <path d="M195 225 L335 195 L355 335 L175 355 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="3.5"/>
+        <path d="M345 215 L515 195 L535 345 L365 355 Z" fill="#8aa8b0" stroke="#0e3a4a" stroke-width="1"/>
+        <path d="M95 245 L185 235 L165 395 L65 385 Z" fill="#a3b59b" stroke="#0e3a4a" stroke-width="1"/>
+        <path d="M470 95 L640 75 L690 215 L510 205 Z" fill="#6f8f99" stroke="#0e3a4a" stroke-width="1"/>
+        <path d="M530 225 L710 235 L690 395 L520 365 Z" fill="#95a897" stroke="#0e3a4a" stroke-width="1"/>
+        <path d="M175 375 L365 365 L385 515 L155 525 Z" fill="#7a9aa0" stroke="#0e3a4a" stroke-width="1"/>
+        <text x="250" y="280" text-anchor="middle" fill="#0e3a4a" font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="700">ĐỐNG ĐA</text>
+      </svg>
+      <div class="scale">Lưới khảo sát · chọn = bồi lắng</div>
+    </section>
+    <aside class="detail">
+      <div class="hd">
+        <div class="eyebrow">Mã xã 922 · matinhxa 1.922</div>
+        <h2>Phường Đống Đa</h2>
+      </div>
+      <div class="nums">
+        <div><small>Dân số</small><strong>81.358</strong></div>
+        <div><small>Diện tích km²</small><strong>2,07</strong></div>
+      </div>
+      <div class="sec">
+        <h3>Trụ sở hành chính</h3>
+        Số 59 phố Hoàng Cầu, phường Đống Đa
+      </div>
+      <div class="sec">
+        <h3>Lãnh đạo</h3>
+        <div class="row"><span>Bí thư</span><b>Nguyễn Văn A</b></div>
+        <div class="row"><span>Chủ tịch UBND</span><b>Trịnh Hữu Tuấn</b></div>
+        <div class="row"><span>Chủ tịch MTTQ</span><b>Trần Thị B</b></div>
+      </div>
+      <div class="sec">
+        <h3>Thông tin khác</h3>
+        <p>Sáp nhập từ: Phường Quang Trung, Trung Liệt, Ô Chợ Dừa (một phần), …</p>
+        <p style="margin-top:0.5rem">Trường bổ sung từ <code>xa-extra.json</code> sẽ hiện ở đây.</p>
+      </div>
+      <a href="#">Mở trang tin phường</a>
+    </aside>
+  </div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "type": "FeatureCollection",
+  "features": [],
+  "_comment": "Thả GeoJSON Tổ dân phố vào đây. Mỗi feature cần properties.ten (hoặc name) và ideally properties.phuong / maxa=922 cho Đống Đa."
+}

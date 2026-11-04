@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>So sánh 3 version · Geo Hà Nội</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Be Vietnam Pro", system-ui, sans-serif;
+      background: #121417;
+      color: #e8eaed;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #2a2f36;
+      background: #1a1d21;
+    }
+    header h1 { font-size: 0.95rem; font-weight: 700; margin-right: auto; }
+    .tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .tabs button {
+      border: 1px solid #3a414c;
+      background: transparent;
+      color: #c5cad1;
+      font: inherit;
+      font-size: 0.82rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .tabs button.active {
+      background: #e8eaed;
+      color: #121417;
+      border-color: #e8eaed;
+      font-weight: 600;
+    }
+    .meta {
+      font-size: 0.75rem;
+      color: #8b939e;
+      width: 100%;
+      line-height: 1.4;
+    }
+    iframe { width: 100%; height: 100%; border: 0; background: #000; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Geo Hà Nội · chọn hướng thiết kế</h1>
+    <div class="tabs">
+      <button type="button" class="active" data-src="v1-an-son.html">V1 Ấn son</button>
+      <button type="button" data-src="v2-song-hong.html">V2 Sông Hồng</button>
+      <button type="button" data-src="v3-dem-ho-tay.html">V3 Đêm Hồ Tây</button>
+    </div>
+    <p class="meta" id="meta">V1 — Đỏ son công văn, giấy lạnh, panel phải kiểu dấu ấn. Map full-bleed sau sidebar.</p>
+  </header>
+  <iframe id="frame" src="v1-an-son.html" title="Mockup version"></iframe>
+  <script>
+    const notes = {
+      "v1-an-son.html": "V1 — Đỏ son công văn, giấy lạnh, panel phải kiểu dấu ấn. Map full-bleed sau sidebar.",
+      "v2-song-hong.html": "V2 — Khảo sát sông: top bar + 3 cột (list | map lưới | detail dock). Accent bồi lắng khi chọn.",
+      "v3-dem-ho-tay.html": "V3 — Đêm mặt nước: overlay kính mờ, chọn = đèn lồng vàng. Một điểm sáng, còn lại im."
+    };
+    const frame = document.getElementById("frame");
+    const meta = document.getElementById("meta");
+    document.querySelectorAll(".tabs button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tabs button").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        frame.src = btn.dataset.src;
+        meta.textContent = notes[btn.dataset.src];
+      });
+    });
+  </script>
+</body>
+</html>
