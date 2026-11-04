@@ -49,7 +49,10 @@ let maskLayer = null;
 let wardLayer = null;
 let mode = "tdp"; // tdp | wards
 
-const map = L.map("map", { zoomControl: true }).setView([21.01, 105.825], 14);
+const map = L.map("map", {
+  zoomControl: true,
+  maxZoom: 20,
+}).setView([21.01, 105.825], 14);
 
 // tile.openstreetmap.org often returns empty images to some clients.
 const OSM_ATTR =
@@ -291,19 +294,12 @@ function focusOnLayer(layer) {
   const bounds = layer.getBounds();
   if (!bounds.isValid()) return;
 
+  // Card chi tiết đè lên map (absolute) — không trừ 300px padding phải
+  // (trước đây làm flyToBounds zoom tụt, tổ chỉ chiếm ~1/5 màn hình).
   const mobile = window.matchMedia("(max-width: 768px)").matches;
-  // Fit địa giới khít khung map (chừa tối thiểu cho card/sheet).
-  const padTL = mobile ? [8, 40] : [12, 12];
-  const padBR = mobile
-    ? [8, Math.round(window.innerHeight * 0.28)]
-    : [300, 12];
-
-  map.flyToBounds(bounds, {
-    paddingTopLeft: padTL,
-    paddingBottomRight: padBR,
-    maxZoom: 20,
-    duration: 0.5,
-  });
+  const pad = mobile ? L.point(20, 72) : L.point(28, 28);
+  const zoom = Math.min(map.getBoundsZoom(bounds, false, pad), map.getMaxZoom());
+  map.flyTo(bounds.getCenter(), zoom, { duration: 0.45 });
 }
 
 function setSelection(key, { fly = true } = {}) {
@@ -335,10 +331,21 @@ function clearSelection() {
   el.detail.classList.remove("open");
 }
 
+function matchesSearch(blob, query) {
+  const needle = foldVi(query);
+  if (!needle) return true;
+  // Mỗi token phải khớp; số phải đúng số (tránh "1" khớp "10")
+  return needle.split(/\s+/).filter(Boolean).every((tok) => {
+    if (/^\d+$/.test(tok)) {
+      return new RegExp(`(?:^|\\D)${tok}(?:\\D|$)`).test(blob);
+    }
+    return blob.includes(tok);
+  });
+}
+
 function applyFilter(q) {
-  const needle = foldVi(q);
   byKey.forEach((entry) => {
-    const match = !needle || entry.searchBlob.includes(needle);
+    const match = matchesSearch(entry.searchBlob, q);
     entry.li.classList.toggle("hidden", !entry.visible || !match);
   });
 }
@@ -495,6 +502,30 @@ async function boot() {
     map.fitBounds(fitTarget.getBounds(), { padding: [28, 28], maxZoom: 15 });
   }
   requestAnimationFrame(() => map.invalidateSize());
+
+  // Expose for Playwright / manual QA
+  window.__GEO_TEST__ = {
+    map,
+    byKey,
+    getSelectedKey: () => selectedKey,
+    selectByLabel(text) {
+      const hit = [...byKey.entries()].find(([, e]) =>
+        (e.props?.ten || e.name || "").includes(text)
+      );
+      if (!hit) throw new Error(`not found: ${text}`);
+      setSelection(hit[0]);
+      return hit[0];
+    },
+    awaitMoveEnd() {
+      return new Promise((resolve) => {
+        map.once("moveend", () => resolve({
+          zoom: map.getZoom(),
+          center: map.getCenter(),
+          bounds: map.getBounds(),
+        }));
+      });
+    },
+  };
 }
 
 boot().catch((err) => {
