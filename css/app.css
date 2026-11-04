@@ -307,7 +307,11 @@ button, input { font: inherit; }
   font-size: 15px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #6e1010;
+  color: #b71c1c;
+}
+
+.list .dot {
+  border: 1px solid #c5ccd6;
 }
 
 @media (max-width: 768px) {

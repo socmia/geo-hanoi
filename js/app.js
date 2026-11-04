@@ -106,34 +106,35 @@ function isDongDaProps(props) {
   return blob.includes("dong da") && (blob.includes("phuong") || blob.includes("to dan"));
 }
 
-/** TDP: viền rõ, fill nhẹ — OSM bên trong vẫn đọc được */
+/** Tổ dân phố: polygon trắng */
 function baseStyle() {
   return {
-    color: "#9b1c1c",
-    weight: 2.2,
+    color: "#ffffff",
+    weight: 2,
     opacity: 1,
-    fillColor: "#e85d4c",
-    fillOpacity: 0.14,
+    fillColor: "#ffffff",
+    fillOpacity: 0.35,
   };
 }
 
 function selectedStyle() {
   return {
-    color: "#c45c00",
+    color: "#ffffff",
     weight: 3,
     opacity: 1,
-    fillColor: "#f0a05a",
-    fillOpacity: 0.28,
+    fillColor: "#ffffff",
+    fillOpacity: 0.55,
   };
 }
 
+/** Địa giới phường: polygon đỏ */
 function wardOutlineStyle() {
   return {
-    color: "#6e1010",
-    weight: 4,
+    color: "#c62828",
+    weight: 3.5,
     opacity: 1,
-    fillColor: "#f3d98a",
-    fillOpacity: 0.12,
+    fillColor: "#e53935",
+    fillOpacity: 0.28,
     interactive: false,
   };
 }
