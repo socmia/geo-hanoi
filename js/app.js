@@ -131,7 +131,6 @@ const ICON = {
   layers: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
   phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>',
-  db: '<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/>',
   list: '<path d="M4 5h16M4 12h16M4 19h10"/>',
   zoom: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
   share: '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/>',
@@ -230,9 +229,7 @@ function renderDetail(entry) {
     <div class="tab-panel" id="tp-ov" role="tabpanel" aria-labelledby="tab-ov">
       <div class="row">${svg("pin")}<span class="row-text">Phường ${escapeHtml(props.phuong || "Đống Đa")}, Hà Nội</span></div>
       ${props.mo_ta ? `<div class="row">${svg("layers")}<span class="row-text">${escapeHtml(props.mo_ta)}<small>Gộp từ các tổ cũ</small></span></div>` : ""}
-      ${extra.ghi_chu ? `<div class="row">${svg("list")}<span class="row-text">${escapeHtml(extra.ghi_chu)}<small>Ghi chú</small></span></div>` : ""}
-      <div class="row">${svg("db")}<span class="row-text">Ranh giới: ${escapeHtml(props.nguon || "Google My Maps")}<small>Địa điểm: OpenStreetMap</small></span></div>
-    </div>
+      ${extra.ghi_chu ? `<div class="row">${svg("list")}<span class="row-text">${escapeHtml(extra.ghi_chu)}<small>Ghi chú</small></span></div>` : ""}    </div>
     <div class="tab-panel" id="tp-in" role="tabpanel" aria-labelledby="tab-in" hidden>
       ${introHtml ? `<div class="prose">${introHtml}</div>` : `<p class="prose muted">Chưa có giới thiệu cho tổ này.</p>`}
     </div>

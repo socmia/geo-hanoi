@@ -184,9 +184,7 @@ async function boot() {
           <div><span>Phường</span><strong>${escapeHtml(props.phuong || "Đống Đa")}</strong></div>
           ${props.mo_ta ? `<div><span>Gộp từ</span><strong>${escapeHtml(props.mo_ta)}</strong></div>` : ""}
           <div><span>Diện tích</span><strong>${formatArea(areaM2(feature.geometry))}</strong></div>
-          <div><span>Địa điểm trong tổ</span><strong>${inTdp.length}</strong></div>
-          <div><span>Nguồn ranh giới</span><strong>${escapeHtml(props.nguon || "Google My Maps")}</strong></div>
-        </div>
+          <div><span>Địa điểm trong tổ</span><strong>${inTdp.length}</strong></div>        </div>
       </section>
 
       <section class="card places" id="places">
