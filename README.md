@@ -44,4 +44,6 @@ Thay `assets/logo.svg` (hoặc đổi `src` trong `index.html`).
 
 ```bash
 node tests/test_normalize.mjs
+npm install
+npx playwright test
 ```
