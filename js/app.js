@@ -109,13 +109,16 @@ function isDongDaProps(props) {
   return blob.includes("dong da") && (blob.includes("phuong") || blob.includes("to dan"));
 }
 
-/** Mỗi tổ một màu — list dot + viền + fill transparent cùng hue */
+/**
+ * Style kiểu bản đồ phường (My Maps / maisonoffice):
+ * pastel fill trong suốt + viền trắng mỏng + nhãn chip trắng.
+ */
 const TDP_COLORS = [
-  "#e53935", "#d81b60", "#8e24aa", "#5e35b1", "#3949ab",
-  "#1e88e5", "#039be5", "#00acc1", "#00897b", "#43a047",
-  "#7cb342", "#c0ca33", "#fdd835", "#ffb300", "#fb8c00",
-  "#f4511e", "#6d4c41", "#546e7a", "#ec407a", "#ab47bc",
-  "#42a5f5", "#26a69a", "#9ccc65",
+  "#81d4fa", "#a5d6a7", "#ce93d8", "#f48fb1", "#ffcc80",
+  "#80cbc4", "#fff59d", "#90caf9", "#c5e1a5", "#ef9a9a",
+  "#b39ddb", "#80deea", "#ffe082", "#aed581", "#f8bbd0",
+  "#9fa8da", "#ffab91", "#b0bec5", "#dce775", "#4dd0e1",
+  "#ffccbc", "#bcaaa4", "#81c784",
 ];
 
 function colorForTdp(num, index = 0) {
@@ -125,73 +128,43 @@ function colorForTdp(num, index = 0) {
   return TDP_COLORS[index % TDP_COLORS.length];
 }
 
+function darkenHex(hex, amount = 0.35) {
+  const h = String(hex).replace("#", "");
+  const n = parseInt(h.length === 3 ? h.split("").map((c) => c + c).join("") : h, 16);
+  const r = Math.round(((n >> 16) & 255) * (1 - amount));
+  const g = Math.round(((n >> 8) & 255) * (1 - amount));
+  const b = Math.round((n & 255) * (1 - amount));
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
 function baseStyle(color) {
   return {
-    color,
-    weight: 2.5,
+    color: "#ffffff",
+    weight: 2,
     opacity: 1,
     fillColor: color,
-    fillOpacity: 0.28,
+    fillOpacity: 0.42,
   };
 }
 
 /** Khi đang chọn 1 tổ: các tổ khác làm mờ */
 function idleStyle(color) {
   return {
-    color,
+    color: "#ffffff",
     weight: 1.5,
-    opacity: 0.5,
+    opacity: 0.7,
     fillColor: color,
-    fillOpacity: 0.08,
+    fillOpacity: 0.16,
   };
 }
 
 function selectedStyle(color) {
   return {
-    color,
-    weight: 6,
+    color: darkenHex(color, 0.4),
+    weight: 4,
     opacity: 1,
     fillColor: color,
-    fillOpacity: 0.45,
-  };
-}
-
-function maskStyle() {
-  return {
-    stroke: false,
-    fillColor: "#1a1a1a",
-    fillOpacity: 0.48,
-    interactive: false,
-  };
-}
-
-/** GeoJSON mask: thế giới có lỗ = địa giới phường → làm mờ ngoài Đống Đa */
-function maskFeatureFromWard(wardFeature) {
-  const WORLD = [
-    [-180, 90],
-    [180, 90],
-    [180, -90],
-    [-180, -90],
-    [-180, 90],
-  ];
-  const geom = wardFeature.geometry;
-  let outers = [];
-  if (geom?.type === "Polygon") outers = [geom.coordinates[0]];
-  else if (geom?.type === "MultiPolygon") outers = geom.coordinates.map((p) => p[0]);
-
-  const holes = outers
-    .filter((ring) => ring && ring.length >= 4)
-    .map((ring) => {
-      const hole = ring.map((c) => [...c]);
-      // lỗ cần chiều ngược outer (GeoJSON)
-      hole.reverse();
-      return hole;
-    });
-
-  return {
-    type: "Feature",
-    properties: {},
-    geometry: { type: "Polygon", coordinates: [WORLD, ...holes] },
+    fillOpacity: 0.58,
   };
 }
 
@@ -398,19 +371,13 @@ async function fetchDongDaWard() {
   return (geo.features || []).find((f) => Number(f.properties?.maxa) === DONG_DA_MAXA) || null;
 }
 
-/** Chỉ mask ngoài Đống Đa — không vẽ polygon phường */
-function applyDongDaMask(wardFeature) {
+/** Bounds phường để fit lúc load — không vẽ polygon / mask tối (style như ảnh tham chiếu) */
+function boundsFromWard(wardFeature) {
   if (!wardFeature) return null;
-  maskLayer = L.geoJSON(maskFeatureFromWard(wardFeature), {
-    style: maskStyle,
-    interactive: false,
-  }).addTo(map);
-  // bounds ẩn để fit lúc load (không vẽ ranh phường)
   wardLayer = L.geoJSON(wardFeature, {
     style: { opacity: 0, fillOpacity: 0, interactive: false },
     interactive: false,
   });
-  // không addTo(map) — chỉ lấy bounds
   return wardLayer.getBounds();
 }
 
@@ -469,7 +436,7 @@ async function boot() {
   clearLayers();
 
   const ward = await fetchDongDaWard().catch(() => null);
-  const dongDaBounds = applyDongDaMask(ward);
+  const dongDaBounds = boundsFromWard(ward);
 
   const tdp = await loadTdpLayer(extra).catch(() => null);
 
@@ -477,7 +444,7 @@ async function boot() {
     mode = "tdp";
     el.cityUnits.textContent = `${tdp.count} tổ dân phố · Đống Đa`;
     el.layerNote.textContent =
-      "Các tổ dân phố Đống Đa (mỗi tổ một màu). Ngoài phường bị làm mờ.";
+      "Bản đồ tổ dân phố Đống Đa — mỗi tổ một màu (kiểu bản đồ hành chính).";
     el.search.placeholder = "Tìm tổ dân phố…";
   } else {
     mode = "ward-fallback";
@@ -512,13 +479,23 @@ async function boot() {
       setSelection(hit[0]);
       return hit[0];
     },
-    awaitMoveEnd() {
+    awaitMoveEnd(timeoutMs = 4000) {
       return new Promise((resolve) => {
-        map.once("moveend", () => resolve({
-          zoom: map.getZoom(),
-          center: map.getCenter(),
-          bounds: map.getBounds(),
-        }));
+        const done = () =>
+          resolve({
+            zoom: map.getZoom(),
+            center: map.getCenter(),
+            bounds: map.getBounds(),
+          });
+        const t = setTimeout(() => {
+          map.off("moveend", onEnd);
+          done();
+        }, timeoutMs);
+        function onEnd() {
+          clearTimeout(t);
+          done();
+        }
+        map.once("moveend", onEnd);
       });
     },
   };
