@@ -131,7 +131,7 @@ function idleStyle() {
 function selectedStyle() {
   return {
     color: "#ffeb3b",
-    weight: 3.5,
+    weight: 6,
     opacity: 1,
     fillColor: "#ffffff",
     fillOpacity: 0.55,
