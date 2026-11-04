@@ -191,7 +191,80 @@ function setCollapsed(collapsed) {
   el.panelTab.setAttribute("aria-label", collapsed ? "Mở bảng bên" : "Thu gọn bảng bên");
 }
 el.panelTab.addEventListener("click", () => setCollapsed(!document.body.classList.contains("panel-collapsed")));
-el.sheetHandle.addEventListener("click", () => document.body.classList.toggle("sheet-full"));
+
+/* ---------- mobile bottom sheet: drag between peek / half / full ---------- */
+const SHEET_STATES = ["peek", "half", "full"];
+let sheetState = "half";
+
+function setSheet(state) {
+  sheetState = state;
+  document.body.classList.toggle("sheet-peek", state === "peek");
+  document.body.classList.toggle("sheet-full", state === "full");
+  document.body.style.removeProperty("--sheet-h");
+  el.sheetHandle.setAttribute("aria-label", state === "full" ? "Thu nhỏ bảng" : "Mở rộng bảng");
+  el.sheetHandle.setAttribute("aria-expanded", String(state !== "peek"));
+}
+
+function sheetHeights() {
+  const panel = el.detail.closest(".panel");
+  const probe = (cls) => {
+    const prev = sheetState;
+    setSheet(cls);
+    const h = panel.getBoundingClientRect().height;
+    setSheet(prev);
+    return h;
+  };
+  return { peek: probe("peek"), half: probe("half"), full: probe("full") };
+}
+
+(function initSheetDrag() {
+  const panel = el.detail.closest(".panel");
+  let drag = null;
+  panel.addEventListener("pointerdown", (e) => {
+    if (!MOBILE_MQ.matches) return;
+    const grip = e.target.closest(".sheet-handle, .list-hd, .d-head");
+    if (!grip || e.target.closest("button:not(.sheet-handle), a, input")) return;
+    drag = { y0: e.clientY, h0: panel.getBoundingClientRect().height, moved: false, id: e.pointerId };
+  });
+  window.addEventListener("pointermove", (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dy = e.clientY - drag.y0;
+    if (!drag.moved && Math.abs(dy) < 6) return;
+    if (!drag.moved) {
+      drag.moved = true;
+      document.body.classList.add("sheet-dragging"); // no transition, so probes read final heights
+      drag.snaps = sheetHeights();
+    }
+    const h = Math.min(drag.snaps.full, Math.max(drag.snaps.peek, drag.h0 - dy));
+    document.body.style.setProperty("--sheet-h", `${h}px`);
+  });
+  const end = (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const d = drag;
+    drag = null;
+    if (!d.moved) return;
+    document.body.classList.remove("sheet-dragging");
+    const h = panel.getBoundingClientRect().height;
+    const flick = e.clientY - d.y0;
+    let next = SHEET_STATES.reduce((a, b) => (Math.abs(d.snaps[b] - h) < Math.abs(d.snaps[a] - h) ? b : a));
+    // a quick flick moves one step even if it didn't pass the midpoint
+    if (next === sheetState && Math.abs(flick) > 40) {
+      const i = SHEET_STATES.indexOf(sheetState) + (flick > 0 ? -1 : 1);
+      next = SHEET_STATES[Math.max(0, Math.min(2, i))];
+    }
+    setSheet(next);
+    el.sheetHandle.dataset.dragged = "1";
+    setTimeout(() => delete el.sheetHandle.dataset.dragged, 0);
+  };
+  window.addEventListener("pointerup", end);
+  window.addEventListener("pointercancel", end);
+})();
+
+el.sheetHandle.addEventListener("click", () => {
+  if (el.sheetHandle.dataset.dragged) return;
+  // tap cycles: peek → half → full → half
+  setSheet(sheetState === "peek" ? "half" : sheetState === "half" ? "full" : "half");
+});
 
 /* ---------- detail ---------- */
 function renderDetail(entry) {
@@ -268,6 +341,7 @@ el.detailBody.addEventListener("click", async (e) => {
   } else if (poiLi) {
     const p = pois[Number(poiLi.getAttribute("data-poi-idx"))];
     const [lng, lat] = p.geometry.coordinates;
+    if (MOBILE_MQ.matches) setSheet("peek"); // uncover the map so the place is visible
     map.flyTo([lat, lng], Math.max(map.getZoom(), 18), { duration: 0.4 });
     p.marker?.openTooltip();
   }
@@ -302,7 +376,7 @@ function setSelection(key, { fly = true } = {}) {
   });
   entry.layer.bringToFront();
   document.body.classList.add("has-sel");
-  document.body.classList.remove("sheet-full");
+  setSheet("half");
   renderDetail(entry);
   setPin(entry.layer.getCenter());
   history.replaceState(null, "", `#tdp-${entry.props.to_dan_pho}`);
@@ -316,6 +390,7 @@ function clearSelection() {
     e.layer.setStyle(baseStyle(e.color));
   });
   document.body.classList.remove("has-sel");
+  if (sheetState === "full") setSheet("half");
   el.detail.hidden = true;
   el.listView.hidden = false;
   if (pinMarker) { map.removeLayer(pinMarker); pinMarker = null; }

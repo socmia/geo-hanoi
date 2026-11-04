@@ -273,6 +273,8 @@ body.panel-collapsed .layers-btn { left: 16px; }
   body { --sheet-h: max(260px, 38vh); }
   body.has-sel { --sheet-h: max(360px, 52vh); }
   body.sheet-full { --sheet-h: calc(100% - 140px); }
+  body.sheet-peek { --sheet-h: 92px; }
+  body.sheet-dragging .panel, body.sheet-dragging .map-ctrls { transition: none; }
 
   .topbar { width: auto; right: 0; background: transparent; border: 0; }
   .brand { padding: 0 16px 24px; gap: 12px; }
@@ -290,7 +292,10 @@ body.panel-collapsed .layers-btn { left: 16px; }
     border-right: 0; border-top: 1px solid var(--line); border-radius: 16px 16px 0 0;
     transition: height 0.2s ease; transform: none !important;
   }
-  .sheet-handle { display: flex; justify-content: center; align-items: center; height: 24px; flex: none; width: 100%; }
+  .sheet-handle { display: flex; justify-content: center; align-items: center; height: 28px; flex: none; width: 100%; cursor: grab; }
+  /* grips: dragging these resizes the sheet instead of scrolling the page */
+  .sheet-handle, .list-hd, .d-head { touch-action: none; }
+  .d-head { position: sticky; top: 0; z-index: 2; background: var(--surface); padding-bottom: 8px !important; }
   .sheet-handle span { width: 36px; height: 4px; border-radius: 2px; background: var(--line); }
   .list-hd { padding: 2px 20px 10px; }
   .list-hd h2 { font-size: 20px; line-height: 26px; }

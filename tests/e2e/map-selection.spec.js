@@ -199,3 +199,40 @@ test.describe("Geo Hà Nội handover checks", () => {
     await expect(page.locator(".brand-back")).toHaveAttribute("href", "index.html#tdp-3");
   });
 });
+
+test.describe("mobile bottom sheet", () => {
+  test.use({ viewport: { width: 375, height: 812 }, hasTouch: true });
+
+  test("drag handle snaps sheet to peek, half and full", async ({ page }) => {
+    await page.goto("/?v=pw#tdp-1");
+    await page.waitForFunction(() => window.__GEO_TEST__?.byKey?.size > 0, null, { timeout: 20_000 });
+    const dragTo = (y1) =>
+      page.evaluate(async (y1) => {
+        const panel = document.getElementById("panel");
+        const h = document.getElementById("sheet-handle");
+        const y0 = panel.getBoundingClientRect().top + 14;
+        const ev = (t, y, tgt) =>
+          (tgt || window).dispatchEvent(new PointerEvent(t, { bubbles: true, clientX: 187, clientY: y, pointerId: 7, pointerType: "touch", isPrimary: true }));
+        ev("pointerdown", y0, h);
+        for (let i = 1; i <= 10; i++) {
+          ev("pointermove", y0 + ((y1 - y0) * i) / 10);
+          await new Promise((r) => setTimeout(r, 16));
+        }
+        ev("pointerup", y1);
+        await new Promise((r) => setTimeout(r, 300));
+        return { cls: document.body.className, h: Math.round(panel.getBoundingClientRect().height) };
+      }, y1);
+
+    const peek = await dragTo(790);
+    expect(peek.cls).toContain("sheet-peek");
+    expect(peek.h).toBeLessThan(120);
+    await expect(page.locator(".d-head h2")).toBeInViewport();
+
+    const half = await dragTo(420);
+    expect(half.cls).not.toContain("sheet-peek");
+    expect(half.cls).not.toContain("sheet-full");
+
+    const full = await dragTo(90);
+    expect(full.cls).toContain("sheet-full");
+  });
+});
