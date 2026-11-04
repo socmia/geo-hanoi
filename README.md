@@ -16,12 +16,13 @@ Mở http://127.0.0.1:8080
 
 ## Tổ dân phố (Đống Đa)
 
-Thả GeoJSON vào `data/to-dan-pho.geojson`. Mỗi feature:
+Nguồn: [Google My Maps — Bản đồ đống đa](https://www.google.com/maps/d/u/0/viewer?mid=1nBY8hhne4fttYxEO0MDGp5KjxIwN86M)
 
-- `properties.ten` (hoặc `name`) — hiện nhãn trên map
-- `properties.phuong` chứa “Đống Đa” **hoặc** `maxa: 922` — để lọc đúng phường
+```bash
+python scripts/import_mymaps_tdp.py   # tải KML → data/to-dan-pho.geojson
+```
 
-App chỉ vẽ TDP Đống Đa, fill trong suốt + tên. Chưa có file → tạm hiện ranh phường Đống Đa.
+App chỉ vẽ TDP Đống Đa, fill trong suốt + tên trên map.
 
 ## Bổ sung thông tin xã
 

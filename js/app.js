@@ -160,8 +160,14 @@ function escapeAttr(s) {
   return escapeHtml(s).replace(/'/g, "&#39;");
 }
 
-function bindLabel(layer, name) {
-  layer.bindTooltip(name, {
+function shortLabel(props, name) {
+  const n = props.to_dan_pho;
+  if (n != null && n !== "") return `Tổ ${n}`;
+  return name.replace(/^Tổ dân phố\s*(số\s*)?/i, "Tổ ").trim() || name;
+}
+
+function bindLabel(layer, name, props = {}) {
+  layer.bindTooltip(shortLabel(props, name), {
     permanent: true,
     direction: "center",
     className: "poly-label",
@@ -338,7 +344,7 @@ async function loadTdpLayer(extra) {
     onEachFeature(feature, layer) {
       const key = `tdp-${i++}`;
       const meta = addFeature(feature, extra, key);
-      bindLabel(layer, meta.name);
+      bindLabel(layer, meta.name, meta.props);
       layer.setStyle(baseStyle());
       byKey.set(key, { feature, layer, ...meta });
       layer.on("click", (e) => {
@@ -360,7 +366,7 @@ async function loadDongDaWardOnly(extra) {
     onEachFeature(feature, layer) {
       const key = `ward-${i++}`;
       const meta = addFeature(feature, extra, key);
-      bindLabel(layer, meta.name);
+      bindLabel(layer, meta.name, meta.props);
       layer.setStyle(baseStyle());
       byKey.set(key, { feature, layer, ...meta });
       layer.on("click", (e) => {
