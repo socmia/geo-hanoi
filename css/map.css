@@ -156,7 +156,7 @@ body.panel-collapsed .panel { transform: translateX(-100%); }
 .d-close-m { display: none; }
 
 .detail-actions {
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px;
   padding: 0 16px 16px; border-bottom: 1px solid var(--line-soft);
 }
 .act {

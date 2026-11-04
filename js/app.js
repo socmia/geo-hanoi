@@ -1,7 +1,6 @@
 import { foldVi } from "./normalize.js";
 
 const DONG_DA_MAXA = 922;
-const MYMAPS_URL = "https://www.google.com/maps/d/u/0/viewer?mid=1nBY8hhne4fttYxEO0MDGp5KjxIwN86M";
 const MOBILE_MQ = window.matchMedia("(max-width: 768px)");
 
 const el = {
@@ -233,9 +232,7 @@ function renderDetail(entry) {
     <div class="detail-actions">
       ${detailHref ? `<a class="act btn-primary" href="${escapeHtml(detailHref)}"><span class="act-ic">${svg("list")}</span>Chi tiết</a>` : ""}
       <button type="button" class="act" data-act="zoom"><span class="act-ic">${svg("zoom")}</span>Phóng tới</button>
-      <button type="button" class="act" data-act="share"><span class="act-ic">${svg("share")}</span>Chia sẻ</button>
-      <a class="act" href="${escapeHtml(props.mid ? `https://www.google.com/maps/d/u/0/viewer?mid=${props.mid}` : MYMAPS_URL)}" target="_blank" rel="noopener"><span class="act-ic">${svg("ext")}</span>Bản đồ gốc</a>
-    </div>
+      <button type="button" class="act" data-act="share"><span class="act-ic">${svg("share")}</span>Chia sẻ</button>    </div>
     <div class="tabs" role="tablist">
       <button type="button" class="tab" role="tab" id="tab-ov" aria-controls="tp-ov" aria-selected="true">Tổng quan</button>
       <button type="button" class="tab" role="tab" id="tab-in" aria-controls="tp-in" aria-selected="false">Giới thiệu</button>
