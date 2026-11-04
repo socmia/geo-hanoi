@@ -25,6 +25,29 @@ test.describe("Geo Hà Nội handover checks", () => {
     expect(info.note.toLowerCase()).toContain("đống đa");
   });
 
+  test("initial view fits Phường Đống Đa polygon", async ({ page }) => {
+    await waitApp(page);
+    const fit = await page.evaluate(() => {
+      const api = window.__GEO_TEST__;
+      const wardBounds = api.wardLayer.getBounds();
+      const mb = api.map.getBounds();
+      const featH = wardBounds.getNorth() - wardBounds.getSouth();
+      const viewH = mb.getNorth() - mb.getSouth();
+      const featW = wardBounds.getEast() - wardBounds.getWest();
+      const viewW = mb.getEast() - mb.getWest();
+      return {
+        zoom: api.map.getZoom(),
+        containsCenter: mb.contains(wardBounds.getCenter()),
+        heightRatio: viewH / featH,
+        widthRatio: viewW / featW,
+      };
+    });
+    expect(fit.containsCenter).toBe(true);
+    expect(fit.zoom).toBeGreaterThanOrEqual(14);
+    expect(fit.heightRatio).toBeLessThan(3.5);
+    expect(fit.widthRatio).toBeLessThan(3.5);
+  });
+
   test("select Tổ 1 zooms in to fit polygon on screen", async ({ page }) => {
     await waitApp(page);
 

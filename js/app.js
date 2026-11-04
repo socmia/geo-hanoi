@@ -498,8 +498,12 @@ async function boot() {
   }
 
   const fitTarget = wardLayer || geoLayer;
-  if (fitTarget?.getBounds) {
-    map.fitBounds(fitTarget.getBounds(), { padding: [28, 28], maxZoom: 15 });
+  if (fitTarget?.getBounds?.().isValid?.()) {
+    // Lúc vào trang: zoom khít địa giới phường Đống Đa (cùng cách tính khi chọn tổ)
+    const bounds = fitTarget.getBounds();
+    const pad = L.point(28, 28);
+    const zoom = Math.min(map.getBoundsZoom(bounds, false, pad), map.getMaxZoom());
+    map.fitBounds(bounds, { padding: [pad.x, pad.y], maxZoom: zoom });
   }
   requestAnimationFrame(() => map.invalidateSize());
 
@@ -507,6 +511,7 @@ async function boot() {
   window.__GEO_TEST__ = {
     map,
     byKey,
+    wardLayer,
     getSelectedKey: () => selectedKey,
     selectByLabel(text) {
       const hit = [...byKey.entries()].find(([, e]) =>
