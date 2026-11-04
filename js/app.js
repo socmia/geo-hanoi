@@ -49,7 +49,7 @@ let wardLayer = null;
 let mode = "tdp"; // tdp | wards
 
 const map = L.map("map", {
-  zoomControl: true,
+  zoomControl: false,
   maxZoom: 20,
 }).setView([21.01, 105.825], 14);
 
