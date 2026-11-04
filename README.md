@@ -2,7 +2,10 @@
 
 Bản đồ tĩnh xã/phường Hà Nội — Leaflet + OpenStreetMap (mirror `tile.openstreetmap.de`, fallback FR/Esri), UI V1 Ấn son.
 
-## Chạy
+**Live:** https://socmia.github.io/geo-hanoi/  
+**Repo:** https://github.com/socmia/geo-hanoi
+
+## Chạy local
 
 ```bash
 python scripts/build-geojson.py   # khi cập nhật mahoa_xa.6.json
