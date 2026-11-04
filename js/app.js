@@ -54,24 +54,23 @@ const map = L.map("map", {
   maxZoom: 20,
 }).setView([21.01, 105.825], 14);
 
-// tile.openstreetmap.org often returns empty images to some clients.
+// Nền dịu (ít POI) để polygon TDP nổi — OSM.de làm fallback.
 const OSM_ATTR =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+const CARTO_ATTR = `${OSM_ATTR} &copy; <a href="https://carto.com/attributions">CARTO</a>`;
 const basemapCandidates = [
+  {
+    // Không nhãn đường — giảm nhiễu, polygon dễ đọc
+    url: "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+    options: { maxZoom: 20, subdomains: "abcd", attribution: CARTO_ATTR },
+  },
+  {
+    url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+    options: { maxZoom: 20, subdomains: "abcd", attribution: CARTO_ATTR },
+  },
   {
     url: "https://tile.openstreetmap.de/{z}/{x}/{y}.png",
     options: { maxZoom: 19, attribution: OSM_ATTR },
-  },
-  {
-    url: "https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",
-    options: { maxZoom: 20, subdomains: "abc", attribution: OSM_ATTR },
-  },
-  {
-    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-    options: {
-      maxZoom: 19,
-      attribution: "Tiles &copy; Esri",
-    },
   },
 ];
 
@@ -109,16 +108,13 @@ function isDongDaProps(props) {
   return blob.includes("dong da") && (blob.includes("phuong") || blob.includes("to dan"));
 }
 
-/**
- * Style kiểu bản đồ phường (My Maps / maisonoffice):
- * pastel fill trong suốt + viền trắng mỏng + nhãn chip trắng.
- */
+/** Màu bão hòa — dễ tách trên nền xám nhạt */
 const TDP_COLORS = [
-  "#81d4fa", "#a5d6a7", "#ce93d8", "#f48fb1", "#ffcc80",
-  "#80cbc4", "#fff59d", "#90caf9", "#c5e1a5", "#ef9a9a",
-  "#b39ddb", "#80deea", "#ffe082", "#aed581", "#f8bbd0",
-  "#9fa8da", "#ffab91", "#b0bec5", "#dce775", "#4dd0e1",
-  "#ffccbc", "#bcaaa4", "#81c784",
+  "#1E88E5", "#43A047", "#8E24AA", "#E53935", "#FB8C00",
+  "#00897B", "#F9A825", "#3949AB", "#7CB342", "#D81B60",
+  "#5E35B1", "#00ACC1", "#EF6C00", "#C0CA33", "#EC407A",
+  "#5C6BC0", "#FF7043", "#546E7A", "#9E9D24", "#26C6DA",
+  "#FF8A65", "#8D6E63", "#66BB6A",
 ];
 
 function colorForTdp(num, index = 0) {
@@ -139,32 +135,32 @@ function darkenHex(hex, amount = 0.35) {
 
 function baseStyle(color) {
   return {
-    color: "#ffffff",
-    weight: 2,
+    color: darkenHex(color, 0.5),
+    weight: 2.75,
     opacity: 1,
     fillColor: color,
-    fillOpacity: 0.42,
+    fillOpacity: 0.68,
   };
 }
 
 /** Khi đang chọn 1 tổ: các tổ khác làm mờ */
 function idleStyle(color) {
   return {
-    color: "#ffffff",
-    weight: 1.5,
-    opacity: 0.7,
+    color: darkenHex(color, 0.4),
+    weight: 1.75,
+    opacity: 0.9,
     fillColor: color,
-    fillOpacity: 0.16,
+    fillOpacity: 0.28,
   };
 }
 
 function selectedStyle(color) {
   return {
-    color: darkenHex(color, 0.4),
-    weight: 4,
+    color: "#1d1d1f",
+    weight: 5,
     opacity: 1,
     fillColor: color,
-    fillOpacity: 0.58,
+    fillOpacity: 0.82,
   };
 }
 
@@ -206,15 +202,36 @@ function bindLabel(layer, name, props = {}) {
     className: "poly-label",
     opacity: 1,
   });
+  const tip = layer.getTooltip();
+  const syncLabelZoom = () => {
+    const elTip = tip?.getElement?.();
+    if (!elTip) return;
+    elTip.classList.toggle("poly-label--dim", map.getZoom() < 15);
+  };
+  layer.on("add", () => {
+    syncLabelZoom();
+    map.on("zoomend", syncLabelZoom);
+  });
+  layer.on("remove", () => map.off("zoomend", syncLabelZoom));
 }
 
 function renderDetail(props) {
   const name = featureName(props);
   const extras = Object.entries(props).filter(
-    ([k, v]) => !KNOWN.has(k) && v != null && v !== "" && typeof v !== "object"
+    ([k, v]) =>
+      !KNOWN.has(k) &&
+      k !== "mo_ta" &&
+      k !== "nguon" &&
+      k !== "mid" &&
+      v != null &&
+      v !== "" &&
+      typeof v !== "object"
   );
 
   const hasWardMeta = props.dan_so != null || props.dien_tich != null;
+  const tdpNum = props.to_dan_pho;
+  const detailHref =
+    tdpNum != null && tdpNum !== "" ? `to.html?n=${encodeURIComponent(String(tdpNum))}` : null;
 
   el.detailBody.innerHTML = `
     <div class="detail-hd">
@@ -227,6 +244,16 @@ function renderDetail(props) {
       <div><small>Dân số</small><b>${escapeHtml(formatPop(props.dan_so))}</b></div>
       <div><small>Diện tích (km²)</small><b>${escapeHtml(String(props.dien_tich ?? "—"))}</b></div>
     </div>`
+        : ""
+    }
+    ${
+      props.phuong
+        ? `<div class="block"><div class="label">Phường</div>${escapeHtml(props.phuong)}</div>`
+        : ""
+    }
+    ${
+      props.mo_ta
+        ? `<div class="block"><div class="label">Ghi chú bản đồ</div><p class="merge">${escapeHtml(props.mo_ta)}</p></div>`
         : ""
     }
     ${
@@ -246,7 +273,9 @@ function renderDetail(props) {
     </div>`
         : ""
     }
-    <div class="block">
+    ${
+      props.sat_nhap_tu || extras.length
+        ? `<div class="block">
       ${props.sat_nhap_tu ? `<div class="label">Sáp nhập từ</div><p class="merge">${escapeHtml(props.sat_nhap_tu)}</p>` : ""}
       ${extras
         .map(
@@ -254,12 +283,21 @@ function renderDetail(props) {
             `<div class="extra-row"><span>${escapeHtml(k)}</span><strong>${escapeHtml(String(v))}</strong></div>`
         )
         .join("")}
-    </div>
-    ${
-      props.link
-        ? `<a class="link" href="${escapeAttr(props.link)}" target="_blank" rel="noopener">Trang tin ${escapeHtml(name)}</a>`
+    </div>`
         : ""
     }
+    <div class="detail-actions">
+      ${
+        detailHref
+          ? `<a class="btn btn-primary" href="${escapeAttr(detailHref)}">Xem chi tiết tổ</a>`
+          : ""
+      }
+      ${
+        props.link
+          ? `<a class="btn btn-ghost" href="${escapeAttr(props.link)}" target="_blank" rel="noopener">Trang tin ${escapeHtml(name)}</a>`
+          : ""
+      }
+    </div>
   `;
   document.getElementById("detail-close-inner")?.addEventListener("click", clearSelection);
   el.detail.classList.add("open");
@@ -270,12 +308,13 @@ function focusOnLayer(layer) {
   const bounds = layer.getBounds();
   if (!bounds.isValid()) return;
 
-  // Card chi tiết đè lên map (absolute) — không trừ 300px padding phải
-  // (trước đây làm flyToBounds zoom tụt, tổ chỉ chiếm ~1/5 màn hình).
   const mobile = window.matchMedia("(max-width: 768px)").matches;
-  const pad = mobile ? L.point(20, 72) : L.point(28, 28);
-  const zoom = Math.min(map.getBoundsZoom(bounds, false, pad), map.getMaxZoom());
-  map.flyTo(bounds.getCenter(), zoom, { duration: 0.45 });
+  const pad = mobile ? [48, 24] : [36, 36];
+  map.flyToBounds(bounds, {
+    padding: pad,
+    maxZoom: 18,
+    duration: 0.4,
+  });
 }
 
 function setSelection(key, { fly = true } = {}) {
@@ -464,6 +503,13 @@ async function boot() {
   }
   requestAnimationFrame(() => map.invalidateSize());
 
+  const hash = location.hash.match(/^#tdp-(.+)$/);
+  if (hash) {
+    const n = hash[1];
+    const hit = [...byKey.entries()].find(([, e]) => String(e.props?.to_dan_pho) === n);
+    if (hit) setSelection(hit[0], { fly: true });
+  }
+
   // Expose for Playwright / manual QA
   window.__GEO_TEST__ = {
     map,
@@ -504,5 +550,5 @@ async function boot() {
 boot().catch((err) => {
   console.error(err);
   el.list.innerHTML =
-    `<li style="padding:1rem;color:var(--son)">Không tải được dữ liệu. Chạy static server từ thư mục gốc project.</li>`;
+    `<li style="padding:1rem;color:var(--mute)">Không tải được dữ liệu. Chạy static server từ thư mục gốc project.</li>`;
 });

@@ -1,0 +1,8 @@
+{
+  "_comment": "Bổ sung nội dung theo số tổ (key = to_dan_pho). Field: gioi_thieu, lien_he, ghi_chu, hoặc sections[{title,body}].",
+  "1": {
+    "gioi_thieu": "",
+    "lien_he": "",
+    "ghi_chu": ""
+  }
+}

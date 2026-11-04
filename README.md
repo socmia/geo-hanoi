@@ -1,6 +1,6 @@
 # Geo Hà Nội
 
-Bản đồ tĩnh xã/phường Hà Nội — Leaflet + OpenStreetMap (mirror `tile.openstreetmap.de`, fallback FR/Esri), UI V1 Ấn son.
+Bản đồ tổ dân phố Đống Đa — Leaflet + OpenStreetMap, UI glass (Apple-style).
 
 **Live:** https://socmia.github.io/geo-hanoi/  
 **Repo:** https://github.com/socmia/geo-hanoi
@@ -22,19 +22,29 @@ Nguồn: [Google My Maps — Bản đồ đống đa](https://www.google.com/map
 python scripts/import_mymaps_tdp.py   # tải KML → data/to-dan-pho.geojson
 ```
 
-App chỉ vẽ TDP Đống Đa, fill trong suốt + tên trên map.
+Mỗi tổ một màu pastel; chọn tổ → sheet chi tiết → **Xem chi tiết tổ** mở `to.html?n=<số>`.
 
-## Bổ sung thông tin xã
+## Trang chi tiết tổ
 
-Sửa `data/xa-extra.json` theo `maxa` (string):
+- URL: `to.html?n=1` (n = `to_dan_pho`)
+- Nội dung mở rộng: `data/tdp-extra.json` theo key số tổ:
 
 ```json
 {
-  "922": { "ghi_chu": "Ví dụ field thêm" }
+  "1": {
+    "gioi_thieu": "…",
+    "lien_he": "…",
+    "ghi_chu": "…",
+    "sections": [{ "title": "Lịch sử", "body": "…" }]
+  }
 }
 ```
 
-Reload trang. Field flat hiện trong card chi tiết.
+Để trống thì trang hiện placeholder — bổ sung sau không cần đổi HTML.
+
+## Bổ sung thông tin xã (legacy)
+
+Sửa `data/xa-extra.json` theo `maxa` (string). Field flat merge vào props.
 
 ## Logo
 
