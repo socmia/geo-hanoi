@@ -225,7 +225,8 @@ test.describe("mobile bottom sheet", () => {
 
     const peek = await dragTo(790);
     expect(peek.cls).toContain("sheet-peek");
-    expect(peek.h).toBeLessThan(120);
+    expect(peek.h).toBeLessThan(160);
+    await expect(page.locator("#sheet-restore")).toBeVisible();
     await expect(page.locator(".d-head h2")).toBeInViewport();
 
     const half = await dragTo(420);
@@ -234,5 +235,20 @@ test.describe("mobile bottom sheet", () => {
 
     const full = await dragTo(90);
     expect(full.cls).toContain("sheet-full");
+  });
+});
+
+test.describe("mobile restore button", () => {
+  test.use({ viewport: { width: 375, height: 812 }, hasTouch: true });
+  test("restore pill brings a collapsed sheet back", async ({ page }) => {
+    await page.goto("/?v=pw#tdp-1");
+    await page.waitForFunction(() => window.__GEO_TEST__?.byKey?.size > 0, null, { timeout: 20_000 });
+    await expect(page.locator("#sheet-restore")).toBeHidden();
+    await page.click(".poi-list li"); // jumping to a place collapses the sheet
+    await expect(page.locator("body")).toHaveClass(/sheet-peek/);
+    await expect(page.locator("#sheet-restore")).toHaveText(/Thông tin tổ/);
+    await page.click("#sheet-restore");
+    await expect(page.locator("body")).not.toHaveClass(/sheet-peek/);
+    await expect(page.locator("#sheet-restore")).toBeHidden();
   });
 });

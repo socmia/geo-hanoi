@@ -203,7 +203,9 @@ function setSheet(state) {
   document.body.style.removeProperty("--sheet-h");
   el.sheetHandle.setAttribute("aria-label", state === "full" ? "Thu nhỏ bảng" : "Mở rộng bảng");
   el.sheetHandle.setAttribute("aria-expanded", String(state !== "peek"));
+  document.getElementById("sheet-restore-label").textContent = selectedKey ? "Thông tin tổ" : "Danh sách tổ";
 }
+document.getElementById("sheet-restore").addEventListener("click", () => setSheet("half"));
 
 function sheetHeights() {
   const panel = el.detail.closest(".panel");
@@ -390,7 +392,7 @@ function clearSelection() {
     e.layer.setStyle(baseStyle(e.color));
   });
   document.body.classList.remove("has-sel");
-  if (sheetState === "full") setSheet("half");
+  setSheet(sheetState === "full" ? "half" : sheetState); // also refreshes the restore label
   el.detail.hidden = true;
   el.listView.hidden = false;
   if (pinMarker) { map.removeLayer(pinMarker); pinMarker = null; }
