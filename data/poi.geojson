@@ -1,0 +1,677 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.819378,
+     21.008218
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Bệnh viện Châm cứu Trung ương",
+    "to_dan_pho": 19,
+    "osm": "way/1468500882"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.815014,
+     21.012397
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Bệnh viện Nội tiết Trung ương",
+    "to_dan_pho": 17,
+    "osm": "way/136259226"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.826795,
+     21.015556
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Bệnh viện Đa khoa Đống Đa",
+    "to_dan_pho": 5,
+    "osm": "way/163711327"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.820999,
+     21.013589
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Bệnh viện đa khoa Nông nghiệp 2",
+    "to_dan_pho": 7,
+    "osm": "node/11949875397"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.820951,
+     21.00392
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Trạm Y tế phường Ngã Tư Sở",
+    "to_dan_pho": 21,
+    "osm": "node/8855590422"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.818635,
+     21.004891
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Trạm Y tế phường Thịnh Quang",
+    "to_dan_pho": 22,
+    "osm": "way/956996523"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.821787,
+     21.012144
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Viện Y học dự phòng Quân đội",
+    "to_dan_pho": 9,
+    "osm": "way/1215063381"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.819533,
+     21.009599
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Ban Quản lý dự án Đường Hồ Chí Minh",
+    "to_dan_pho": 11,
+    "osm": "way/136259020"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.830197,
+     21.015811
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Bảo hiểm xã hội cơ sở Đống Đa",
+    "to_dan_pho": 3,
+    "osm": "way/904135122"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.812585,
+     21.012543
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Công an phường Láng",
+    "to_dan_pho": 16,
+    "osm": "node/11590941891"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.820065,
+     21.012587
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Công an phường Đống Đa (Cơ sở 2)",
+    "to_dan_pho": 12,
+    "osm": "way/1246762482"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.815479,
+     21.008848
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Công an phường Đống Đa (Cơ sở 3)",
+    "to_dan_pho": 18,
+    "osm": "way/956996491"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.824155,
+     21.01689
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Công an phường Đống Đa (Trụ sở chính)",
+    "to_dan_pho": 6,
+    "osm": "way/1350645039"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.826364,
+     21.014245
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Kho bạc Nhà nước Đống Đa",
+    "to_dan_pho": 5,
+    "osm": "way/1040730411"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.821502,
+     21.014273
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Thuế cơ sở 4 thành phố Hà Nội",
+    "to_dan_pho": 7,
+    "osm": "way/677190112"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.820844,
+     21.003905
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "UBND phường Ngã Tư Sở",
+    "to_dan_pho": 21,
+    "osm": "way/851595054"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.815426,
+     21.008368
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "UBND phường Thịnh Quang",
+    "to_dan_pho": 18,
+    "osm": "way/956996513"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.82503,
+     21.017518
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Đảng ủy - HĐND - UBND phường Đống Đa",
+    "to_dan_pho": 6,
+    "osm": "node/13136496644"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.830318,
+     21.016257
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Đảng ủy - UBND phường Nam Đồng",
+    "to_dan_pho": 3,
+    "osm": "way/942107845"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.824875,
+     21.017168
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Đảng ủy - UBND phường Ô Chợ Dừa",
+    "to_dan_pho": 6,
+    "osm": "node/13136496645"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.823706,
+     21.011124
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Cơ sở tại chức",
+    "to_dan_pho": 9,
+    "osm": "way/1557512957"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.818732,
+     21.012718
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Tiếng Trung Cầm Xu - cs2",
+    "to_dan_pho": 13,
+    "osm": "node/5398016422"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.81653,
+     21.012087
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Tiểu học Thái Thịnh",
+    "to_dan_pho": 17,
+    "osm": "way/500040428"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.81606,
+     21.012442
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung học cơ sở Thái Thịnh",
+    "to_dan_pho": 17,
+    "osm": "way/500040429"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.815107,
+     21.013001
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Cao đẳng nghề Công nghiệp Hà Nội",
+    "to_dan_pho": 17,
+    "osm": "way/888629818"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.828355,
+     21.015075
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Mầm Non Magic Star",
+    "to_dan_pho": 4,
+    "osm": "node/4066099003"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.820026,
+     21.006434
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Mầm non Thực nghiệm Hoa Hồng",
+    "to_dan_pho": 20,
+    "osm": "way/426733615"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.831408,
+     21.015774
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Phổ thông cơ sở Xã Đàn",
+    "to_dan_pho": 3,
+    "osm": "way/839655655"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.828883,
+     21.012955
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Tiểu học Bế Văn Đàn",
+    "to_dan_pho": 4,
+    "osm": "way/840066506"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.81795,
+     21.005036
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Tiểu học Bế Văn Đàn (phân hiệu)",
+    "to_dan_pho": 22,
+    "osm": "way/802431700"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.827967,
+     21.017896
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Tiểu học Vietkids",
+    "to_dan_pho": 1,
+    "osm": "way/884063651"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.828705,
+     21.018656
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Tiểu học Đống Đa",
+    "to_dan_pho": 1,
+    "osm": "way/840439575"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.823412,
+     21.013338
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Tiểu học Đống Đa (cơ sở 2)",
+    "to_dan_pho": 8,
+    "osm": "way/570570399"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.822608,
+     21.007324
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung cấp Nghiệp vụ và Dạy nghề Công đoàn Hà Nội",
+    "to_dan_pho": 10,
+    "osm": "way/1216451393"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.818325,
+     21.005272
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung học cơ sở Thái Thịnh (phân hiệu)",
+    "to_dan_pho": 22,
+    "osm": "way/802431699"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.827759,
+     21.017939
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung học cơ sở Tô Hiến Thành",
+    "to_dan_pho": 1,
+    "osm": "node/9593574430"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.829101,
+     21.01391
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung học cơ sở Đống Đa",
+    "to_dan_pho": 4,
+    "osm": "way/840066509"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.823877,
+     21.013734
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung học cơ sở Đống Đa (phân hiệu)",
+    "to_dan_pho": 8,
+    "osm": "way/179998403"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.822384,
+     21.00747
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung học phổ thông Anhxtanh Hà Nội",
+    "to_dan_pho": 10,
+    "osm": "node/12552981505"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.817671,
+     21.005707
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung học phổ thông Quang Trung - Đống Đa",
+    "to_dan_pho": 23,
+    "osm": "way/802433054"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.815578,
+     21.010705
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường mầm non Hoa Hồng",
+    "to_dan_pho": 17,
+    "osm": "way/826029900"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.817365,
+     21.006537
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Đào tạo Cán bộ Lê Hồng Phong",
+    "to_dan_pho": 23,
+    "osm": "way/698722897"
+   }
+  }
+ ]
+}

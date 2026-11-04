@@ -1,6 +1,6 @@
 # Geo Hà Nội
 
-Bản đồ tổ dân phố Đống Đa — Leaflet + OpenStreetMap, UI glass (Apple-style).
+Bản đồ tổ dân phố Đống Đa — Leaflet + OpenStreetMap, giao diện kiểu Google Maps (panel trái, chip lớp, bottom sheet trên mobile).
 
 **Live:** https://socmia.github.io/geo-hanoi/  
 **Repo:** https://github.com/socmia/geo-hanoi
@@ -56,4 +56,12 @@ Thay `assets/logo.png` (hoặc đổi `src` trong `index.html`).
 node tests/test_normalize.mjs
 npm install
 npx playwright test
+```
+
+## Địa điểm (trường học, y tế, công sở)
+
+Nguồn OpenStreetMap, lọc theo ranh giới các tổ:
+
+```bash
+python scripts/fetch_poi.py   # → data/poi.geojson
 ```

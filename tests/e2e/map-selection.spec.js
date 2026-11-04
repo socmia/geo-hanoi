@@ -94,7 +94,9 @@ test.describe("Geo Hà Nội handover checks", () => {
       const featH = fb.getNorth() - fb.getSouth();
       const viewH = mb.getNorth() - mb.getSouth();
       const featW = fb.getEast() - fb.getWest();
-      const viewW = mb.getEast() - mb.getWest();
+      // Side panel covers the left of the map on desktop: compare against the visible part only
+      const panelW = document.getElementById("panel").getBoundingClientRect().width;
+      const viewW = (mb.getEast() - mb.getWest()) * ((innerWidth - panelW) / innerWidth);
       return {
         zoom: api.map.getZoom(),
         contains: mb.contains(fb.getCenter()),
@@ -118,9 +120,30 @@ test.describe("Geo Hà Nội handover checks", () => {
     const visible = await page.evaluate(() =>
       [...document.querySelectorAll("#ward-list li")]
         .filter((li) => !li.classList.contains("hidden"))
-        .map((li) => li.textContent.trim())
+        .map((li) => li.querySelector(".li-name").textContent.trim())
     );
     expect(visible).toEqual(["Tổ dân phố số 1"]);
+  });
+
+  test("POI layers load inside the ward and chips toggle them", async ({ page }) => {
+    await waitApp(page);
+    await page.waitForFunction(() => window.__GEO_TEST__.pois.length > 0);
+    const before = await page.locator(".leaflet-marker-pane .poi--school").count();
+    expect(before).toBeGreaterThan(0);
+    await page.click('.chip[data-poi="school"]');
+    await expect(page.locator(".leaflet-marker-pane .poi--school")).toHaveCount(0);
+    await expect(page.locator('.chip[data-poi="school"]')).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("detail panel replaces list and back returns to list", async ({ page }) => {
+    await waitApp(page);
+    await page.evaluate(() => window.__GEO_TEST__.selectByLabel("Tổ dân phố số 3"));
+    await expect(page.locator("#detail")).toBeVisible();
+    await expect(page.locator("#list-view")).toBeHidden();
+    await expect(page.locator("#detail h2")).toHaveText("Tổ dân phố số 3");
+    await page.click(".d-back");
+    await expect(page.locator("#list-view")).toBeVisible();
+    await expect(page.locator("#detail")).toBeHidden();
   });
 
   test("selected stroke is thicker than idle, same hue", async ({ page }) => {
