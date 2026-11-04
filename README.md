@@ -68,3 +68,9 @@ Nguồn OpenStreetMap, lọc theo ranh giới các tổ:
 ```bash
 python scripts/fetch_poi.py   # → data/poi.geojson
 ```
+
+## Nhúng vào Google Sites
+
+Chèn → **Nhúng** → **Theo URL** → `https://socmia.github.io/geo-hanoi/` → chọn "Toàn bộ trang". Kéo khung rộng ≥ 800px
+(hẹp hơn 768px sẽ hiện bố cục mobile) và cao ~720px. Trong khung nhúng, nút "Vị trí của tôi" có thể bị trình duyệt chặn;
+"Chia sẻ" tự chuyển sang sao chép liên kết.

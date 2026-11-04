@@ -1,4 +1,6 @@
 // Detail page for one tổ dân phố: to.html?n=<to_dan_pho>
+import { shareLink } from "./share.js";
+
 const TDP_COLORS = [
   "#1E88E5", "#43A047", "#8E24AA", "#E53935", "#FB8C00",
   "#00897B", "#F9A825", "#3949AB", "#7CB342", "#D81B60",
@@ -196,12 +198,7 @@ async function boot() {
     </aside>
   `;
 
-  document.getElementById("share-btn").addEventListener("click", async () => {
-    try {
-      if (navigator.share) await navigator.share({ title: name, url: location.href });
-      else { await navigator.clipboard.writeText(location.href); toast("Đã sao chép liên kết"); }
-    } catch { /* cancelled */ }
-  });
+  document.getElementById("share-btn").addEventListener("click", () => shareLink(location.href, name, toast));
 
   mountMiniMap(geo, feature, color, inTdp);
 }

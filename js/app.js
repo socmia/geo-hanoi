@@ -1,4 +1,5 @@
 import { foldVi } from "./normalize.js";
+import { shareLink } from "./share.js";
 
 const DONG_DA_MAXA = 922;
 const MOBILE_MQ = window.matchMedia("(max-width: 768px)");
@@ -258,10 +259,7 @@ el.detailBody.addEventListener("click", async (e) => {
   else if (act === "zoom") focusOnLayer(byKey.get(selectedKey)?.layer);
   else if (act === "share") {
     const url = location.href.split("#")[0] + `#tdp-${byKey.get(selectedKey)?.props.to_dan_pho}`;
-    try {
-      if (navigator.share) await navigator.share({ title: byKey.get(selectedKey)?.name, url });
-      else { await navigator.clipboard.writeText(url); toast("Đã sao chép liên kết"); }
-    } catch { /* user cancelled */ }
+    await shareLink(url, byKey.get(selectedKey)?.name || document.title, toast);
   } else if (tab) {
     el.detailBody.querySelectorAll(".tab").forEach((b) => {
       const on = b === tab;
