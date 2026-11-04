@@ -25,11 +25,11 @@ test.describe("Geo Hà Nội handover checks", () => {
     expect(info.note.toLowerCase()).toContain("đống đa");
   });
 
-  test("initial view fits Phường Đống Đa polygon", async ({ page }) => {
+  test("initial view fits Đống Đa area", async ({ page }) => {
     await waitApp(page);
     const fit = await page.evaluate(() => {
       const api = window.__GEO_TEST__;
-      const wardBounds = api.wardLayer.getBounds();
+      const wardBounds = api.dongDaBounds;
       const mb = api.map.getBounds();
       const featH = wardBounds.getNorth() - wardBounds.getSouth();
       const viewH = mb.getNorth() - mb.getSouth();
@@ -46,6 +46,28 @@ test.describe("Geo Hà Nội handover checks", () => {
     expect(fit.zoom).toBeGreaterThanOrEqual(14);
     expect(fit.heightRatio).toBeLessThan(3.5);
     expect(fit.widthRatio).toBeLessThan(3.5);
+  });
+
+  test("each tổ has its own color on list and polygon", async ({ page }) => {
+    await waitApp(page);
+    const colors = await page.evaluate(() => {
+      const api = window.__GEO_TEST__;
+      const e1 = [...api.byKey.values()].find((e) => e.props.to_dan_pho === 1);
+      const e2 = [...api.byKey.values()].find((e) => e.props.to_dan_pho === 2);
+      return {
+        c1: e1.color,
+        c2: e2.color,
+        fill1: e1.layer.options.fillColor,
+        fill2: e2.layer.options.fillColor,
+        expected1: api.colorForTdp(1),
+        expected2: api.colorForTdp(2),
+      };
+    });
+    expect(colors.c1).toBe(colors.expected1);
+    expect(colors.c2).toBe(colors.expected2);
+    expect(colors.c1).not.toBe(colors.c2);
+    expect(colors.fill1).toBe(colors.c1);
+    expect(colors.fill2).toBe(colors.c2);
   });
 
   test("select Tổ 1 zooms in to fit polygon on screen", async ({ page }) => {
@@ -98,7 +120,7 @@ test.describe("Geo Hà Nội handover checks", () => {
     expect(visible).toEqual(["Tổ dân phố số 1"]);
   });
 
-  test("selected stroke is thicker than idle", async ({ page }) => {
+  test("selected stroke is thicker than idle, same hue", async ({ page }) => {
     await waitApp(page);
     const weights = await page.evaluate(async () => {
       const api = window.__GEO_TEST__;
@@ -108,11 +130,16 @@ test.describe("Geo Hà Nội handover checks", () => {
       const selected = [...api.byKey.values()].find((e) => e.props.to_dan_pho === 1);
       const other = [...api.byKey.values()].find((e) => e.props.to_dan_pho === 2);
       return {
-        selected: selected.layer.options.weight,
-        other: other.layer.options.weight,
+        selectedW: selected.layer.options.weight,
+        otherW: other.layer.options.weight,
+        selectedColor: selected.layer.options.color,
+        fill: selected.layer.options.fillColor,
+        expected: selected.color,
       };
     });
-    expect(weights.selected).toBeGreaterThanOrEqual(6);
-    expect(weights.selected).toBeGreaterThan(weights.other);
+    expect(weights.selectedW).toBeGreaterThanOrEqual(6);
+    expect(weights.selectedW).toBeGreaterThan(weights.otherW);
+    expect(weights.selectedColor).toBe(weights.expected);
+    expect(weights.fill).toBe(weights.expected);
   });
 });
