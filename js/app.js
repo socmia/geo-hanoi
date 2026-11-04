@@ -232,6 +232,27 @@ function renderDetail(props) {
   el.detail.classList.add("open");
 }
 
+function focusOnLayer(layer) {
+  if (!layer?.getBounds) return;
+  const bounds = layer.getBounds();
+  if (!bounds.isValid()) return;
+
+  const mobile = window.matchMedia("(max-width: 768px)").matches;
+  // Keep selected polygon visually centered in the free map area
+  // (detail card right on desktop, bottom sheet on mobile).
+  const padTL = mobile ? [24, 56] : [48, 48];
+  const padBR = mobile
+    ? [24, Math.round(window.innerHeight * 0.42)]
+    : [360, 48];
+
+  map.flyToBounds(bounds, {
+    paddingTopLeft: padTL,
+    paddingBottomRight: padBR,
+    maxZoom: 18,
+    duration: 0.55,
+  });
+}
+
 function setSelection(key, { fly = true } = {}) {
   selectedKey = key;
   byKey.forEach((entry, k) => {
@@ -248,9 +269,7 @@ function setSelection(key, { fly = true } = {}) {
     return;
   }
   renderDetail(entry.props);
-  if (fly && entry.layer?.getBounds) {
-    map.fitBounds(entry.layer.getBounds(), { padding: [40, 40], maxZoom: 16 });
-  }
+  if (fly) focusOnLayer(entry.layer);
   closeDrawer();
 }
 
