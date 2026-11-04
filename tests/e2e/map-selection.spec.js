@@ -178,7 +178,10 @@ test.describe("Geo Hà Nội handover checks", () => {
     await expect(page.locator("h1")).toContainText("Tổ dân phố số 3");
     await expect(page.locator("#mini-map .leaflet-overlay-pane path").first()).toBeVisible();
     await expect(page.locator(".col-side .card").first()).toContainText("Diện tích");
-    await expect(page.locator("#near .chip")).toHaveCount(3);
+    await expect(page.locator("#places .place").first()).toBeVisible();
+    await page.goto("/to.html?n=2"); // tổ without POIs still shows the section
+    await expect(page.locator("#places")).toContainText("Chưa ghi nhận");
+    await page.goto("/to.html?n=3");
     await expect(page.locator(".brand-back")).toHaveAttribute("href", "index.html#tdp-3");
   });
 });

@@ -197,7 +197,7 @@ body.panel-collapsed .panel { transform: translateX(-100%); }
 .poi-list li:hover { color: var(--accent); }
 .poi-list .poi { width: 22px; height: 22px; flex: none; border-width: 0; }
 .poi-list .poi svg { width: 13px; height: 13px; }
-.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.d-empty { font-size: 14px; line-height: 20px; color: var(--mute); }
 
 /* ---------- chips ---------- */
 .chips {
@@ -221,8 +221,6 @@ body.panel-collapsed .chips { left: calc(var(--panel-w) + 16px); }
 .poi-dot--health { background: var(--poi-health); }
 .poi-dot--office { background: var(--poi-office); }
 .chip[aria-pressed="false"] .poi-dot { opacity: 0.45; }
-.chip-sm { height: 36px; border-radius: 18px; padding: 0 14px 0 8px; }
-.chip-sm .sw { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid; }
 
 /* ---------- panel tab ---------- */
 .panel-tab {

@@ -31,11 +31,6 @@ function colorForTdp(num) {
   return TDP_COLORS[0];
 }
 
-function rgba(hex, a) {
-  const n = parseInt(hex.replace("#", ""), 16);
-  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
-}
-
 function escapeHtml(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
@@ -109,7 +104,6 @@ function mountMiniMap(geo, feature, color, inTdp) {
     }).addTo(map);
   });
   map.fitBounds(sel.getBounds(), { padding: [28, 28], maxZoom: 18 });
-  return { map, center: sel.getBounds().getCenter() };
 }
 
 async function boot() {
@@ -187,7 +181,6 @@ async function boot() {
       <section class="card">
         <h2>Thông tin</h2>
         <div class="kv">
-          <div><span>Số tổ</span><strong>${escapeHtml(String(num))}</strong></div>
           <div><span>Phường</span><strong>${escapeHtml(props.phuong || "Đống Đa")}</strong></div>
           ${props.mo_ta ? `<div><span>Gộp từ</span><strong>${escapeHtml(props.mo_ta)}</strong></div>` : ""}
           <div><span>Diện tích</span><strong>${formatArea(areaM2(feature.geometry))}</strong></div>
@@ -196,14 +189,11 @@ async function boot() {
         </div>
       </section>
 
-      ${inTdp.length ? `<section class="card places">
+      <section class="card places" id="places">
         <h2>Địa điểm trong tổ</h2>
-        ${inTdp.map((p) => `<div class="place">${poiHtml(p.properties.kind)}<span class="place-text"><span>${escapeHtml(p.properties.name)}</span><small>${POI_KINDS[p.properties.kind].label}</small></span></div>`).join("")}
-      </section>` : ""}
-
-      <section class="card">
-        <h2>Tổ lân cận</h2>
-        <div class="chips" id="near"></div>
+        ${inTdp.length
+          ? inTdp.map((p) => `<div class="place">${poiHtml(p.properties.kind)}<span class="place-text"><span>${escapeHtml(p.properties.name)}</span><small>${POI_KINDS[p.properties.kind].label}</small></span></div>`).join("")
+          : '<p class="muted">Chưa ghi nhận trường học, cơ sở y tế hay công sở nào trong tổ này.</p>'}
       </section>
     </aside>
   `;
@@ -215,21 +205,7 @@ async function boot() {
     } catch { /* cancelled */ }
   });
 
-  const { map, center } = mountMiniMap(geo, feature, color, inTdp);
-
-  // Nearest tổ by centre distance
-  const near = features
-    .filter((f) => f !== feature && f.properties?.to_dan_pho != null)
-    .map((f) => ({ f, d: map.distance(center, L.geoJSON(f).getBounds().getCenter()) }))
-    .sort((a, b) => a.d - b.d)
-    .slice(0, 3);
-  document.getElementById("near").innerHTML = near
-    .map(({ f }) => {
-      const k = f.properties.to_dan_pho;
-      const c = colorForTdp(k);
-      return `<a class="chip" href="to.html?n=${encodeURIComponent(k)}"><span class="sw" style="background:${rgba(c, 0.22)};border-color:${c}"></span>Tổ ${escapeHtml(String(k))}</a>`;
-    })
-    .join("");
+  mountMiniMap(geo, feature, color, inTdp);
 }
 
 boot().catch((err) => {

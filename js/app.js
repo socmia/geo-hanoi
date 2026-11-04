@@ -193,16 +193,6 @@ el.panelTab.addEventListener("click", () => setCollapsed(!document.body.classLis
 el.sheetHandle.addEventListener("click", () => document.body.classList.toggle("sheet-full"));
 
 /* ---------- detail ---------- */
-function nearest(entry, n = 3) {
-  const c = entry.layer.getCenter();
-  return [...byKey.values()]
-    .filter((e) => e !== entry)
-    .map((e) => ({ e, d: map.distance(c, e.layer.getCenter()) }))
-    .sort((a, b) => a.d - b.d)
-    .slice(0, n)
-    .map((x) => x.e);
-}
-
 function renderDetail(entry) {
   const { props, color, feature } = entry;
   const name = featureName(props);
@@ -210,7 +200,6 @@ function renderDetail(entry) {
   const extra = tdpExtra[String(num)] || {};
   const detailHref = num != null && num !== "" ? `to.html?n=${encodeURIComponent(String(num))}` : null;
   const inTdp = pois.filter((p) => p.properties.to_dan_pho === num);
-  const near = nearest(entry);
   const sections = Array.isArray(extra.sections) ? extra.sections.filter((s) => s && (s.title || s.body)) : [];
   const introHtml = [
     extra.gioi_thieu ? escapeHtml(extra.gioi_thieu) : "",
@@ -250,12 +239,11 @@ function renderDetail(entry) {
     <div class="tab-panel" id="tp-ct" role="tabpanel" aria-labelledby="tab-ct" hidden>
       ${extra.lien_he ? `<div class="row">${svg("phone")}<span class="row-text">${escapeHtml(extra.lien_he)}</span></div>` : `<div class="row">${svg("user")}<span class="row-text"><span class="muted">Chưa cập nhật thông tin liên hệ.</span></span></div>`}
     </div>
-    ${inTdp.length ? `<section class="d-sec"><h3>Địa điểm trong tổ</h3><ul class="poi-list">
-      ${inTdp.map((p, i) => `<li data-poi-idx="${pois.indexOf(p)}">${poiHtml(p.properties.kind)}<span>${escapeHtml(p.properties.name)}</span></li>`).join("")}
-    </ul></section>` : ""}
-    <section class="d-sec"><h3>Tổ lân cận</h3><div class="chip-row">
-      ${near.map((e) => `<button type="button" class="chip chip-sm" data-goto="${escapeHtml(e.key)}"><span class="sw" style="background:${rgba(e.color, 0.22)};border-color:${e.color}"></span>Tổ ${escapeHtml(String(e.props.to_dan_pho))}</button>`).join("")}
-    </div></section>
+    <section class="d-sec"><h3>Địa điểm trong tổ</h3>
+      ${inTdp.length
+        ? `<ul class="poi-list">${inTdp.map((p) => `<li data-poi-idx="${pois.indexOf(p)}">${poiHtml(p.properties.kind)}<span>${escapeHtml(p.properties.name)}</span></li>`).join("")}</ul>`
+        : '<p class="d-empty">Chưa ghi nhận trường học, cơ sở y tế hay công sở nào trong tổ này.</p>'}
+    </section>
   `;
   el.detail.hidden = false;
   el.listView.hidden = true;
@@ -266,7 +254,6 @@ el.detailBody.addEventListener("click", async (e) => {
   const t = /** @type {HTMLElement} */ (e.target);
   const act = t.closest("[data-act]")?.getAttribute("data-act");
   const tab = t.closest(".tab");
-  const go = t.closest("[data-goto]")?.getAttribute("data-goto");
   const poiLi = t.closest("[data-poi-idx]");
   if (act === "back") clearSelection();
   else if (act === "zoom") focusOnLayer(byKey.get(selectedKey)?.layer);
@@ -282,8 +269,7 @@ el.detailBody.addEventListener("click", async (e) => {
       b.setAttribute("aria-selected", String(on));
       document.getElementById(b.getAttribute("aria-controls")).hidden = !on;
     });
-  } else if (go) setSelection(go);
-  else if (poiLi) {
+  } else if (poiLi) {
     const p = pois[Number(poiLi.getAttribute("data-poi-idx"))];
     const [lng, lat] = p.geometry.coordinates;
     map.flyTo([lat, lng], Math.max(map.getZoom(), 18), { duration: 0.4 });
