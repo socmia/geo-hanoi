@@ -35,7 +35,6 @@ const el = {
   cityArea: document.getElementById("city-area"),
   cityPop: document.getElementById("city-pop"),
   cityUnits: document.getElementById("city-units"),
-  layerNote: document.getElementById("layer-note"),
 };
 
 el.cityArea.textContent = CITY.areaLabel;
@@ -484,14 +483,10 @@ async function boot() {
   if (tdp && tdp.count > 0) {
     mode = "tdp";
     el.cityUnits.textContent = `${tdp.count} tổ dân phố · Đống Đa`;
-    el.layerNote.textContent =
-      "Bản đồ tổ dân phố Đống Đa — mỗi tổ một màu (kiểu bản đồ hành chính).";
     el.search.placeholder = "Tìm tổ dân phố…";
   } else {
     mode = "ward-fallback";
     el.cityUnits.textContent = "Phường Đống Đa";
-    el.layerNote.textContent =
-      "Chưa có Tổ dân phố trong data/to-dan-pho.geojson.";
     el.search.placeholder = "Tìm…";
   }
 

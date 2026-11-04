@@ -17,12 +17,12 @@ test.describe("Geo Hà Nội handover checks", () => {
         count: entries.length,
         nums,
         dup6: nums.filter((n) => n === 6).length,
-        note: document.getElementById("layer-note")?.textContent || "",
+        units: document.getElementById("city-units")?.textContent || "",
       };
     });
     expect(info.count).toBe(23);
     expect(info.dup6).toBe(1);
-    expect(info.note.toLowerCase()).toContain("đống đa");
+    expect(info.units.toLowerCase()).toContain("đống đa");
   });
 
   test("initial view fits Đống Đa area", async ({ page }) => {
