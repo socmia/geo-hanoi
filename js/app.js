@@ -54,39 +54,41 @@ const map = L.map("map", {
   maxZoom: 20,
 }).setView([21.01, 105.825], 14);
 
-// Nền dịu (ít POI) để polygon TDP nổi — OSM.de làm fallback.
+// Carto CDN đòi API key → Esri Light Gray (miễn phí). Overscale sau z16.
 const OSM_ATTR =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
-const CARTO_ATTR = `${OSM_ATTR} &copy; <a href="https://carto.com/attributions">CARTO</a>`;
+const ESRI_ATTR = "Tiles &copy; Esri";
 const basemapCandidates = [
   {
-    // Không nhãn đường — giảm nhiễu, polygon dễ đọc
-    url: "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
-    options: { maxZoom: 20, subdomains: "abcd", attribution: CARTO_ATTR },
-  },
-  {
-    url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-    options: { maxZoom: 20, subdomains: "abcd", attribution: CARTO_ATTR },
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+    options: { maxZoom: 20, maxNativeZoom: 16, attribution: ESRI_ATTR },
   },
   {
     url: "https://tile.openstreetmap.de/{z}/{x}/{y}.png",
     options: { maxZoom: 19, attribution: OSM_ATTR },
   },
+  {
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+    options: { maxZoom: 19, attribution: ESRI_ATTR },
+  },
 ];
 
 let basemapIndex = 0;
 let basemapErrors = 0;
+/** @type {L.TileLayer | null} */
+let basemapLayer = null;
 
 function mountBasemap(i) {
   basemapIndex = i;
   basemapErrors = 0;
   const cfg = basemapCandidates[i];
+  if (basemapLayer) map.removeLayer(basemapLayer);
   const layer = L.tileLayer(cfg.url, cfg.options);
+  basemapLayer = layer;
   layer.on("tileerror", () => {
     basemapErrors += 1;
     if (basemapErrors < 4) return;
     if (basemapIndex + 1 >= basemapCandidates.length) return;
-    map.removeLayer(layer);
     mountBasemap(basemapIndex + 1);
   });
   layer.addTo(map);
@@ -135,32 +137,32 @@ function darkenHex(hex, amount = 0.35) {
 
 function baseStyle(color) {
   return {
-    color: darkenHex(color, 0.5),
-    weight: 2.75,
+    color: "#ffffff",
+    weight: 3,
     opacity: 1,
     fillColor: color,
-    fillOpacity: 0.68,
+    fillOpacity: 0.72,
   };
 }
 
 /** Khi đang chọn 1 tổ: các tổ khác làm mờ */
 function idleStyle(color) {
   return {
-    color: darkenHex(color, 0.4),
-    weight: 1.75,
-    opacity: 0.9,
+    color: "#ffffff",
+    weight: 2,
+    opacity: 0.85,
     fillColor: color,
-    fillOpacity: 0.28,
+    fillOpacity: 0.32,
   };
 }
 
 function selectedStyle(color) {
   return {
-    color: "#1d1d1f",
+    color: "#111111",
     weight: 5,
     opacity: 1,
     fillColor: color,
-    fillOpacity: 0.82,
+    fillOpacity: 0.88,
   };
 }
 

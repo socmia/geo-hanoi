@@ -184,9 +184,12 @@ button:active,
   height: 100%;
 }
 #map .leaflet-container { background: #e8eaed; }
-/* Làm dịu tile để polygon nổi hơn */
+/* Làm dịu tile (khi fallback OSM) để polygon nổi */
 #map .leaflet-tile-pane {
-  filter: saturate(0.35) contrast(0.9) brightness(1.06);
+  filter: grayscale(0.35) saturate(0.4) contrast(0.95) brightness(1.05);
+}
+#map .leaflet-overlay-pane {
+  filter: none;
 }
 
 .menu-btn,
