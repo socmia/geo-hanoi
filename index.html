@@ -8,95 +8,89 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <link rel="stylesheet" href="css/map.css?v=8" />
+  <link rel="stylesheet" href="css/map.css?v=15" />
 </head>
 <body>
-  <div id="map" role="application" aria-label="Bản đồ tổ dân phố phường Đống Đa"></div>
-
-  <div class="topbar" id="topbar">
-    <header class="brand">
-      <img src="assets/logo.png" width="48" height="48" alt="Logo phường Đống Đa" />
-      <div>
-        <h1>Phường Đống Đa</h1>
-        <p>Bản đồ tổ dân phố · Hà Nội</p>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></svg>
+      </span>
+      <div class="brand-text">
+        <h1>Bản đồ Tổ dân phố</h1>
+        <p>Phường Đống Đa, Hà Nội</p>
       </div>
-    </header>
-    <div class="search-wrap">
-      <form class="search" id="search-form" role="search">
-        <button type="button" class="icon-btn menu-btn" id="menu-btn" aria-controls="panel" aria-expanded="false" aria-label="Mở danh sách tổ">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
-        </button>
-        <label for="search" class="sr-only">Tìm tổ dân phố</label>
-        <input id="search" type="search" placeholder="Tìm tổ dân phố, số tổ cũ…" autocomplete="off" enterkeyhint="search" />
-        <button type="button" class="icon-btn" id="search-clear" aria-label="Xoá tìm kiếm" hidden>
+    </div>
+
+    <form class="filters" id="filters" onsubmit="return false">
+      <div class="field field--ward">
+        <label for="ward-select">Phường</label>
+        <select id="ward-select"><option value="922" selected>Đống Đa</option></select>
+      </div>
+      <div class="field field--tdp">
+        <label for="tdp-select">Tổ dân phố</label>
+        <select id="tdp-select"><option value="">Chọn tổ dân phố</option></select>
+      </div>
+    </form>
+
+    <div class="tools">
+      <button type="button" class="tool-btn" id="layers-btn" aria-label="Chuyển sang vệ tinh" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z" /><path d="M3 13l9 5 9-5" /></svg>
+        <span class="tool-label">Lớp dữ liệu</span>
+      </button>
+      <button type="button" class="tool-btn tool-btn--coord" id="coord-btn" aria-label="Lấy tọa độ" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="1.5" class="fill" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg>
+        <span class="tool-label">Lấy tọa độ</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div id="map" role="application" aria-label="Bản đồ tổ dân phố phường Đống Đa"></div>
+
+    <aside class="legend" aria-label="Chú thích">
+      <h2>Chú thích</h2>
+      <ul>
+        <li><i class="sw sw--ward"></i>Phường</li>
+        <li><i class="sw sw--tdp"></i>Mỗi tổ một màu</li>
+      </ul>
+    </aside>
+
+    <section class="info" id="info" aria-live="polite" hidden>
+      <div class="info-hd">
+        <h2 id="info-title"></h2>
+        <button type="button" class="info-x" id="info-close" aria-label="Đóng thông tin tổ">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
-        <button type="submit" class="icon-btn icon-btn--accent" aria-label="Tìm kiếm">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
-  <aside class="panel" id="panel" aria-label="Tổ dân phố">
-
-    <section class="list-view" id="list-view">
-      <div class="list-hd">
-        <h2>Tổ dân phố</h2>
-        <p id="city-units">—</p>
       </div>
-      <ul class="list" id="ward-list"></ul>
-      <p class="list-empty" id="list-empty" hidden>Không tìm thấy tổ phù hợp. Thử số tổ (vd. 12) hoặc số tổ cũ (vd. 38A).</p>
+      <div id="info-body"></div>
+      <div class="info-actions">
+        <a class="btn-primary" id="info-detail" href="#">Xem chi tiết</a>
+        <button type="button" class="btn-ghost" id="info-share">Chia sẻ</button>
+      </div>
     </section>
 
-    <article class="detail" id="detail" aria-live="polite" hidden>
-      <div id="detail-body"></div>
-    </article>
-  </aside>
-
-  <button type="button" class="panel-tab" id="panel-tab" aria-label="Thu gọn bảng bên" aria-expanded="true">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
-  </button>
-
-  <div class="chips" id="chips" role="toolbar" aria-label="Lớp hiển thị">
-    <button type="button" class="chip" data-layer="tdp" aria-pressed="true">
-      <svg class="chip-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
-      Tổ dân phố
-    </button>
-    <button type="button" class="chip" data-poi="school" aria-pressed="true">
-      <span class="poi-dot poi-dot--school" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10l9-4 9 4-9 4z" /><path d="M7 12v4c3 2 7 2 10 0v-4" /></svg></span>Trường học
-    </button>
-    <button type="button" class="chip" data-poi="health" aria-pressed="true">
-      <span class="poi-dot poi-dot--health" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></span>Y tế
-    </button>
-    <button type="button" class="chip" data-poi="office" aria-pressed="true">
-      <span class="poi-dot poi-dot--office" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 20V4h12v16M10 8h1M13 8h1M10 12h1M13 12h1M11 20v-3h2v3" /></svg></span>Công sở
-    </button>
-  </div>
-
-  <button type="button" class="layers-btn" id="layers-btn" aria-label="Đổi lớp bản đồ">
-    <span class="layers-thumb" id="layers-thumb" aria-hidden="true"></span>
-    <span class="layers-label" id="layers-label">Vệ tinh</span>
-  </button>
-
-  <div class="map-ctrls">
-    <button type="button" class="ctrl" id="locate-btn" aria-label="Vị trí của tôi">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" class="fill" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg>
-    </button>
-    <div class="ctrl-group">
-      <button type="button" class="ctrl" id="zoom-in" aria-label="Phóng to">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+    <div class="map-ctrls">
+      <button type="button" class="ctrl" id="locate-btn" aria-label="Vị trí của tôi">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 17-7-4-7 4z" /></svg>
       </button>
-      <button type="button" class="ctrl" id="zoom-out" aria-label="Thu nhỏ">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
+      <button type="button" class="ctrl" id="fs-btn" aria-label="Toàn màn hình">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
       </button>
+      <div class="ctrl-group">
+        <button type="button" class="ctrl" id="zoom-in" aria-label="Phóng to">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+        </button>
+        <button type="button" class="ctrl" id="zoom-out" aria-label="Thu nhỏ">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
+        </button>
+      </div>
     </div>
-  </div>
 
-  <div class="toast" id="toast" role="status" hidden></div>
+    <div class="toast" id="toast" role="status" hidden></div>
+  </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script type="module" src="js/app.js?v=35"></script>
+  <script type="module" src="js/app.js?v=40"></script>
 </body>
 </html>

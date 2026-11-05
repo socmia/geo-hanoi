@@ -10,13 +10,13 @@ Read this first, then `docs/STATUS.md` for the living detail.
 
 ## Gotchas
 - `css/map.css` (map) and `css/to.css` (detail) share tokens by copy; `css/app.css` is legacy/unused.
-- POI markers hide below zoom 15 (`.pois-far`), even when their chip is on.
+- POI markers and polygon labels hide below zoom 15 (`.pois-far`, `.labels-far`).
 - Bump the `?v=` query on `app.js` / `map.css` in `index.html` after edits (Pages caches).
-- Tests read `window.__GEO_TEST__` and IDs `#search`, `#ward-list`, `#city-units`, `.detail-actions .btn-primary`.
+- Tests read `window.__GEO_TEST__` and IDs `#tdp-select`, `#info`, `#info-title`, `#info-detail`, `#info-close`, `#clear-filter`, `#layers-btn`, `#coord-btn`.
 
 ## Run
 ```bash
 python -m http.server 8080      # open http://127.0.0.1:8080
-npx playwright test             # 9 e2e checks
+npx playwright test             # 14 e2e checks
 python scripts/fetch_poi.py     # refresh POIs from OpenStreetMap
 ```

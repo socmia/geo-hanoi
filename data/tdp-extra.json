@@ -1,8 +1,42 @@
 {
-  "_comment": "Bổ sung nội dung theo số tổ (key = to_dan_pho). Field: gioi_thieu, to_truong, dien_thoai, dia_diem_sinh_hoat, lien_he, ghi_chu, sections[{title,body}].",
-  "1": {
-    "gioi_thieu": "",
-    "lien_he": "",
-    "ghi_chu": ""
-  }
+  "_comment": "Nội dung theo số tổ (key = to_dan_pho). Field: ho_dan, nhan_khau, dia_diem_sinh_hoat, bi_thu{ten,dt}, to_truong{ten,dt}, cskv{ten,dt}, gioi_thieu, ghi_chu, sections[{title,body}]. Khoá _phuong = thông tin chung cấp phường; _chung.gioi_thieu = đoạn giới thiệu dùng cho mọi tổ. Nguồn: docs/phuong-dong-da-23-tdp.md.",
+  "_phuong": {
+    "ubnd": {
+      "ten": "Trụ sở UBND phường Đống Đa",
+      "dia_chi": "Số 59 Hoàng Cầu, phường Đống Đa, thành phố Hà Nội",
+      "dien_thoai": ["0913.362.068", "0912.648.466"],
+      "email": "vanthu_dongda@hanoi.gov.vn"
+    },
+    "tiep_cong_dan": {
+      "ten": "Ban Tiếp công dân phường Đống Đa",
+      "dia_chi": "420 Tây Sơn, phường Đống Đa, thành phố Hà Nội",
+      "dien_thoai": ["0904.801.616"]
+    }
+  },
+  "_chung": {
+    "gioi_thieu": "UBND phường trang bị đầy đủ thiết bị cho các nhà sinh hoạt cộng đồng: Wi-Fi miễn phí, máy vi tính, máy in, màn hình tương tác 85 inch, camera, thiết bị họp trực tuyến và phần mềm phục vụ họp, kết nối trực tuyến với UBND phường. Trên cơ sở đó, phường xây dựng mô hình “Nhà sinh hoạt cộng đồng số – Không gian văn hóa mở, kết nối các thế hệ”, gắn với mô hình “Hội nghị số – Kết nối cộng đồng” và định hướng bố trí “Điểm hỗ trợ công dân số”; phát huy nhà sinh hoạt cộng đồng là nơi sinh hoạt văn hóa, học tập kỹ năng số, tương tác hai chiều giữa chính quyền với Nhân dân."
+  },
+  "1":  {"ho_dan": 1023, "nhan_khau": 3269, "dia_diem_sinh_hoat": "178E Nguyễn Lương Bằng", "bi_thu": {"ten": "Nguyễn Ngọc Vinh", "dt": "0912.364.672"}, "to_truong": {"ten": "Nguyễn Thị Hợp", "dt": "0904.525.778"}, "cskv": {"ten": "Lê Tiến Thắng", "dt": "0982.291.985"}},
+  "2":  {"ho_dan": 1186, "nhan_khau": 3846, "dia_diem_sinh_hoat": "Số 5 ngõ 85 Nguyễn Lương Bằng", "bi_thu": {"ten": "Phạm Đức Lợi", "dt": "0983.454.047"}, "to_truong": {"ten": "Hoàng Quốc Khánh", "dt": "0788.880.081"}, "cskv": {"ten": "Hoàng Trung Hiếu", "dt": "0942.865.204"}},
+  "3":  {"ho_dan": 1127, "nhan_khau": 3720, "dia_diem_sinh_hoat": "98 ngõ Xã Đàn 2", "bi_thu": {"ten": "Chu Mạnh Thìn", "dt": "0982.714.699"}, "to_truong": {"ten": "Trần Đức Tiến", "dt": "0913.004.154"}, "cskv": {"ten": "Hoàng Trung Dũng", "dt": "0976.101.990"}},
+  "4":  {"ho_dan": 1155, "nhan_khau": 3337, "dia_diem_sinh_hoat": "Ngõ 10 Hồ Đắc Di", "bi_thu": {"ten": "Nguyễn Thị Thư", "dt": "0869.184.858"}, "to_truong": {"ten": "Nguyễn Hữu Cường", "dt": "0913.302.357"}, "cskv": {"ten": "Phạm Duy Bửu", "dt": "0345.026.888"}},
+  "5":  {"ho_dan": 1005, "nhan_khau": 3167, "dia_diem_sinh_hoat": "Số 5 ngõ 180 Nguyễn Lương Bằng", "bi_thu": {"ten": "Tống Công Dân", "dt": "0902.076.342"}, "to_truong": {"ten": "Nguyễn Trọng Hiến", "dt": "0983.873.899"}, "cskv": {"ten": "Bùi Việt Hậu", "dt": "0987.732.666"}},
+  "6":  {"ho_dan": 1099, "nhan_khau": 3512, "dia_diem_sinh_hoat": "Số 12 ngõ 18 Võ Văn Dũng", "bi_thu": {"ten": "Đinh Đức Bộ", "dt": "0912.201.616"}, "to_truong": {"ten": "Lê Minh Ba", "dt": "0912.738.136"}, "cskv": {"ten": "Nguyễn Quang Phong", "dt": "0948.551.668"}},
+  "7":  {"ho_dan": 862,  "nhan_khau": 2941, "dia_diem_sinh_hoat": "48 ngõ 178 Tây Sơn", "bi_thu": {"ten": "Hoàng Thị Tuyết", "dt": "0353.999.808"}, "to_truong": {"ten": "Hoàng Thị Thu Hà", "dt": "0827.782.966"}, "cskv": {"ten": "Nguyễn Văn Nam", "dt": "0935.468.768"}},
+  "8":  {"ho_dan": 1009, "nhan_khau": 3099, "dia_diem_sinh_hoat": "Số 92 phố Tây Sơn", "bi_thu": {"ten": "Lê Minh Đạo", "dt": "0912.692.435"}, "to_truong": {"ten": "Phạm Đức Quý", "dt": "0983.980.668"}, "cskv": {"ten": "Lê Quang Hải", "dt": "0986.812.822"}},
+  "9":  {"ho_dan": 1188, "nhan_khau": 3996, "dia_diem_sinh_hoat": "Số 3 ngõ 178 phố Tây Sơn", "bi_thu": {"ten": "Nguyễn Phong", "dt": "0904.222.939"}, "to_truong": {"ten": "Nguyễn Mạnh Đào", "dt": "0988.566.963"}, "cskv": {"ten": "Nguyễn Minh Tuấn", "dt": "0942.908.866"}},
+  "10": {"ho_dan": 1006, "nhan_khau": 3892, "dia_diem_sinh_hoat": "Số 60 ngõ 3 phố Thái Hà", "bi_thu": {"ten": "Lê Thanh Thủy", "dt": "0975.272.292"}, "to_truong": {"ten": "Trần Thị Thu Hằng", "dt": "0963.137.598"}, "cskv": {"ten": "Phạm Bảo Ngọc", "dt": "0972.589.966"}},
+  "11": {"ho_dan": 814,  "nhan_khau": 2772, "dia_diem_sinh_hoat": "109/2 Trung Liệt", "bi_thu": {"ten": "Nguyễn Khắc Lợi", "dt": "0904.698.255"}, "to_truong": {"ten": "Vũ Hoài", "dt": "0352.470.541"}, "cskv": {"ten": "Nguyễn Đại Hải", "dt": "0947.101.233"}},
+  "12": {"ho_dan": 1019, "nhan_khau": 3972, "dia_diem_sinh_hoat": "Số 8 ngõ 89 phố Thái Hà", "bi_thu": {"ten": "Nguyễn Thị Tâm", "dt": "0912.387.001"}, "to_truong": {"ten": "Đinh Thị Thu Hạnh", "dt": "0913.547.456"}, "cskv": {"ten": "Nguyễn Minh Đức", "dt": "0939.186.866"}},
+  "13": {"ho_dan": 881,  "nhan_khau": 3462, "dia_diem_sinh_hoat": "E3, E4 Trung Liệt", "bi_thu": {"ten": "Bùi Minh Hòa", "dt": "0367.141.163"}, "to_truong": {"ten": "Bùi Thị Nhàn", "dt": "0948.669.741"}, "cskv": {"ten": "Đỗ Mạnh Cường", "dt": "0913.582.586"}},
+  "14": {"ho_dan": 868,  "nhan_khau": 2730, "dia_diem_sinh_hoat": "165 Thái Hà", "bi_thu": {"ten": "Vũ Quang Hùng", "dt": "0983.608.468"}, "to_truong": {"ten": "Nguyễn Tiến Dũng", "dt": "0912.648.904"}, "cskv": {"ten": "Đặng Quốc Vy", "dt": "0986.884.492"}},
+  "15": {"ho_dan": 852,  "nhan_khau": 2953, "dia_diem_sinh_hoat": "Ngõ 173 Thái Hà", "bi_thu": {"ten": "Chử Đức Hoài", "dt": "0904.409.661"}, "to_truong": {"ten": "Lương Quang Sử", "dt": "0983.196.356"}, "cskv": {"ten": "Nguyễn Mạnh Hùng", "dt": "0987.808.687"}},
+  "16": {"ho_dan": 1070, "nhan_khau": 4117, "dia_diem_sinh_hoat": "Số 111 Láng Hạ", "bi_thu": {"ten": "Văn Đức Bình", "dt": "0903.210.376"}, "to_truong": {"ten": "Hoàng Thị Nga", "dt": "0912.224.094"}, "cskv": {"ten": "Nguyễn Văn Tâm", "dt": "0915.723.396"}},
+  "17": {"ho_dan": 1266, "nhan_khau": 4795, "dia_diem_sinh_hoat": "Số 470 đường Láng", "bi_thu": {"ten": "Lưu Văn Hợp", "dt": "0913.526.943"}, "to_truong": {"ten": "Phạm Văn Mạnh", "dt": "0904.394.444"}, "cskv": {"ten": "Nguyễn Mạnh Tùng", "dt": "0973.603.685"}},
+  "18": {"ho_dan": 1182, "nhan_khau": 4089, "dia_diem_sinh_hoat": "Số 65A/67 phố Thái Thịnh", "bi_thu": {"ten": "Nguyễn Kiên Dũng", "dt": "0904.138.160"}, "to_truong": {"ten": "Phan Văn Phòng", "dt": "0983.315.290"}, "cskv": {"ten": "Đào Viết Thắng", "dt": "0983.105.575"}},
+  "19": {"ho_dan": 1096, "nhan_khau": 2658, "dia_diem_sinh_hoat": "Khu D, ngõ 63 phố Thái Thịnh", "bi_thu": {"ten": "Nguyễn Xuân Tiến", "dt": "0982.246.222"}, "to_truong": {"ten": "Nguyễn Văn Phú", "dt": "0912.543.609"}, "cskv": {"ten": "Trần Ngọc Tiến", "dt": "0979.972.299"}},
+  "20": {"ho_dan": 1226, "nhan_khau": 4081, "dia_diem_sinh_hoat": "B2, B3 phố Vĩnh Hồ", "bi_thu": {"ten": "Hoàng Khâm", "dt": "0913.247.878"}, "to_truong": {"ten": "Nguyễn Viết Thanh", "dt": "0982.150.036"}, "cskv": {"ten": "Lê Hoàng Nam", "dt": "0983.848.339"}},
+  "21": {"ho_dan": 1294, "nhan_khau": 4134, "dia_diem_sinh_hoat": "Khu tập thể A5 Vĩnh Hồ", "bi_thu": {"ten": "Vũ Đình Tùng", "dt": "0913.250.707"}, "to_truong": {"ten": "Quách Lan Anh", "dt": "0904.267.824"}, "cskv": {"ten": "Bùi Bình Định", "dt": "0912.110.470"}},
+  "22": {"ho_dan": 1158, "nhan_khau": 3566, "dia_diem_sinh_hoat": "Số 121 ngõ Thịnh Quang", "bi_thu": {"ten": "Nguyễn Thị Lệ Hằng", "dt": "0912.095.058"}, "to_truong": {"ten": "Nguyễn Thị Tuyết Lan", "dt": "0984.418.010"}, "cskv": {"ten": "Nguyễn Thái Dương", "dt": "0976.941.468"}},
+  "23": {"ho_dan": 1253, "nhan_khau": 4327, "dia_diem_sinh_hoat": "97 ngõ 167 Thái Thịnh", "bi_thu": {"ten": "Trần Đình Việt", "dt": "0902.587.395"}, "to_truong": {"ten": "Lê Thị Thanh Thủy", "dt": "0946.229.717"}, "cskv": {"ten": "Dương Văn Thu", "dt": "0986.859.886"}}
 }

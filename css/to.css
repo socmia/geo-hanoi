@@ -127,3 +127,6 @@ svg { display: block; }
   .rows h2 { margin: 0 20px 4px; }
   .row { padding: 12px 20px; }
 }
+.lnk { color: inherit; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+.lnk:hover { text-decoration: underline; }
+.sub { font-size: 12px; font-weight: 500; color: var(--mute); margin: 12px 24px 0; text-transform: none; }

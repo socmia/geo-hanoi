@@ -81,6 +81,14 @@ function contactRow(icon, value, label) {
   }<small>${escapeHtml(label)}</small></span></div>`;
 }
 
+const phoneLink = (p) => `<a class="lnk" href="tel:${String(p).replace(/\D/g, "")}">${escapeHtml(p)}</a>`;
+
+/** Person row: name + role label + tel link; "Đang cập nhật" when the name is missing. */
+function personRow(p, label) {
+  if (!p?.ten) return contactRow("user", "", label);
+  return `<div class="row">${svg("user")}<span class="row-text"><span>${escapeHtml(p.ten)}</span><small>${escapeHtml(label)}</small>${p.dt ? phoneLink(p.dt) : ""}</span></div>`;
+}
+
 function mountMiniMap(geo, feature, color, inTdp) {
   const map = L.map("mini-map", {
     zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
@@ -141,8 +149,16 @@ async function boot() {
     (p) => POI_KINDS[p.properties?.kind] && String(p.properties.to_dan_pho) === String(num)
   );
   const sections = Array.isArray(more.sections) ? more.sections.filter((s) => s && (s.title || s.body)) : [];
+  const fmt = (v) => Number(v).toLocaleString("vi-VN");
+  const counts = more.ho_dan != null && more.nhan_khau != null ? `${fmt(more.ho_dan)} hộ dân · ${fmt(more.nhan_khau)} nhân khẩu` : "";
+  const intro = more.gioi_thieu || more.mo_ta_dai || extra._chung?.gioi_thieu;
+  const { ubnd, tiep_cong_dan: tcd } = extra._phuong || {};
+  const org = (o, extraHtml = "") => o
+    ? `<div class="row">${svg("pin")}<span class="row-text"><span>${escapeHtml(o.ten || "")}</span><small>${escapeHtml(o.dia_chi || "")}</small>${(o.dien_thoai || []).map(phoneLink).join("")}${extraHtml}</span></div>`
+    : "";
   const introHtml = [
-    more.gioi_thieu || more.mo_ta_dai ? escapeHtml(more.gioi_thieu || more.mo_ta_dai) : "",
+    counts ? `<strong>${escapeHtml(counts)}</strong>` : "",
+    intro ? escapeHtml(intro) : "",
     ...sections.map((s) => `<h3>${escapeHtml(s.title || "")}</h3>${escapeHtml(s.body || "")}`),
   ].filter(Boolean).join("\n");
 
@@ -172,9 +188,14 @@ async function boot() {
 
       <section class="card rows">
         <h2>Liên hệ</h2>
-        ${contactRow("user", more.to_truong, "Tổ trưởng")}
-        ${contactRow("phone", more.dien_thoai || more.lien_he, more.dien_thoai || !more.lien_he ? "Điện thoại" : "Liên hệ")}
-        ${contactRow("home", more.dia_diem_sinh_hoat, "Nhà văn hoá / điểm sinh hoạt")}
+        ${personRow(more.bi_thu, "Bí thư chi bộ")}
+        ${personRow(more.to_truong, "Tổ trưởng")}
+        ${personRow(more.cskv, "Cảnh sát khu vực")}
+        ${contactRow("home", more.dia_diem_sinh_hoat, "Nhà sinh hoạt cộng đồng")}
+        ${more.lien_he ? contactRow("phone", more.lien_he, "Liên hệ") : ""}
+        ${ubnd || tcd ? '<h3 class="sub">UBND phường</h3>' : ""}
+        ${org(ubnd, ubnd?.email ? `<a class="lnk" href="mailto:${escapeHtml(ubnd.email)}">${escapeHtml(ubnd.email)}</a>` : "")}
+        ${org(tcd)}
         ${more.ghi_chu ? `<div class="row">${svg("note")}<span class="row-text">${escapeHtml(more.ghi_chu)}<small>Ghi chú</small></span></div>` : ""}
       </section>
     </div>

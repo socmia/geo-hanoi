@@ -4,27 +4,22 @@ import { shareLink } from "./share.js";
 const DONG_DA_MAXA = 922;
 const MOBILE_MQ = window.matchMedia("(max-width: 768px)");
 
+const $ = (id) => document.getElementById(id);
 const el = {
-  list: document.getElementById("ward-list"),
-  listView: document.getElementById("list-view"),
-  listEmpty: document.getElementById("list-empty"),
-  search: document.getElementById("search"),
-  searchForm: document.getElementById("search-form"),
-  searchClear: document.getElementById("search-clear"),
-  detail: document.getElementById("detail"),
-  detailBody: document.getElementById("detail-body"),
-  cityUnits: document.getElementById("city-units"),
-  panelTab: document.getElementById("panel-tab"),
-  menuBtn: document.getElementById("menu-btn"),
-  backdrop: document.getElementById("drawer-backdrop"),
-  chips: document.getElementById("chips"),
-  layersBtn: document.getElementById("layers-btn"),
-  layersThumb: document.getElementById("layers-thumb"),
-  layersLabel: document.getElementById("layers-label"),
-  locateBtn: document.getElementById("locate-btn"),
-  zoomIn: document.getElementById("zoom-in"),
-  zoomOut: document.getElementById("zoom-out"),
-  toast: document.getElementById("toast"),
+  tdpSelect: $("tdp-select"),
+  layersBtn: $("layers-btn"),
+  coordBtn: $("coord-btn"),
+  info: $("info"),
+  infoTitle: $("info-title"),
+  infoBody: $("info-body"),
+  infoClose: $("info-close"),
+  infoDetail: $("info-detail"),
+  infoShare: $("info-share"),
+  locateBtn: $("locate-btn"),
+  fsBtn: $("fs-btn"),
+  zoomIn: $("zoom-in"),
+  zoomOut: $("zoom-out"),
+  toast: $("toast"),
 };
 
 /** @type {Map<string, any>} */
@@ -32,58 +27,37 @@ const byKey = new Map();
 let selectedKey = null;
 let geoLayer = null;
 let wardLayer = null;
-let pinMarker = null;
 let meMarker = null;
 let tdpExtra = {};
 /** @type {any[]} */
 let pois = [];
-const poiLayers = {};
 
 const map = L.map("map", { zoomControl: false, maxZoom: 20, zoomSnap: 0.5, attributionControl: true }).setView([21.01, 105.825], 14);
 
-/* ---------- basemaps ---------- */
-const OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
-const ESRI_ATTR = "Tiles &copy; Esri";
+/* ---------- basemaps: Esri street map (default, Google-like) / Esri imagery ---------- */
+// CARTO Voyager raster tiles now answer with an "API KEY REQUIRED" watermark, so they are not used.
 const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services";
 const BASEMAPS = {
   map: {
-    label: "Bản đồ",
-    thumb: `${ESRI}/Canvas/World_Light_Gray_Base/MapServer/tile/15/14425/26016`,
-    candidates: [
-      { url: `${ESRI}/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`, options: { maxZoom: 20, maxNativeZoom: 16, attribution: ESRI_ATTR } },
-      { url: "https://tile.openstreetmap.de/{z}/{x}/{y}.png", options: { maxZoom: 19, attribution: OSM_ATTR } },
-      { url: `${ESRI}/World_Street_Map/MapServer/tile/{z}/{y}/{x}`, options: { maxZoom: 19, attribution: ESRI_ATTR } },
-    ],
+    url: `${ESRI}/World_Street_Map/MapServer/tile/{z}/{y}/{x}`,
+    options: { maxZoom: 20, maxNativeZoom: 19, attribution: "Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, OpenStreetMap contributors" },
   },
   sat: {
-    label: "Vệ tinh",
-    thumb: `${ESRI}/World_Imagery/MapServer/tile/15/14425/26016`,
-    candidates: [
-      { url: `${ESRI}/World_Imagery/MapServer/tile/{z}/{y}/{x}`, options: { maxZoom: 20, maxNativeZoom: 19, attribution: ESRI_ATTR } },
-    ],
+    url: `${ESRI}/World_Imagery/MapServer/tile/{z}/{y}/{x}`,
+    options: { maxZoom: 20, maxNativeZoom: 19, attribution: "Tiles &copy; Esri" },
   },
 };
 let basemapMode = "map";
 let basemapLayer = null;
 
-function mountBasemap(mode, i = 0) {
-  const cfg = BASEMAPS[mode].candidates[i];
+function mountBasemap(mode) {
   if (basemapLayer) map.removeLayer(basemapLayer);
-  let errors = 0;
-  const layer = L.tileLayer(cfg.url, cfg.options);
-  layer.on("tileerror", () => {
-    errors += 1;
-    if (errors < 4 || i + 1 >= BASEMAPS[mode].candidates.length || basemapLayer !== layer) return;
-    mountBasemap(mode, i + 1);
-  });
-  basemapLayer = layer.addTo(map);
+  basemapLayer = L.tileLayer(BASEMAPS[mode].url, BASEMAPS[mode].options).addTo(map);
   basemapLayer.bringToBack();
   basemapMode = mode;
-  const other = mode === "map" ? "sat" : "map";
-  el.layersThumb.style.backgroundImage = `url("${BASEMAPS[other].thumb}")`;
-  el.layersLabel.textContent = BASEMAPS[other].label;
-  el.layersBtn.setAttribute("aria-label", `Chuyển sang ${BASEMAPS[other].label.toLowerCase()}`);
-  document.body.classList.toggle("basemap-sat", mode === "sat");
+  const sat = mode === "sat";
+  el.layersBtn.setAttribute("aria-pressed", String(sat));
+  el.layersBtn.setAttribute("aria-label", sat ? "Chuyển sang bản đồ" : "Chuyển sang vệ tinh");
 }
 mountBasemap("map");
 el.layersBtn.addEventListener("click", () => mountBasemap(basemapMode === "map" ? "sat" : "map"));
@@ -105,6 +79,7 @@ function isDongDaProps(props) {
   return blob.includes("dong da") && (blob.includes("phuong") || blob.includes("to dan"));
 }
 
+// One hue per tổ (index = số tổ - 1), same palette as the detail page
 const TDP_COLORS = [
   "#1E88E5", "#43A047", "#8E24AA", "#E53935", "#FB8C00",
   "#00897B", "#F9A825", "#3949AB", "#7CB342", "#D81B60",
@@ -112,285 +87,120 @@ const TDP_COLORS = [
   "#5C6BC0", "#FF7043", "#546E7A", "#9E9D24", "#26C6DA",
   "#FF8A65", "#8D6E63", "#66BB6A",
 ];
-
-function colorForTdp(num, index = 0) {
-  if (num != null && Number.isFinite(Number(num))) {
-    return TDP_COLORS[(Number(num) - 1 + TDP_COLORS.length) % TDP_COLORS.length];
-  }
-  return TDP_COLORS[index % TDP_COLORS.length];
-}
-
-function rgba(hex, a) {
-  const n = parseInt(hex.replace("#", ""), 16);
-  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
-}
-
-const baseStyle = (c) => ({ color: "#ffffff", weight: 2, opacity: 1, fillColor: c, fillOpacity: 0.3, dashArray: null });
-const idleStyle = (c) => ({ color: "#ffffff", weight: 1.5, opacity: 0.8, fillColor: c, fillOpacity: 0.16, dashArray: null });
-const selectedStyle = (c) => ({ color: "#D93025", weight: 4, opacity: 1, fillColor: c, fillOpacity: 0.42, dashArray: "8 6" });
-
-const ICON = {
-  pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
-  layers: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
-  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
-  phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>',
-  list: '<path d="M4 5h16M4 12h16M4 19h10"/>',
-  zoom: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
-  share: '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/>',
-  ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
-  back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
-  close: '<path d="M6 6l12 12M18 6L6 18"/>',
-  chev: '<path d="M9 6l6 6-6 6"/>',
-};
-const svg = (name, cls = "") => `<svg ${cls ? `class="${cls}" ` : ""}viewBox="0 0 24 24" aria-hidden="true">${ICON[name]}</svg>`;
+const colorForTdp = (num, i = 0) => TDP_COLORS[((Number.isFinite(Number(num)) && num != null ? Number(num) - 1 : i) + TDP_COLORS.length) % TDP_COLORS.length];
+const baseStyle = (c) => ({ color: c, weight: 1.5, opacity: 1, fillColor: c, fillOpacity: 0.3, dashArray: null });
+const selectedStyle = (c) => ({ color: "#3b0764", weight: 3, opacity: 1, fillColor: c, fillOpacity: 0.55, dashArray: "8 6" });
 
 const POI_KINDS = {
-  school: { label: "Trường học", icon: '<path d="M3 10l9-4 9 4-9 4z"/><path d="M7 12v4c3 2 7 2 10 0v-4"/>' },
-  health: { label: "Y tế", icon: '<path d="M12 5v14M5 12h14"/>' },
-  office: { label: "Công sở", icon: '<path d="M6 20V4h12v16M10 8h1M13 8h1M10 12h1M13 12h1M11 20v-3h2v3"/>' },
+  school: '<path d="M3 10l9-4 9 4-9 4z"/><path d="M7 12v4c3 2 7 2 10 0v-4"/>',
+  health: '<path d="M12 5v14M5 12h14"/>',
+  office: '<path d="M6 20V4h12v16M10 8h1M13 8h1M10 12h1M13 12h1M11 20v-3h2v3"/>',
 };
-const poiHtml = (kind) => `<span class="poi poi--${kind}"><svg viewBox="0 0 24 24" aria-hidden="true">${POI_KINDS[kind].icon}</svg></span>`;
+const poiHtml = (kind) => `<span class="poi poi--${kind}"><svg viewBox="0 0 24 24" aria-hidden="true">${POI_KINDS[kind]}</svg></span>`;
 
-function toast(msg) {
+/** Toast with an optional action button (e.g. copy). */
+function toast(msg, action) {
   el.toast.textContent = msg;
+  if (action) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = action.label;
+    b.addEventListener("click", action.run);
+    el.toast.appendChild(b);
+  }
   el.toast.hidden = false;
   clearTimeout(toast.t);
-  toast.t = setTimeout(() => (el.toast.hidden = true), 2200);
+  toast.t = setTimeout(() => (el.toast.hidden = true), action ? 8000 : 2200);
 }
 
-/** Mini SVG of a polygon's shape for the detail hero. */
-function shapeSvg(feature, color) {
-  const g = feature.geometry;
-  const polys = g.type === "Polygon" ? [g.coordinates] : g.coordinates;
-  const k = Math.cos((21.01 * Math.PI) / 180);
-  const pts = polys.flatMap((p) => p[0]).map(([x, y]) => [x * k, -y]);
-  const xs = pts.map((p) => p[0]);
-  const ys = pts.map((p) => p[1]);
-  const x0 = Math.min(...xs), y0 = Math.min(...ys);
-  const s = 1000 / Math.max(Math.max(...xs) - x0, Math.max(...ys) - y0);
-  const d = polys
-    .map((p) => "M" + p[0].map(([x, y]) => `${((x * k - x0) * s).toFixed(1)},${((-y - y0) * s).toFixed(1)}`).join(" ") + "Z")
-    .join("");
-  const w = (Math.max(...xs) - x0) * s, h = (Math.max(...ys) - y0) * s;
-  return `<svg class="shape" viewBox="-30 -30 ${w + 60} ${h + 60}" role="img" aria-label="Hình dạng ranh giới">
-    <path d="${d}" fill="${rgba(color, 0.28)}" stroke="${color}" stroke-width="${(w + h) / 260}" stroke-linejoin="round"/></svg>`;
+/* ---------- selection + info card ---------- */
+function mapPadding(withCard) {
+  if (!withCard) return { paddingTopLeft: [24, 24], paddingBottomRight: [24, 24] };
+  return MOBILE_MQ.matches
+    ? { paddingTopLeft: [24, 24], paddingBottomRight: [24, 280] }
+    : { paddingTopLeft: [40, 40], paddingBottomRight: [380, 40] };
 }
 
-/* ---------- layout state ---------- */
-function mapPadding() {
-  if (MOBILE_MQ.matches) return { paddingTopLeft: [24, 190], paddingBottomRight: [24, 32] };
-  const left = document.body.classList.contains("panel-collapsed") ? 0 : 408;
-  return { paddingTopLeft: [left + 40, 70], paddingBottomRight: [80, 40] };
-}
-
-function setCollapsed(collapsed) {
-  document.body.classList.toggle("panel-collapsed", collapsed);
-  el.panelTab.setAttribute("aria-expanded", String(!collapsed));
-  el.panelTab.setAttribute("aria-label", collapsed ? "Mở bảng bên" : "Thu gọn bảng bên");
-}
-el.panelTab.addEventListener("click", () => setCollapsed(!document.body.classList.contains("panel-collapsed")));
-
-/* ---------- mobile: left drawer opened by the ☰ button in the search bar ---------- */
-function setDrawer(open) {
-  document.body.classList.toggle("drawer-open", open);
-  el.menuBtn.setAttribute("aria-expanded", String(open));
-  el.menuBtn.setAttribute("aria-label", open ? "Đóng danh sách" : "Mở danh sách tổ");
-}
-const drawerOpen = () => document.body.classList.contains("drawer-open");
-el.menuBtn.addEventListener("click", () => setDrawer(!drawerOpen()));
-el.backdrop.addEventListener("click", () => setDrawer(false));
-/** On phones, hand the screen back to the map (no-op on desktop). */
-const showMapOnMobile = () => { if (MOBILE_MQ.matches) setDrawer(false); };
-
-/* ---------- detail ---------- */
-function renderDetail(entry) {
-  const { props, color, feature } = entry;
-  const name = featureName(props);
+function renderInfo({ props }) {
   const num = props.to_dan_pho;
   const extra = tdpExtra[String(num)] || {};
-  const detailHref = num != null && num !== "" ? `to.html?n=${encodeURIComponent(String(num))}` : null;
-  const inTdp = pois.filter((p) => p.properties.to_dan_pho === num);
-  const sections = Array.isArray(extra.sections) ? extra.sections.filter((s) => s && (s.title || s.body)) : [];
-  const introHtml = [
-    extra.gioi_thieu ? escapeHtml(extra.gioi_thieu) : "",
-    ...sections.map((s) => `<h4>${escapeHtml(s.title || "")}</h4>${escapeHtml(s.body || "")}`),
-  ].filter(Boolean).join("\n");
-
-  el.detailBody.innerHTML = `
-    <div class="d-hero">
-      ${shapeSvg(feature, color)}
-      <button type="button" class="d-back" data-act="back" aria-label="Quay lại danh sách">${svg("back")}</button>
-    </div>
-    <div class="d-head">
-      <div>
-        <h2>${escapeHtml(name)}</h2>
-        <p>Tổ dân phố · Phường ${escapeHtml(props.phuong || "Đống Đa")}, Hà Nội</p>
-      </div>
-      <button type="button" class="d-close-m" data-act="back" aria-label="Đóng">${svg("close")}</button>
-    </div>
-    <div class="detail-actions">
-      ${detailHref ? `<a class="act btn-primary" href="${escapeHtml(detailHref)}"><span class="act-ic">${svg("list")}</span>Chi tiết</a>` : ""}
-      <button type="button" class="act" data-act="zoom"><span class="act-ic">${svg("zoom")}</span>Phóng tới</button>
-      <button type="button" class="act" data-act="share"><span class="act-ic">${svg("share")}</span>Chia sẻ</button>    </div>
-    <div class="tabs" role="tablist">
-      <button type="button" class="tab" role="tab" id="tab-ov" aria-controls="tp-ov" aria-selected="true">Tổng quan</button>
-      <button type="button" class="tab" role="tab" id="tab-in" aria-controls="tp-in" aria-selected="false">Giới thiệu</button>
-      <button type="button" class="tab" role="tab" id="tab-ct" aria-controls="tp-ct" aria-selected="false">Liên hệ</button>
-    </div>
-    <div class="tab-panel" id="tp-ov" role="tabpanel" aria-labelledby="tab-ov">
-      <div class="row">${svg("pin")}<span class="row-text">Phường ${escapeHtml(props.phuong || "Đống Đa")}, Hà Nội</span></div>
-      ${props.mo_ta ? `<div class="row">${svg("layers")}<span class="row-text">${escapeHtml(props.mo_ta)}<small>Gộp từ các tổ cũ</small></span></div>` : ""}
-      ${extra.ghi_chu ? `<div class="row">${svg("list")}<span class="row-text">${escapeHtml(extra.ghi_chu)}<small>Ghi chú</small></span></div>` : ""}    </div>
-    <div class="tab-panel" id="tp-in" role="tabpanel" aria-labelledby="tab-in" hidden>
-      ${introHtml ? `<div class="prose">${introHtml}</div>` : `<p class="prose muted">Chưa có giới thiệu cho tổ này.</p>`}
-    </div>
-    <div class="tab-panel" id="tp-ct" role="tabpanel" aria-labelledby="tab-ct" hidden>
-      ${extra.lien_he ? `<div class="row">${svg("phone")}<span class="row-text">${escapeHtml(extra.lien_he)}</span></div>` : `<div class="row">${svg("user")}<span class="row-text"><span class="muted">Chưa cập nhật thông tin liên hệ.</span></span></div>`}
-    </div>
-    <section class="d-sec"><h3>Địa điểm trong tổ</h3>
-      ${inTdp.length
-        ? `<ul class="poi-list">${inTdp.map((p) => `<li data-poi-idx="${pois.indexOf(p)}">${poiHtml(p.properties.kind)}<span>${escapeHtml(p.properties.name)}</span></li>`).join("")}</ul>`
-        : '<p class="d-empty">Chưa ghi nhận trường học, cơ sở y tế hay công sở nào trong tổ này.</p>'}
-    </section>
-  `;
-  el.detail.hidden = false;
-  el.listView.hidden = true;
-  el.detail.scrollTop = 0;
+  const fmt = (v) => Number(v).toLocaleString("vi-VN");
+  const counts = extra.ho_dan != null && extra.nhan_khau != null ? `${fmt(extra.ho_dan)} hộ dân · ${fmt(extra.nhan_khau)} nhân khẩu` : "";
+  const phone = (p) => `<a class="lnk" href="tel:${String(p).replace(/\D/g, "")}">${escapeHtml(p)}</a>`;
+  const person = (p, label) => (p?.ten
+    ? `<div class="info-row"><small>${label}</small><span>${escapeHtml(p.ten)}</span>${p.dt ? phone(p.dt) : ""}</div>`
+    : "");
+  el.infoTitle.textContent = featureName(props);
+  el.infoBody.innerHTML = [
+    counts ? `<p class="info-count">${escapeHtml(counts)}</p>` : "",
+    person(extra.bi_thu, "Bí thư chi bộ"),
+    person(extra.to_truong, "Tổ trưởng"),
+    person(extra.cskv, "Cảnh sát khu vực"),
+    extra.dia_diem_sinh_hoat ? `<div class="info-row"><small>Nhà sinh hoạt cộng đồng</small><span>${escapeHtml(extra.dia_diem_sinh_hoat)}</span></div>` : "",
+  ].join("");
+  el.infoDetail.href = `to.html?n=${encodeURIComponent(String(num))}`;
+  el.info.hidden = false;
+  el.info.scrollTop = 0;
 }
 
-el.detailBody.addEventListener("click", async (e) => {
-  const t = /** @type {HTMLElement} */ (e.target);
-  const act = t.closest("[data-act]")?.getAttribute("data-act");
-  const tab = t.closest(".tab");
-  const poiLi = t.closest("[data-poi-idx]");
-  if (act === "back") clearSelection();
-  else if (act === "zoom") { showMapOnMobile(); focusOnLayer(byKey.get(selectedKey)?.layer); }
-  else if (act === "share") {
-    const url = location.href.split("#")[0] + `#tdp-${byKey.get(selectedKey)?.props.to_dan_pho}`;
-    await shareLink(url, byKey.get(selectedKey)?.name || document.title, toast);
-  } else if (tab) {
-    el.detailBody.querySelectorAll(".tab").forEach((b) => {
-      const on = b === tab;
-      b.setAttribute("aria-selected", String(on));
-      document.getElementById(b.getAttribute("aria-controls")).hidden = !on;
-    });
-  } else if (poiLi) {
-    const p = pois[Number(poiLi.getAttribute("data-poi-idx"))];
-    const [lng, lat] = p.geometry.coordinates;
-    showMapOnMobile();
-    map.flyTo([lat, lng], Math.max(map.getZoom(), 18), { duration: 0.4 });
-    p.marker?.openTooltip();
-  }
-});
-
-function focusOnLayer(layer) {
-  if (!layer?.getBounds) return;
-  const bounds = layer.getBounds();
-  if (!bounds.isValid()) return;
-  map.flyToBounds(bounds, { ...mapPadding(), maxZoom: 18, duration: 0.4 });
-}
-
-function setPin(latlng) {
-  const icon = L.divIcon({
-    className: "pin",
-    html: '<svg width="30" height="42" viewBox="-15 -42 30 42" aria-hidden="true"><path d="M0,0 C-3,-9 -14,-17 -14,-28 A14,14 0 1 1 14,-28 C14,-17 3,-9 0,0Z" fill="#EA4335" stroke="#B31412"/><circle cx="0" cy="-28" r="5" fill="#B31412"/></svg>',
-    iconSize: [30, 42],
-    iconAnchor: [15, 42],
-  });
-  if (pinMarker) pinMarker.setLatLng(latlng);
-  else pinMarker = L.marker(latlng, { icon, interactive: false, keyboard: false, zIndexOffset: 1000 }).addTo(map);
+function focusOnLayer(layer, withCard = true) {
+  const bounds = layer?.getBounds?.();
+  if (!bounds?.isValid()) return;
+  map.flyToBounds(bounds, { ...mapPadding(withCard), maxZoom: 18, duration: 0.4 });
 }
 
 function setSelection(key, { fly = true } = {}) {
   const entry = byKey.get(key);
   if (!entry) return clearSelection();
   selectedKey = key;
-  byKey.forEach((e, k) => {
-    const active = k === key;
-    e.li.classList.toggle("active", active);
-    e.layer.setStyle(active ? selectedStyle(e.color) : idleStyle(e.color));
-  });
+  byKey.forEach((e, k) => e.layer.setStyle(k === key ? selectedStyle(e.color) : baseStyle(e.color)));
   entry.layer.bringToFront();
+  el.tdpSelect.value = key;
   document.body.classList.add("has-sel");
-  if (MOBILE_MQ.matches) setDrawer(true);
-  renderDetail(entry);
-  setPin(entry.layer.getCenter());
+  renderInfo(entry);
   history.replaceState(null, "", `#tdp-${entry.props.to_dan_pho}`);
   if (fly) requestAnimationFrame(() => focusOnLayer(entry.layer));
 }
 
 function clearSelection() {
   selectedKey = null;
-  byKey.forEach((e) => {
-    e.li.classList.remove("active");
-    e.layer.setStyle(baseStyle(e.color));
-  });
+  byKey.forEach((e) => e.layer.setStyle(baseStyle(e.color)));
+  el.tdpSelect.value = "";
+  el.info.hidden = true;
   document.body.classList.remove("has-sel");
-  el.detail.hidden = true;
-  el.listView.hidden = false;
-  if (pinMarker) { map.removeLayer(pinMarker); pinMarker = null; }
   if (location.hash) history.replaceState(null, "", location.pathname + location.search);
 }
 
-/* ---------- search ---------- */
-/**
- * Every token must match. A number matches the tổ number as a prefix ("2" → 2, 20–23),
- * or an old tổ number in mo_ta exactly ("38" → the tổ merged from 38, not 38A).
- */
-function matchesSearch(entry, query) {
-  const needle = foldVi(query);
-  if (!needle) return true;
-  const num = String(entry.props.to_dan_pho ?? "");
-  return needle.split(/\s+/).filter(Boolean).every((tok) => {
-    if (/^\d+[a-z]?$/.test(tok)) {
-      return num.startsWith(tok) || new RegExp(`(?:^|\\D)${tok}(?:[^\\da-z]|$)`).test(entry.extraBlob);
-    }
-    return entry.searchBlob.includes(tok);
+el.tdpSelect.addEventListener("change", () => setSelection(el.tdpSelect.value));
+el.infoClose.addEventListener("click", clearSelection);
+el.infoShare.addEventListener("click", () => {
+  const e = byKey.get(selectedKey);
+  if (e) shareLink(`${location.href.split("#")[0]}#tdp-${e.props.to_dan_pho}`, e.name, toast);
+});
+
+/* ---------- map tools ---------- */
+let picking = false;
+function setPicking(on) {
+  picking = on;
+  el.coordBtn.setAttribute("aria-pressed", String(on));
+  map.getContainer().classList.toggle("picking", on);
+  if (on) toast("Bấm vào bản đồ để lấy tọa độ");
+}
+el.coordBtn.addEventListener("click", () => setPicking(!picking));
+
+function pickCoords({ lat, lng }) {
+  const text = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  setPicking(false);
+  toast(text, {
+    label: "Sao chép",
+    run: () => navigator.clipboard.writeText(text).then(() => toast("Đã sao chép tọa độ"), () => toast(text)),
   });
 }
-
-function applyFilter(q) {
-  let shown = 0;
-  byKey.forEach((entry) => {
-    const match = matchesSearch(entry, q);
-    entry.li.classList.toggle("hidden", !match);
-    if (match) shown += 1;
-  });
-  el.listEmpty.hidden = shown > 0;
-  el.cityUnits.textContent = q.trim() ? `${shown} kết quả` : `${byKey.size} tổ dân phố · Đống Đa`;
-  el.searchClear.hidden = !q;
-}
-
-el.search.addEventListener("input", () => {
-  if (MOBILE_MQ.matches) setDrawer(true); // results live in the drawer
-  if (selectedKey) clearSelection();
-  applyFilter(el.search.value);
-});
-el.searchForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const first = [...byKey.entries()].find(([, x]) => !x.li.classList.contains("hidden"));
-  if (first) setSelection(first[0]);
-  el.search.blur();
-});
-el.searchClear.addEventListener("click", () => {
-  el.search.value = "";
-  applyFilter("");
-  el.search.focus();
-});
-
-/* ---------- chips & controls ---------- */
-el.chips.addEventListener("click", (e) => {
-  const chip = /** @type {HTMLElement} */ (e.target).closest(".chip");
-  if (!chip) return;
-  const on = chip.getAttribute("aria-pressed") !== "true";
-  chip.setAttribute("aria-pressed", String(on));
-  const kind = chip.dataset.poi;
-  if (kind && poiLayers[kind]) on ? poiLayers[kind].addTo(map) : map.removeLayer(poiLayers[kind]);
-  if (chip.dataset.layer === "tdp" && geoLayer) on ? geoLayer.addTo(map) : map.removeLayer(geoLayer);
-});
 
 el.zoomIn.addEventListener("click", () => map.zoomIn());
 el.zoomOut.addEventListener("click", () => map.zoomOut());
+if (!document.documentElement.requestFullscreen) el.fsBtn.hidden = true; // e.g. iOS Safari
+el.fsBtn.addEventListener("click", () => (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()));
 el.locateBtn.addEventListener("click", () => {
   if (!navigator.geolocation) return toast("Trình duyệt không hỗ trợ định vị");
   navigator.geolocation.getCurrentPosition(
@@ -406,38 +216,18 @@ el.locateBtn.addEventListener("click", () => {
   );
 });
 
-map.on("click", () => clearSelection());
-const syncPoiZoom = () => map.getContainer().classList.toggle("pois-far", map.getZoom() < 15);
-map.on("zoomend", syncPoiZoom);
-syncPoiZoom();
+map.on("click", (e) => (picking ? pickCoords(e.latlng) : clearSelection()));
+const syncZoomClasses = () => {
+  const z = map.getZoom();
+  const c = map.getContainer();
+  c.classList.toggle("pois-far", z < 15);
+  c.classList.toggle("labels-far", z < 15);
+};
+map.on("zoomend", syncZoomClasses);
+syncZoomClasses();
 window.addEventListener("resize", () => map.invalidateSize());
 
 /* ---------- data ---------- */
-function bindLabel(layer, props) {
-  layer.bindTooltip(props.to_dan_pho != null ? `TDP số ${props.to_dan_pho}` : featureName(props), {
-    permanent: true, direction: "center", className: "poly-label", opacity: 1, interactive: false,
-  });
-  const sync = () => layer.getTooltip()?.getElement?.()?.classList.toggle("poly-label--dim", map.getZoom() < 15);
-  layer.on("add", () => { sync(); map.on("zoomend", sync); });
-  layer.on("remove", () => map.off("zoomend", sync));
-}
-
-function addListItem(key, props, name, color) {
-  const li = document.createElement("li");
-  li.setAttribute("role", "button");
-  li.tabIndex = 0;
-  li.innerHTML = `<span class="tdp-thumb" style="background:${rgba(color, 0.22)};border-color:${color}">${escapeHtml(String(props.to_dan_pho ?? ""))}</span>
-    <span class="li-text"><span class="li-name"></span><span class="li-sub"></span></span>${svg("chev", "chev")}`;
-  li.querySelector(".li-name").textContent = name;
-  li.querySelector(".li-sub").textContent = props.mo_ta || `Phường ${props.phuong || "Đống Đa"}, Hà Nội`;
-  li.addEventListener("click", () => setSelection(key));
-  li.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelection(key); }
-  });
-  el.list.appendChild(li);
-  return li;
-}
-
 async function loadTdpLayer() {
   const res = await fetch("data/to-dan-pho.geojson", { cache: "no-store" });
   if (!res.ok) return 0;
@@ -455,15 +245,18 @@ async function loadTdpLayer() {
       const name = featureName(props);
       const color = colorForTdp(props.to_dan_pho, idx);
       layer.setStyle(baseStyle(color));
-      bindLabel(layer, props);
-      const li = addListItem(key, props, name, color);
-      const searchBlob = foldVi([name, props.phuong, props.mo_ta].filter(Boolean).join(" "));
-      const extraBlob = foldVi(props.mo_ta || "");
-      byKey.set(key, { key, feature, layer, props, name, li, searchBlob, extraBlob, color });
+      const text = props.to_dan_pho != null ? `Tổ dân phố ${props.to_dan_pho}` : name;
+      layer.bindTooltip(`<span class="tag" style="border-left-color:${color}">${escapeHtml(text)}</span>`, {
+        permanent: true, direction: "center", className: "poly-label", opacity: 1, interactive: false,
+      });
+      byKey.set(key, { key, feature, layer, props, name, color });
       layer.on("click", (e) => {
         L.DomEvent.stopPropagation(e);
-        setSelection(key);
+        if (picking) pickCoords(e.latlng);
+        else setSelection(key);
       });
+      const opt = new Option(name, key);
+      el.tdpSelect.add(opt);
     },
   }).addTo(map);
   return byKey.size;
@@ -472,16 +265,12 @@ async function loadTdpLayer() {
 async function loadPois() {
   const geo = await fetch("data/poi.geojson", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
   pois = (geo?.features || []).filter((f) => POI_KINDS[f.properties?.kind]);
-  Object.keys(POI_KINDS).forEach((kind) => {
-    poiLayers[kind] = L.layerGroup().addTo(map);
-  });
   pois.forEach((p) => {
     const [lng, lat] = p.geometry.coordinates;
-    const kind = p.properties.kind;
-    const icon = L.divIcon({ className: "", html: poiHtml(kind), iconSize: [24, 24], iconAnchor: [12, 12] });
+    const icon = L.divIcon({ className: "", html: poiHtml(p.properties.kind), iconSize: [24, 24], iconAnchor: [12, 12] });
     p.marker = L.marker([lat, lng], { icon, title: p.properties.name, riseOnHover: true })
       .bindTooltip(escapeHtml(p.properties.name), { direction: "top", offset: [0, -12], className: "poi-tip" })
-      .addTo(poiLayers[kind]);
+      .addTo(map);
   });
 }
 
@@ -494,17 +283,21 @@ async function boot() {
   tdpExtra = await fetch("data/tdp-extra.json", { cache: "no-store" }).then((r) => r.json()).catch(() => ({}));
 
   const ward = await fetchDongDaWard().catch(() => null);
-  if (ward) wardLayer = L.geoJSON(ward, { interactive: false, style: { opacity: 0, fillOpacity: 0 } });
+  if (ward) {
+    wardLayer = L.geoJSON(ward, {
+      interactive: false,
+      style: { color: "#10b981", weight: 3, opacity: 0.9, fillColor: "#a7f3d0", fillOpacity: 0.25 },
+    }).addTo(map);
+  }
   const dongDaBounds = wardLayer?.getBounds();
 
-  const count = await loadTdpLayer().catch(() => 0);
-  el.cityUnits.textContent = count ? `${count} tổ dân phố · Đống Đa` : "Phường Đống Đa";
+  await loadTdpLayer().catch(() => 0);
   await loadPois();
 
   map.invalidateSize();
   // Fit the TDP polygons themselves (tighter than the ward outline in hanoi.geojson)
   const bounds = (geoLayer?.getBounds().isValid() && geoLayer.getBounds()) || (dongDaBounds?.isValid() && dongDaBounds);
-  if (bounds) map.fitBounds(bounds, { ...mapPadding(), maxZoom: 17, animate: false });
+  if (bounds) map.fitBounds(bounds, { ...mapPadding(false), maxZoom: 17, animate: false });
 
   const selectFromHash = () => {
     const hash = location.hash.match(/^#tdp-(.+)$/);
@@ -541,5 +334,5 @@ async function boot() {
 
 boot().catch((err) => {
   console.error(err);
-  el.list.innerHTML = `<li style="color:var(--mute)">Không tải được dữ liệu. Chạy static server từ thư mục gốc project.</li>`;
+  toast("Không tải được dữ liệu. Chạy static server từ thư mục gốc project.");
 });
