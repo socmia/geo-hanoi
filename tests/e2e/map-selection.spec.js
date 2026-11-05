@@ -152,7 +152,8 @@ test.describe("map page", () => {
     await page.goto("/to.html?n=3");
     await expect(page.locator("h1")).toContainText("Tổ dân phố số 3");
     await expect(page.locator("#mini-map .leaflet-overlay-pane path").first()).toBeVisible();
-    await expect(page.locator(".col-side .card").first()).toContainText("Diện tích");
+    await expect(page.locator(".stats")).toContainText("Diện tích");
+    await expect(page.locator(".stats")).toContainText("Hộ dân");
     await expect(page.locator("#places .place").first()).toBeVisible();
     await page.goto("/to.html?n=2"); // tổ without POIs still shows the section
     await expect(page.locator("#places")).toContainText("Chưa ghi nhận");

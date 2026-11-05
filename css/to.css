@@ -89,6 +89,13 @@ svg { display: block; }
 .row-text small { font-size: 12px; line-height: 16px; color: var(--mute); }
 .row-text .muted { line-height: 20px; }
 
+/* stats */
+.stats { display: flex; flex-wrap: wrap; gap: 12px 40px; padding: 16px 0; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); }
+.stat { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.stat strong { font-size: 22px; line-height: 28px; font-weight: 500; }
+.stat strong em { font-size: 14px; line-height: 28px; font-style: normal; font-weight: 400; color: var(--mute); }
+.stat span { font-size: 12px; line-height: 16px; color: var(--mute); }
+
 /* key/value */
 .kv { display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
 .kv div { display: flex; justify-content: space-between; gap: 16px; }

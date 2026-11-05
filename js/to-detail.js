@@ -150,14 +150,15 @@ async function boot() {
   );
   const sections = Array.isArray(more.sections) ? more.sections.filter((s) => s && (s.title || s.body)) : [];
   const fmt = (v) => Number(v).toLocaleString("vi-VN");
-  const counts = more.ho_dan != null && more.nhan_khau != null ? `${fmt(more.ho_dan)} hộ dân · ${fmt(more.nhan_khau)} nhân khẩu` : "";
+  const stat = (v, label) => `<div class="stat"><strong>${v == null || v === "" ? '<em>Đang cập nhật</em>' : escapeHtml(String(v))}</strong><span>${label}</span></div>`;
+  const area = areaM2(feature.geometry);
+  const statsHtml = stat(area ? formatArea(area) : null, "Diện tích") + stat(more.ho_dan != null ? fmt(more.ho_dan) : null, "Hộ dân") + stat(more.nhan_khau != null ? fmt(more.nhan_khau) : null, "Nhân khẩu");
   const intro = more.gioi_thieu || more.mo_ta_dai || extra._chung?.gioi_thieu;
   const { ubnd, tiep_cong_dan: tcd } = extra._phuong || {};
   const org = (o, extraHtml = "") => o
     ? `<div class="row">${svg("pin")}<span class="row-text"><span>${escapeHtml(o.ten || "")}</span><small>${escapeHtml(o.dia_chi || "")}</small>${(o.dien_thoai || []).map(phoneLink).join("")}${extraHtml}</span></div>`
     : "";
   const introHtml = [
-    counts ? `<strong>${escapeHtml(counts)}</strong>` : "",
     intro ? escapeHtml(intro) : "",
     ...sections.map((s) => `<h3>${escapeHtml(s.title || "")}</h3>${escapeHtml(s.body || "")}`),
   ].filter(Boolean).join("\n");
@@ -174,6 +175,7 @@ async function boot() {
             <h1>${escapeHtml(name)}</h1>
             <p class="hero-sub">Tổ dân phố · Phường ${escapeHtml(props.phuong || "Đống Đa")}, Hà Nội</p>
           </div>
+          <div class="stats">${statsHtml}</div>
           <div class="actions">
             <a class="btn btn-primary" href="${escapeHtml(mapHref)}">${svg("pin")}Xem trên bản đồ</a>
             <button type="button" class="btn" id="share-btn">${svg("share")}Chia sẻ</button>
@@ -201,15 +203,6 @@ async function boot() {
     </div>
 
     <aside class="col-side">
-      <section class="card">
-        <h2>Thông tin</h2>
-        <div class="kv">
-          <div><span>Phường</span><strong>${escapeHtml(props.phuong || "Đống Đa")}</strong></div>
-          ${props.mo_ta ? `<div><span>Gộp từ</span><strong>${escapeHtml(props.mo_ta)}</strong></div>` : ""}
-          <div><span>Diện tích</span><strong>${formatArea(areaM2(feature.geometry))}</strong></div>
-          <div><span>Địa điểm trong tổ</span><strong>${inTdp.length}</strong></div>        </div>
-      </section>
-
       <section class="card places" id="places">
         <h2>Địa điểm trong tổ</h2>
         ${inTdp.length
