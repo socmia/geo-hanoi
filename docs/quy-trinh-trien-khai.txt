@@ -1,0 +1,34 @@
+Quy trình triển khai Bản đồ số 23 tổ dân phố – Phường Đống Đa gồm 5 bước, chỉ ghi nhận những gì đã có trong mã nguồn và dữ liệu.
+
+BƯỚC 1: Chuẩn bị pháp lý, xác định yêu cầu và lựa chọn công nghệ
+- Mục tiêu: xem ranh giới, số liệu và liên hệ từng tổ trên điện thoại và máy tính, không cần cài đặt.
+- Dữ liệu: 23 tổ dân phố và 42 địa điểm công cộng (22 trường học, 7 cơ sở y tế, 13 cơ quan).
+- Công nghệ: trang web tĩnh (HTML/CSS/JavaScript), Leaflet 1.9.4, bản đồ nền Esri; không cần máy chủ riêng.
+- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: căn cứ pháp lý, gồm số, ngày và nội dung quyết định của UBND phường]
+- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: đơn vị quản lý, vận hành ứng dụng]
+
+BƯỚC 2: Thu thập dữ liệu
+- Ranh giới 23 tổ nhập từ Google My Maps "Bản đồ đống đa"; viền phường có sẵn trong dữ liệu.
+- Địa điểm công cộng lấy từ OpenStreetMap (Overpass API), chỉ giữ điểm nằm trong ranh giới tổ.
+- Số hộ, nhân khẩu và liên hệ theo tổ do phường cung cấp: toàn phường 24.639 hộ, 82.435 nhân khẩu.
+- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: cơ quan cung cấp và thời điểm chốt số liệu hộ dân, nhân khẩu]
+
+BƯỚC 3: Xử lý, chuẩn hóa và xây dựng cơ sở dữ liệu
+- Dữ liệu lưu thành tệp GeoJSON/JSON trong thư mục data/, không cần cơ sở dữ liệu máy chủ.
+- Làm sạch: loại bản trùng, đóng vòng đa giác, gán số tổ, gắn từng địa điểm vào tổ chứa nó.
+- Diện tích tính trong trình duyệt từ ranh giới, hiển thị "≈ N ha" và chỉ là số ước tính.
+- Chỉ lưu số liệu tổng hợp cấp tổ, không có dữ liệu cá nhân; trường chưa có dữ liệu ghi "Đang cập nhật".
+
+BƯỚC 4: Phát triển phần mềm và giao diện
+- Hai trang tĩnh: bản đồ (index.html) và chi tiết từng tổ (to.html).
+- Trang bản đồ: bộ lọc, lớp vệ tinh, lấy tọa độ, mỗi tổ một màu; thẻ thông tin có nút gọi và chia sẻ.
+- Trang chi tiết: diện tích, số hộ, nhân khẩu, liên hệ UBND phường và Ban Tiếp công dân, danh sách địa điểm.
+- Giao diện thích ứng máy tính và điện thoại; mọi người dùng xem cùng một nội dung công khai.
+- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: xác nhận được phép công bố số điện thoại Bí thư, Tổ trưởng, Cảnh sát khu vực]
+
+BƯỚC 5: Thử nghiệm và đưa vào vận hành
+- Kiểm thử: 14 kịch bản Playwright (npx playwright test) kiểm tra 23 tổ, chọn tổ, địa điểm, bố cục máy tính và điện thoại.
+- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kết quả chạy thử tại tổ dân phố và ý kiến góp ý của người dùng]
+- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kế hoạch hoặc kết quả tập huấn, tài liệu hướng dẫn sử dụng]
+- Cập nhật: sửa dữ liệu, chạy lại kiểm thử rồi đẩy lên main; GitHub Pages (https://socmia.github.io/geo-hanoi/) tự triển khai.
+- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: quy chế cập nhật dữ liệu (ai đề xuất, ai duyệt, tần suất)]
