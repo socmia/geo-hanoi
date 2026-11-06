@@ -1,34 +1,49 @@
-Quy trình triển khai Bản đồ số 23 tổ dân phố – Phường Đống Đa gồm 5 bước, chỉ ghi nhận những gì đã có trong mã nguồn và dữ liệu.
+Quy trình triển khai Bản đồ số 23 tổ dân phố – Phường Đống Đa gồm 5 bước.
 
 BƯỚC 1: Chuẩn bị pháp lý, xác định yêu cầu và lựa chọn công nghệ
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: căn cứ pháp lý, gồm số, ngày và nội dung quyết định của UBND phường]
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: đơn vị quản lý, vận hành ứng dụng; người giữ quyền quản trị các tài khoản GitHub và Google Sites]
 - Mục tiêu: xem ranh giới, số liệu và liên hệ từng tổ trên điện thoại và máy tính, không cần cài đặt.
 - Dữ liệu: 23 tổ dân phố và 42 địa điểm công cộng (22 trường học, 7 cơ sở y tế, 13 cơ quan).
 - Công nghệ: trang web tĩnh (HTML/CSS/JavaScript), Leaflet 1.9.4, bản đồ nền Esri; không cần máy chủ riêng.
-- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: căn cứ pháp lý, gồm số, ngày và nội dung quyết định của UBND phường]
-- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: đơn vị quản lý, vận hành ứng dụng]
+- Dịch vụ bên ngoài sử dụng: GitHub Pages (lưu trữ), Google Sites (trang nhúng), Esri (bản đồ nền, ảnh vệ tinh), unpkg (thư viện Leaflet), Google Fonts (phông chữ).
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: thời gian thực hiện, nhân sự tham gia, kinh phí (hiện không phát sinh chi phí hạ tầng)]
 
 BƯỚC 2: Thu thập dữ liệu
-- Ranh giới 23 tổ nhập từ Google My Maps "Bản đồ đống đa"; viền phường có sẵn trong dữ liệu.
-- Địa điểm công cộng lấy từ OpenStreetMap (Overpass API), chỉ giữ điểm nằm trong ranh giới tổ.
-- Số hộ, nhân khẩu và liên hệ theo tổ do phường cung cấp: toàn phường 24.639 hộ, 82.435 nhân khẩu.
-- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: cơ quan cung cấp và thời điểm chốt số liệu hộ dân, nhân khẩu]
+- Ranh giới 23 tổ nhập từ Google My Maps "Bản đồ đống đa".
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: đơn vị và thời điểm lập bản đồ Google My Maps nguồn]
+- Viền ranh giới phường lấy từ tệp data/hanoi.geojson của dự án.
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: nguồn gốc dữ liệu viền ranh giới phường]
+- Địa điểm công cộng lấy từ OpenStreetMap (Overpass API) ngày 04/11/2026, chỉ giữ điểm nằm trong ranh giới tổ; dữ liệu OSM có thể thiếu hoặc chưa cập nhật.
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kết quả phường rà soát danh sách 42 địa điểm]
+- Số hộ, nhân khẩu và liên hệ theo tổ do phường cung cấp: toàn phường 24.639 hộ, 82.435 nhân khẩu (tổng của 23 tổ).
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: cơ quan cung cấp và thời điểm chốt số liệu hộ dân, nhân khẩu]
 
 BƯỚC 3: Xử lý, chuẩn hóa và xây dựng cơ sở dữ liệu
 - Dữ liệu lưu thành tệp GeoJSON/JSON trong thư mục data/, không cần cơ sở dữ liệu máy chủ.
-- Làm sạch: loại bản trùng, đóng vòng đa giác, gán số tổ, gắn từng địa điểm vào tổ chứa nó.
+- Làm sạch: loại bản ghi trùng, đóng vòng đa giác, gán số tổ, gắn từng địa điểm vào tổ chứa nó.
 - Diện tích tính trong trình duyệt từ ranh giới, hiển thị "≈ N ha" và chỉ là số ước tính.
-- Chỉ lưu số liệu tổng hợp cấp tổ, không có dữ liệu cá nhân; trường chưa có dữ liệu ghi "Đang cập nhật".
+- Ranh giới tổ không phải bản đồ địa chính, chỉ mang tính tham khảo, không dùng làm căn cứ pháp lý.
+- Dữ liệu cá nhân: có lưu và công bố họ tên, số điện thoại của Bí thư chi bộ, Tổ trưởng và Cảnh sát khu vực từng tổ; không lưu dữ liệu cá nhân của người dân, số hộ và nhân khẩu chỉ ở mức tổng hợp cấp tổ.
+- Trường chưa có dữ liệu hiển thị "Đang cập nhật".
 
 BƯỚC 4: Phát triển phần mềm và giao diện
-- Hai trang tĩnh: bản đồ (index.html) và chi tiết từng tổ (to.html).
-- Trang bản đồ: bộ lọc, lớp vệ tinh, lấy tọa độ, mỗi tổ một màu; thẻ thông tin có nút gọi và chia sẻ.
-- Trang chi tiết: diện tích, số hộ, nhân khẩu, liên hệ UBND phường và Ban Tiếp công dân, danh sách địa điểm.
+- Hai trang: bản đồ và chi tiết từng tổ.
+- Trang bản đồ: bộ lọc, lớp vệ tinh, lấy tọa độ, mỗi tổ một màu; thông tin vắn tắt và chia sẻ.
+- Trang chi tiết: diện tích, số hộ, nhân khẩu, thông tin liên hệ UBND phường và Ban Tiếp công dân, danh sách địa điểm.
 - Giao diện thích ứng máy tính và điện thoại; mọi người dùng xem cùng một nội dung công khai.
-- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: xác nhận được phép công bố số điện thoại Bí thư, Tổ trưởng, Cảnh sát khu vực]
+- Ghi nguồn bản đồ nền (Esri) trên bản đồ; nguồn OpenStreetMap cho địa điểm công cộng cần được ghi công theo giấy phép ODbL.
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: văn bản đồng ý của từng cán bộ hoặc chỉ đạo của phường cho phép công bố họ tên, số điện thoại Bí thư, Tổ trưởng, Cảnh sát khu vực (theo Nghị định 13/2023/NĐ-CP)]
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: quyết định có hiển thị câu "ranh giới chỉ mang tính tham khảo" trên giao diện hay không]
 
 BƯỚC 5: Thử nghiệm và đưa vào vận hành
-- Kiểm thử: 14 kịch bản Playwright (npx playwright test) kiểm tra 23 tổ, chọn tổ, địa điểm, bố cục máy tính và điện thoại.
-- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kết quả chạy thử tại tổ dân phố và ý kiến góp ý của người dùng]
-- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kế hoạch hoặc kết quả tập huấn, tài liệu hướng dẫn sử dụng]
-- Cập nhật: sửa dữ liệu, chạy lại kiểm thử rồi đẩy lên main; GitHub Pages (https://socmia.github.io/geo-hanoi/) tự triển khai.
-- 👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: quy chế cập nhật dữ liệu (ai đề xuất, ai duyệt, tần suất)]
+- Kiểm thử: 14 kịch bản test tự động kiểm tra 23 tổ, chọn tổ, địa điểm, bố cục máy tính và điện thoại.
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kết quả chạy thử tại tổ dân phố và ý kiến góp ý của người dùng]
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kế hoạch hoặc kết quả tập huấn, tài liệu hướng dẫn sử dụng]
+- Địa chỉ truy cập: https://sites.google.com/view/phuongdongda (nhúng toàn trang từ https://socmia.github.io/geo-hanoi/).
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: ngày chính thức đưa vào vận hành]
+- Cập nhật: sửa tệp dữ liệu, chạy lại kiểm thử, đẩy mã lên nhánh main; GitHub Pages tự triển khai và trang Google Sites tự cập nhật theo.
+- Sao lưu: toàn bộ mã nguồn và dữ liệu lưu trong kho Git, mỗi lần sửa đều có lịch sử và khôi phục được.
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: quy chế cập nhật dữ liệu (ai đề xuất, ai duyệt, tần suất)]
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: đầu mối tiếp nhận báo sai dữ liệu và góp ý của người dân]
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: phương án khi một dịch vụ bên ngoài ngừng hoạt động]

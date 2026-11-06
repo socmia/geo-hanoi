@@ -23,7 +23,7 @@ Dữ liệu trong ứng dụng đến từ các nguồn có sẵn, được nh�
 	👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: đơn vị và thời điểm lập bản đồ Google My Maps nguồn]
 • Viền ranh giới phường: lấy từ data/hanoi.geojson (sinh bằng scripts/build-geojson.py).
 • Địa điểm công cộng: lấy từ OpenStreetMap qua Overpass API bằng scripts/fetch_poi.py, chỉ giữ các điểm nằm trong ranh giới tổ.
-• Số liệu và liên hệ theo tổ: do phường cung cấp, nhập vào data/tdp-extra.json; toàn phường có 24.639 hộ dân và 82.435 nhân khẩu (tổng của 23 tổ). Ứng dụng chỉ lưu số liệu tổng hợp cấp tổ, không có dữ liệu cá nhân.
+• Số liệu và liên hệ theo tổ: do phường cung cấp, nhập vào data/tdp-extra.json; toàn phường có 24.639 hộ dân và 82.435 nhân khẩu (tổng của 23 tổ). Số hộ và nhân khẩu chỉ ở mức tổng hợp cấp tổ; không lưu dữ liệu cá nhân của người dân. Họ tên và số điện thoại của Bí thư, Tổ trưởng, Cảnh sát khu vực là dữ liệu cá nhân (Nghị định 13/2023/NĐ-CP) và đang được công bố.
 	👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: cơ quan cung cấp và thời điểm chốt số liệu hộ dân, nhân khẩu]
 
 BƯỚC 3: Xử lý, chuẩn hóa và xây dựng cơ sở dữ liệu

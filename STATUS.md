@@ -13,6 +13,7 @@ Read this first, then `docs/STATUS.md` for the living detail.
 - POI markers and polygon labels hide below zoom 15 (`.pois-far`, `.labels-far`).
 - Bump the `?v=` query on `app.js` / `map.css` in `index.html` after edits (Pages caches).
 - Tests read `window.__GEO_TEST__` and IDs `#tdp-select`, `#info`, `#info-title`, `#info-detail`, `#info-close`, `#clear-filter`, `#layers-btn`, `#coord-btn`.
+- Hand off only after a fresh green `npx playwright test` in the same session (never leave verification to the user).
 
 ## Run
 ```bash

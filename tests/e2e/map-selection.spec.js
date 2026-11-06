@@ -155,6 +155,13 @@ test.describe("map page", () => {
     await expect(page.locator(".stats")).toContainText("Diện tích");
     await expect(page.locator(".stats")).toContainText("Hộ dân");
     await expect(page.locator("#places .place").first()).toBeVisible();
+    // Contact block: 2 columns — Liên hệ | UBND phường
+    const contactCols = page.locator(".contact-grid > .card.rows");
+    await expect(contactCols).toHaveCount(2);
+    await expect(contactCols.nth(0).locator("h2")).toHaveText("Liên hệ");
+    await expect(contactCols.nth(1).locator("h2")).toHaveText("UBND phường");
+    await expect(contactCols.nth(0)).toContainText("Bí thư chi bộ");
+    await expect(contactCols.nth(1)).toContainText("UBND");
     await page.goto("/to.html?n=2"); // tổ without POIs still shows the section
     await expect(page.locator("#places")).toContainText("Chưa ghi nhận");
     await page.goto("/to.html?n=3");

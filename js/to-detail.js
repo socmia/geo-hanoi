@@ -188,18 +188,23 @@ async function boot() {
         ${introHtml ? `<div class="prose">${introHtml}</div>` : '<p class="muted">Thông tin giới thiệu về tổ đang được cập nhật.</p>'}
       </section>
 
-      <section class="card rows">
-        <h2>Liên hệ</h2>
-        ${personRow(more.bi_thu, "Bí thư chi bộ")}
-        ${personRow(more.to_truong, "Tổ trưởng")}
-        ${personRow(more.cskv, "Cảnh sát khu vực")}
-        ${contactRow("home", more.dia_diem_sinh_hoat, "Nhà sinh hoạt cộng đồng")}
-        ${more.lien_he ? contactRow("phone", more.lien_he, "Liên hệ") : ""}
-        ${ubnd || tcd ? '<h3 class="sub">UBND phường</h3>' : ""}
-        ${org(ubnd, ubnd?.email ? `<a class="lnk" href="mailto:${escapeHtml(ubnd.email)}">${escapeHtml(ubnd.email)}</a>` : "")}
-        ${org(tcd)}
-        ${more.ghi_chu ? `<div class="row">${svg("note")}<span class="row-text">${escapeHtml(more.ghi_chu)}<small>Ghi chú</small></span></div>` : ""}
-      </section>
+      <div class="contact-grid">
+        <section class="card rows">
+          <h2>Liên hệ</h2>
+          ${personRow(more.bi_thu, "Bí thư chi bộ")}
+          ${personRow(more.to_truong, "Tổ trưởng")}
+          ${personRow(more.cskv, "Cảnh sát khu vực")}
+          ${contactRow("home", more.dia_diem_sinh_hoat, "Nhà sinh hoạt cộng đồng")}
+          ${more.lien_he ? contactRow("phone", more.lien_he, "Liên hệ") : ""}
+          ${more.ghi_chu ? `<div class="row">${svg("note")}<span class="row-text">${escapeHtml(more.ghi_chu)}<small>Ghi chú</small></span></div>` : ""}
+        </section>
+        <section class="card rows">
+          <h2>UBND phường</h2>
+          ${org(ubnd, ubnd?.email ? `<a class="lnk" href="mailto:${escapeHtml(ubnd.email)}">${escapeHtml(ubnd.email)}</a>` : "")}
+          ${org(tcd)}
+          ${!(ubnd || tcd) ? '<p class="muted pad">Thông tin đang được cập nhật.</p>' : ""}
+        </section>
+      </div>
     </div>
 
     <aside class="col-side">
