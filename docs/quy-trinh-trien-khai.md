@@ -9,11 +9,11 @@ Bước này đặt nền móng cho kiến trúc của ứng dụng bản đồ 
 • Mục tiêu: Xây dựng bản đồ số 23 tổ dân phố của phường Đống Đa để xem ranh giới, số liệu và thông tin liên hệ của từng tổ, dùng được trên điện thoại và máy tính mà không cần cài đặt.
 • Các lớp dữ liệu đang quản lý:
 	• Ranh giới 23 tổ dân phố và đường viền ranh giới phường.
-	• 42 địa điểm công cộng (22 trường học, 7 cơ sở y tế, 13 cơ quan/công sở), gắn với tổ nơi điểm đó nằm.
+	• 68 địa điểm gắn với tổ nơi điểm đó nằm: 23 nhà sinh hoạt cộng đồng (vị trí gần đúng theo địa chỉ), 20 trường học, 6 cơ sở y tế, 7 công sở, 10 đình/chùa/đền/nhà thờ, 1 di tích (Gò Đống Đa), 1 cơ sở chăm sóc người cao tuổi.
 	• Thông tin quản lý theo tổ: số hộ dân, số nhân khẩu, nhà sinh hoạt cộng đồng, Bí thư chi bộ, Tổ trưởng, Cảnh sát khu vực; thông tin liên hệ UBND phường và Ban Tiếp công dân.
 • Công nghệ đã chọn:
 	• Trang web tĩnh (HTML/CSS/JavaScript), thư viện bản đồ Leaflet 1.9.4, phông chữ Roboto; không có bước biên dịch và không có máy chủ riêng.
-	• Bản đồ nền Esri World Street Map (mặc định) và ảnh vệ tinh Esri World Imagery; không sử dụng ô bản đồ của Google.
+	• Bản đồ nền vector OpenFreeMap (MapLibre GL, dữ liệu OpenStreetMap), đã ẩn nhãn địa danh và điểm quan tâm để không hiện tên phường, quận cũ; ảnh vệ tinh Esri World Imagery; không sử dụng ô bản đồ của Google.
 	• Công bố qua GitHub Pages (https://socmia.github.io/geo-hanoi/) và nhúng vào Google Sites của phường (https://sites.google.com/view/phuongdongda).
 
 BƯỚC 2: Thu thập dữ liệu
@@ -22,7 +22,7 @@ Dữ liệu trong ứng dụng đến từ các nguồn có sẵn, được nh�
 • Ranh giới tổ dân phố: nhập từ bản đồ Google My Maps "Bản đồ đống đa" bằng scripts/import_mymaps_tdp.py (tải KML, giữ các đối tượng có tên "Tổ dân phố").
 	👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: đơn vị và thời điểm lập bản đồ Google My Maps nguồn]
 • Viền ranh giới phường: lấy từ data/hanoi.geojson (sinh bằng scripts/build-geojson.py).
-• Địa điểm công cộng: lấy từ OpenStreetMap qua Overpass API bằng scripts/fetch_poi.py, chỉ giữ các điểm nằm trong ranh giới tổ.
+• Địa điểm công cộng: lấy từ OpenStreetMap qua Overpass API bằng scripts/fetch_poi.py, chỉ giữ các điểm nằm trong ranh giới tổ; sau đó áp dữ liệu rà soát của phường trong data/poi-curation.json (bỏ, đổi tên, thêm điểm) bằng scripts/curate_poi.py.
 • Số liệu và liên hệ theo tổ: do phường cung cấp, nhập vào data/tdp-extra.json; toàn phường có 24.639 hộ dân và 82.435 nhân khẩu (tổng của 23 tổ). Số hộ và nhân khẩu chỉ ở mức tổng hợp cấp tổ; không lưu dữ liệu cá nhân của người dân. Họ tên và số điện thoại của Bí thư, Tổ trưởng, Cảnh sát khu vực là dữ liệu cá nhân (Nghị định 13/2023/NĐ-CP) và đang được công bố.
 	👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: cơ quan cung cấp và thời điểm chốt số liệu hộ dân, nhân khẩu]
 
@@ -48,7 +48,7 @@ Giao diện gồm hai trang web tĩnh: trang bản đồ (index.html, css/map.cs
 
 BƯỚC 5: Thử nghiệm và đưa vào vận hành
 
-• Kiểm thử tự động: 14 kịch bản Playwright (npx playwright test, tests/e2e/map-selection.spec.js) kiểm tra tải đủ 23 tổ, vị trí khởi tạo, màu và nhãn từng tổ, chọn tổ và thẻ thông tin, liên kết điện thoại khớp tdp-extra.json, liên kết trực tiếp #tdp-N, chuyển lớp vệ tinh, lấy tọa độ, hiển thị địa điểm, trang chi tiết, bố cục máy tính và điện thoại.
+• Kiểm thử tự động: 16 kịch bản Playwright (npx playwright test, tests/e2e/map-selection.spec.js) kiểm tra tải đủ 23 tổ, vị trí khởi tạo, màu và nhãn từng tổ, chọn tổ và thẻ thông tin, liên kết điện thoại khớp tdp-extra.json, liên kết trực tiếp #tdp-N, chuyển lớp vệ tinh, lấy tọa độ, hiển thị địa điểm, trang chi tiết, bố cục máy tính và điện thoại.
 	👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kết quả chạy thử tại tổ dân phố và ý kiến góp ý của người dùng]
 	👉 [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kế hoạch hoặc kết quả tập huấn, tài liệu hướng dẫn sử dụng]
 • Triển khai: đẩy mã lên nhánh main, quy trình GitHub Actions (.github/workflows/pages.yml) tự triển khai lên GitHub Pages; trang Google Sites nhúng tự cập nhật theo.

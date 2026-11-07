@@ -15,6 +15,10 @@
   --poi-school: #e37400;
   --poi-health: #c5221f;
   --poi-office: #5f6368;
+  --poi-community: #1a73e8;
+  --poi-worship: #6d4c41;
+  --poi-heritage: #00796b;
+  --poi-social: #d81b60;
   color-scheme: light;
 }
 
@@ -117,6 +121,13 @@ svg { display: block; }
 .place { display: flex; align-items: center; gap: 12px; padding: 8px 0; font-size: 14px; }
 .place-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .place-text small { font-size: 12px; color: var(--mute); }
+.place-meta { display: flex; flex-direction: column; gap: 1px; font-size: 12px; line-height: 18px; color: var(--ink-2); }
+.place-meta:empty { display: none; }
+.place-meta a { color: var(--accent); text-decoration: none; overflow-wrap: anywhere; }
+.place-meta a:hover { text-decoration: underline; }
+.place-meta em { color: var(--mute); }
+.place { align-items: flex-start; }
+.place .poi { margin-top: 2px; }
 .poi {
   width: 24px; height: 24px; border-radius: 50%; flex: none; display: grid; place-items: center;
 }
@@ -124,6 +135,10 @@ svg { display: block; }
 .poi--school { background: var(--poi-school); }
 .poi--health { background: var(--poi-health); }
 .poi--office { background: var(--poi-office); }
+.poi--community { background: var(--poi-community); }
+.poi--worship { background: var(--poi-worship); }
+.poi--heritage { background: var(--poi-heritage); }
+.poi--social { background: var(--poi-social); }
 .map-poi .poi { border: 2px solid #fff; }
 
 .toast {

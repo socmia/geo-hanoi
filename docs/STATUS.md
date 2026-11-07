@@ -1,11 +1,12 @@
 # STATUS — detail
 
-_Last updated: 2026-11-06_
+_Last updated: 2026-11-07_
 
 ## ✅ Done
+- 2026-11-07: Ward feedback applied. Title "BẢN ĐỒ SỐ TỔ DÂN PHỐ". POIs curated via `data/poi-curation.json` + `scripts/curate_poi.py` (9 removed, 7 renamed incl. "(Tư thục)", added 23 nhà sinh hoạt cộng đồng (approx, from addresses), 10 đình/chùa/đền/nhà thờ from OSM, Gò Đống Đa (with phone/email/web), elderly day-care at 194 Nguyễn Lương Bằng) → 68 POIs, 7 kinds in shared `js/poi-kinds.js`. POI click popup with address/contact; legend lists kinds (collapsed on mobile). Tổ labels placed by `js/polylabel.js` (Tổ 18 label was inside Tổ 19). Basemap → OpenFreeMap vector (`js/basemap.js`) on both pages with place/POI labels stripped and Vietnamese street names — removes old ward/quận names. 16 e2e tests.
 - 2026-11-06: Detail page contact block split into 2 columns — **Liên hệ** (cán bộ tổ + nhà sinh hoạt) | **UBND phường** (UBND + Tiếp công dân). Stacks to 1 column below 800px. `css/to.css?v=5`, `js/to-detail.js?v=32`. e2e asserts both column headings. Rule: hand off only after fresh `npx playwright test` green.
 - 2026-11-05: Map page redesigned to match bandotdp.thanhkhe.com.vn ("Option A"): white top bar (blue logo, Phường / Tổ dân phố selects, Xóa lọc, Lớp dữ liệu, Lấy tọa độ), full-bleed map, purple polygons with white "Tổ N" tags (shown at zoom >= 15), legend card, floating info card (top-right desktop / bottom card mobile) with contacts, "Xem chi tiết" and "Chia sẻ". Left panel, search, chips, drawer removed. Basemap: Esri World Street Map (CARTO Voyager raster now needs an API key) with Esri imagery as alternate. "Chụp ảnh" button deliberately not built (no dependable static-page screenshot).
-- `scripts/fetch_poi.py` → `data/poi.geojson`: 42 POIs (22 school, 7 health, 13 office) inside the TDP polygons, deduped by kind+name.
+- `scripts/fetch_poi.py` → `data/poi.geojson`: OSM schools/health/offices inside the TDP polygons, deduped by kind+name, then curated (see 2026-11-07).
 - Detail page `to.html` redesigned to match (approved mock): red header, static mini Leaflet map with POIs, Giới thiệu / Liên hệ cards, side column Thông tin (area computed from polygon) / Địa điểm trong tổ (always shown). Own stylesheet `css/to.css`.
 - Removed "Bản đồ gốc" action, "Tổ lân cận" sections and the "Số tổ" info row (user request).
 - Embedded in Google Sites as a full-page embed: https://sites.google.com/view/phuongdongda (auto-updates on push).
@@ -16,11 +17,13 @@ _Last updated: 2026-11-06_
 - Nothing in flight.
 
 ## ⚠️ Known Issues
-- OSM POI names still carry pre-merger ward names (e.g. "UBND phường Nam Đồng") — that is OSM data, not ours.
+- Nhà sinh hoạt cộng đồng positions are approximate (street-level). Address mismatches: Tổ 7 "48 ngõ 178 Tây Sơn" (ngõ 178 Tây Sơn is in Tổ 9; placed on ngõ 178 Thái Hà), Tổ 23 "97 ngõ 167 Thái Thịnh" (not inside Tổ 23; placed at its centre). Await exact coordinates from the ward.
+- Gò Đống Đa park lies in the Tổ 8 polygon; point placed at the Đặng Tiến Đông entrance inside Tổ 9 per ward request.
+- Tổ 18 boundary has a thin spike toward the south-east (source data).
 - `css/app.css` is now unused (kept for reference); delete when sure.
 - `designs/` holds older static mocks (v1–v3), unused by the app.
 ## 🎯 Next Steps
-- Optionally curate `data/poi.geojson` by hand (add missing schools/offices, fix names).
+- Replace approximate nhà sinh hoạt coordinates once the ward sends them (`data/poi-curation.json`).
 
 ## 📜 Key Files
 - `index.html`, `css/map.css`, `js/app.js` — map page

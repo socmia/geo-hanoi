@@ -124,10 +124,52 @@ test.describe("map page", () => {
   test("Lớp dữ liệu toggles satellite and back", async ({ page }) => {
     await waitApp(page);
     await expect(page.locator("#layers-btn")).toHaveAttribute("aria-pressed", "false");
-    await expect(page.locator(".leaflet-tile-pane img").first()).toHaveAttribute("src", /World_Street_Map/);
+    // Street map is the OpenFreeMap vector style (canvas), with place/POI labels removed (old ward names)
+    await expect(page.locator(".leaflet-tile-pane canvas.maplibregl-canvas")).toBeVisible();
     await page.click("#layers-btn");
     await expect(page.locator("#layers-btn")).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator(".leaflet-tile-pane img").first()).toHaveAttribute("src", /World_Imagery/);
+    await page.click("#layers-btn");
+    await expect(page.locator(".leaflet-tile-pane canvas.maplibregl-canvas")).toBeVisible();
+    const layerIds = await page.evaluate(() => {
+      let found = null;
+      window.__GEO_TEST__.map.eachLayer((l) => { if (l.getMaplibreMap) found = l.getMaplibreMap().getStyle().layers; });
+      return found.map((l) => l["source-layer"] || "");
+    });
+    expect(layerIds).not.toContain("place");
+  });
+
+  test("every tổ label sits inside its own polygon (Tổ 18 no longer drifts into Tổ 19)", async ({ page }) => {
+    await waitApp(page);
+    const outside = await page.evaluate(() => {
+      const inRing = (x, y, r) => { let hit = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const [xi, yi] = r[i], [xj, yj] = r[j]; if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) hit = !hit; } return hit; };
+      const bad = [];
+      window.__GEO_TEST__.byKey.forEach((e) => {
+        const ll = e.layer.getTooltip().getLatLng();
+        const g = e.feature.geometry;
+        const polys = g.type === "MultiPolygon" ? g.coordinates : [g.coordinates];
+        if (!polys.some((p) => inRing(ll.lng, ll.lat, p[0]))) bad.push(e.props.to_dan_pho);
+      });
+      return bad;
+    });
+    expect(outside).toEqual([]);
+  });
+
+  test("curated POIs: old-ward offices removed, renames applied, one community house per tổ", async ({ page }) => {
+    await waitApp(page);
+    await page.waitForFunction(() => window.__GEO_TEST__.pois.length > 0);
+    const pois = await page.evaluate(() => window.__GEO_TEST__.pois.map((p) => p.properties));
+    const names = pois.map((p) => p.name);
+    for (const gone of ["UBND phường Thịnh Quang", "Đảng ủy - UBND phường Nam Đồng", "Công an phường Láng", "Kho bạc Nhà nước Đống Đa", "Trạm Y tế phường Ngã Tư Sở"]) {
+      expect(names).not.toContain(gone);
+    }
+    expect(names).toContain("Trường Mầm non Magic Star (Tư thục)");
+    expect(names).toContain("Trụ sở Ban Tiếp công dân phường Đống Đa");
+    expect(names).toContain("Gò Đống Đa");
+    const community = pois.filter((p) => p.kind === "community").map((p) => p.to_dan_pho).sort((a, b) => a - b);
+    expect(community).toEqual(Array.from({ length: 23 }, (_, i) => i + 1));
+    await expect(page.locator("#legend-list")).toContainText("Nhà sinh hoạt cộng đồng");
+    await expect(page.locator(".brand h1")).toHaveText("BẢN ĐỒ SỐ TỔ DÂN PHỐ");
   });
 
   test("Lấy tọa độ shows lat,lng toast after a map click", async ({ page }) => {
@@ -162,8 +204,10 @@ test.describe("map page", () => {
     await expect(contactCols.nth(1).locator("h2")).toHaveText("UBND phường");
     await expect(contactCols.nth(0)).toContainText("Bí thư chi bộ");
     await expect(contactCols.nth(1)).toContainText("UBND");
-    await page.goto("/to.html?n=2"); // tổ without POIs still shows the section
-    await expect(page.locator("#places")).toContainText("Chưa ghi nhận");
+    await page.goto("/to.html?n=9");
+    await expect(page.locator("#places")).toContainText("Nhà sinh hoạt cộng đồng Tổ dân phố 9");
+    await expect(page.locator("#places")).toContainText("Gò Đống Đa");
+    await expect(page.locator('#places a[href="https://godongda.vn"]')).toBeVisible();
     await page.goto("/to.html?n=3");
     await expect(page.locator(".brand-back")).toHaveAttribute("href", "index.html#tdp-3");
   });

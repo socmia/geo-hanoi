@@ -19,6 +19,10 @@
   --poi-school: #e37400;
   --poi-health: #c5221f;
   --poi-office: #5f6368;
+  --poi-community: #1a73e8;
+  --poi-worship: #6d4c41;
+  --poi-heritage: #00796b;
+  --poi-social: #d81b60;
   --shadow: 0 2px 8px rgba(15, 23, 42, 0.14);
   color-scheme: light;
 }
@@ -108,6 +112,10 @@ svg { display: block; }
 .poi--school { background: var(--poi-school); }
 .poi--health { background: var(--poi-health); }
 .poi--office { background: var(--poi-office); }
+.poi--community { background: var(--poi-community); }
+.poi--worship { background: var(--poi-worship); }
+.poi--heritage { background: var(--poi-heritage); }
+.poi--social { background: var(--poi-social); }
 .poi-tip { font: 500 13px Roboto, Arial, sans-serif; color: var(--ink); border: 1px solid var(--line); box-shadow: none; border-radius: 8px; padding: 4px 8px; }
 .me-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--brand); border: 3px solid #fff; outline: 1px solid var(--line); }
 
@@ -116,7 +124,20 @@ svg { display: block; }
   position: absolute; left: 12px; bottom: 24px; z-index: 900;
   background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); padding: 10px 14px;
 }
-.legend h2 { font-size: 12px; font-weight: 500; color: var(--mute); margin-bottom: 6px; }
+.legend summary { font-size: 12px; font-weight: 500; color: var(--mute); cursor: pointer; list-style: none; display: flex; align-items: center; gap: 6px; min-height: 24px; }
+.legend summary::-webkit-details-marker { display: none; }
+.legend summary::after { content: ""; width: 6px; height: 6px; border: solid var(--mute); border-width: 0 1.5px 1.5px 0; transform: rotate(-135deg); margin-left: auto; }
+.legend:not([open]) summary::after { transform: rotate(45deg); margin-top: -3px; }
+.legend[open] summary { margin-bottom: 6px; }
+.legend .poi { width: 18px; height: 18px; border-width: 0; flex: none; }
+.legend .poi svg { width: 11px; height: 11px; }
+/* POI popup: name, kind, address and contact links */
+.poi-pop .leaflet-popup-content-wrapper { border-radius: 8px; border: 1px solid var(--line); box-shadow: var(--shadow); }
+.poi-pop .leaflet-popup-content { margin: 10px 14px; font: 13px/18px Roboto, Arial, sans-serif; color: var(--ink); display: flex; flex-direction: column; gap: 3px; }
+.poi-pop strong { font-size: 14px; font-weight: 500; }
+.poi-pop small { color: var(--mute); font-size: 12px; }
+.poi-pop a { color: var(--brand-ink); overflow-wrap: anywhere; }
+.poi-pop em { color: var(--mute); font-size: 12px; }
 .legend ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .legend li { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .sw { width: 16px; height: 16px; border-radius: 3px; flex: none; border: 1px solid; }

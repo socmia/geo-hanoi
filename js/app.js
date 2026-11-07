@@ -1,5 +1,8 @@
 import { foldVi } from "./normalize.js";
 import { shareLink } from "./share.js";
+import { POI_KINDS, poiHtml, poiMetaHtml } from "./poi-kinds.js";
+import { polylabel } from "./polylabel.js";
+import { streetLayer } from "./basemap.js";
 
 const DONG_DA_MAXA = 922;
 const MOBILE_MQ = window.matchMedia("(max-width: 768px)");
@@ -34,10 +37,9 @@ let pois = [];
 
 const map = L.map("map", { zoomControl: false, maxZoom: 20, zoomSnap: 0.5, attributionControl: true }).setView([21.01, 105.825], 14);
 
-/* ---------- basemaps: Esri street map (default, Google-like) / Esri imagery ---------- */
-// CARTO Voyager raster tiles now answer with an "API KEY REQUIRED" watermark, so they are not used.
+/* ---------- basemaps: vector street map (js/basemap.js) / Esri imagery ---------- */
 const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services";
-const BASEMAPS = {
+const RASTER = {
   map: {
     url: `${ESRI}/World_Street_Map/MapServer/tile/{z}/{y}/{x}`,
     options: { maxZoom: 20, maxNativeZoom: 19, attribution: "Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, OpenStreetMap contributors" },
@@ -47,17 +49,22 @@ const BASEMAPS = {
     options: { maxZoom: 20, maxNativeZoom: 19, attribution: "Tiles &copy; Esri" },
   },
 };
+const rasterLayer = (mode) => L.tileLayer(RASTER[mode].url, RASTER[mode].options);
 let basemapMode = "map";
 let basemapLayer = null;
+let mountSeq = 0;
 
-function mountBasemap(mode) {
-  if (basemapLayer) map.removeLayer(basemapLayer);
-  basemapLayer = L.tileLayer(BASEMAPS[mode].url, BASEMAPS[mode].options).addTo(map);
-  basemapLayer.bringToBack();
+async function mountBasemap(mode) {
+  const seq = ++mountSeq;
   basemapMode = mode;
   const sat = mode === "sat";
   el.layersBtn.setAttribute("aria-pressed", String(sat));
   el.layersBtn.setAttribute("aria-label", sat ? "Chuyển sang bản đồ" : "Chuyển sang vệ tinh");
+  const layer = sat ? rasterLayer("sat") : await streetLayer(() => rasterLayer("map"));
+  if (seq !== mountSeq) return; // a newer toggle won
+  if (basemapLayer) map.removeLayer(basemapLayer);
+  basemapLayer = layer.addTo(map);
+  basemapLayer.bringToBack?.();
 }
 mountBasemap("map");
 el.layersBtn.addEventListener("click", () => mountBasemap(basemapMode === "map" ? "sat" : "map"));
@@ -91,12 +98,6 @@ const colorForTdp = (num, i = 0) => TDP_COLORS[((Number.isFinite(Number(num)) &&
 const baseStyle = (c) => ({ color: c, weight: 1.5, opacity: 1, fillColor: c, fillOpacity: 0.3, dashArray: null });
 const selectedStyle = (c) => ({ color: "#3b0764", weight: 3, opacity: 1, fillColor: c, fillOpacity: 0.55, dashArray: "8 6" });
 
-const POI_KINDS = {
-  school: '<path d="M3 10l9-4 9 4-9 4z"/><path d="M7 12v4c3 2 7 2 10 0v-4"/>',
-  health: '<path d="M12 5v14M5 12h14"/>',
-  office: '<path d="M6 20V4h12v16M10 8h1M13 8h1M10 12h1M13 12h1M11 20v-3h2v3"/>',
-};
-const poiHtml = (kind) => `<span class="poi poi--${kind}"><svg viewBox="0 0 24 24" aria-hidden="true">${POI_KINDS[kind]}</svg></span>`;
 
 /** Toast with an optional action button (e.g. copy). */
 function toast(msg, action) {
@@ -259,7 +260,20 @@ async function loadTdpLayer() {
       el.tdpSelect.add(opt);
     },
   }).addTo(map);
+  // Leaflet centres a polygon tooltip on the area centroid, which falls outside concave tổ (e.g. Tổ 18
+  // sat inside Tổ 19). Re-open each label at the interior point farthest from the edge instead.
+  byKey.forEach(({ feature, layer }) => {
+    const [x, y] = polylabel(largestPolygon(feature.geometry));
+    layer.openTooltip(L.latLng(y, x));
+  });
   return byKey.size;
+}
+
+/** Rings of the polygon with the largest outer ring (MultiPolygon → its main part). */
+function largestPolygon(geom) {
+  const polys = geom.type === "MultiPolygon" ? geom.coordinates : [geom.coordinates];
+  const area = (r) => Math.abs(r.reduce((a, [x1, y1], i) => { const [x2, y2] = r[(i + 1) % r.length]; return a + x1 * y2 - x2 * y1; }, 0));
+  return polys.reduce((best, p) => (area(p[0]) > area(best[0]) ? p : best));
 }
 
 async function loadPois() {
@@ -270,8 +284,23 @@ async function loadPois() {
     const icon = L.divIcon({ className: "", html: poiHtml(p.properties.kind), iconSize: [24, 24], iconAnchor: [12, 12] });
     p.marker = L.marker([lat, lng], { icon, title: p.properties.name, riseOnHover: true })
       .bindTooltip(escapeHtml(p.properties.name), { direction: "top", offset: [0, -12], className: "poi-tip" })
+      .bindPopup(poiPopupHtml(p.properties), { className: "poi-pop", offset: [0, -8], maxWidth: 280 })
       .addTo(map);
   });
+}
+
+function poiPopupHtml(props) {
+  return `<strong>${escapeHtml(props.name)}</strong><small>${POI_KINDS[props.kind].label}${props.to_dan_pho ? ` · Tổ dân phố ${props.to_dan_pho}` : ""}</small>${poiMetaHtml(props)}`;
+}
+
+function renderLegend() {
+  const list = document.getElementById("legend-list");
+  if (!list) return;
+  if (MOBILE_MQ.matches) document.getElementById("legend").open = false; // keep the map clear on phones
+  const present = new Set(pois.map((p) => p.properties.kind));
+  list.insertAdjacentHTML("beforeend", Object.entries(POI_KINDS)
+    .filter(([kind]) => present.has(kind))
+    .map(([kind, k]) => `<li>${poiHtml(kind)}${k.label}</li>`).join(""));
 }
 
 async function fetchDongDaWard() {
@@ -293,6 +322,7 @@ async function boot() {
 
   await loadTdpLayer().catch(() => 0);
   await loadPois();
+  renderLegend();
 
   map.invalidateSize();
   // Fit the TDP polygons themselves (tighter than the ward outline in hanoi.geojson)

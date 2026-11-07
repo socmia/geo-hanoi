@@ -1,0 +1,417 @@
+{
+ "_comment": "Hand curation applied on top of the OSM fetch by scripts/curate_poi.py (fetch_poi.py runs it too). remove/rename match the 'osm' id; add entries carry their own coordinates. approx=true marks positions placed from the street address, to be confirmed by the ward.",
+ "remove": [
+  {
+   "osm": "way/942107845",
+   "why": "TDP 3: Đảng ủy - UBND phường Nam Đồng (old ward)"
+  },
+  {
+   "osm": "way/1040730411",
+   "why": "TDP 5: Kho bạc Nhà nước Đống Đa"
+  },
+  {
+   "osm": "node/13136496645",
+   "why": "TDP 6: Đảng ủy - UBND phường Ô Chợ Dừa (old ward)"
+  },
+  {
+   "osm": "way/1557512957",
+   "why": "TDP 9: Cơ sở tại chức, school unknown"
+  },
+  {
+   "osm": "node/5398016422",
+   "why": "TDP 13: Tiếng Trung Cầm Xu"
+  },
+  {
+   "osm": "node/11590941891",
+   "why": "TDP 16: Công an phường Láng (old ward)"
+  },
+  {
+   "osm": "way/956996491",
+   "why": "TDP 18: Công an phường Đống Đa (Cơ sở 3)"
+  },
+  {
+   "osm": "way/956996513",
+   "why": "TDP 18: UBND phường Thịnh Quang (old ward)"
+  },
+  {
+   "osm": "node/8855590422",
+   "why": "TDP 21: Trạm Y tế phường Ngã Tư Sở (old ward)"
+  }
+ ],
+ "rename": [
+  {
+   "osm": "way/884063651",
+   "name": "Trường Tiểu học Vietkids (Tư thục)"
+  },
+  {
+   "osm": "node/9593574430",
+   "name": "Trường Trung học cơ sở Tô Hiến Thành (Tư thục)"
+  },
+  {
+   "osm": "node/4066099003",
+   "name": "Trường Mầm non Magic Star (Tư thục)"
+  },
+  {
+   "osm": "way/570570399",
+   "name": "Trường Tiểu học Đống Đa (phân hiệu)"
+  },
+  {
+   "osm": "node/12552981505",
+   "name": "Trường Trung học phổ thông Anhxtanh Hà Nội (Tư thục)"
+  },
+  {
+   "osm": "way/851595054",
+   "name": "Trụ sở Ban Tiếp công dân phường Đống Đa",
+   "address": "420 Tây Sơn, phường Đống Đa, thành phố Hà Nội"
+  },
+  {
+   "osm": "way/956996523",
+   "name": "Trạm Y tế phường Đống Đa"
+  }
+ ],
+ "add": [
+  {
+   "id": "community/tdp-1",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 1",
+   "to_dan_pho": 1,
+   "lat": 21.015545,
+   "lng": 105.827574,
+   "address": "178E Nguyễn Lương Bằng",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-2",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 2",
+   "to_dan_pho": 2,
+   "lat": 21.01501,
+   "lng": 105.828861,
+   "address": "Số 5 ngõ 85 Nguyễn Lương Bằng",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-3",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 3",
+   "to_dan_pho": 3,
+   "lat": 21.015663,
+   "lng": 105.831131,
+   "address": "98 ngõ Xã Đàn 2",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-4",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 4",
+   "to_dan_pho": 4,
+   "lat": 21.012989,
+   "lng": 105.828355,
+   "address": "Ngõ 10 Hồ Đắc Di",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-5",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 5",
+   "to_dan_pho": 5,
+   "lat": 21.014822,
+   "lng": 105.827173,
+   "address": "Số 5 ngõ 180 Nguyễn Lương Bằng",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-6",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 6",
+   "to_dan_pho": 6,
+   "lat": 21.015602,
+   "lng": 105.824466,
+   "address": "Số 12 ngõ 18 Võ Văn Dũng",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-7",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 7",
+   "to_dan_pho": 7,
+   "lat": 21.014594,
+   "lng": 105.821063,
+   "address": "48 ngõ 178 Tây Sơn",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-8",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 8",
+   "to_dan_pho": 8,
+   "lat": 21.011431,
+   "lng": 105.825555,
+   "address": "Số 92 phố Tây Sơn",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-9",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 9",
+   "to_dan_pho": 9,
+   "lat": 21.010358,
+   "lng": 105.824802,
+   "address": "Số 3 ngõ 178 phố Tây Sơn",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-10",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 10",
+   "to_dan_pho": 10,
+   "lat": 21.009147,
+   "lng": 105.822378,
+   "address": "Số 60 ngõ 3 phố Thái Hà",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-11",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 11",
+   "to_dan_pho": 11,
+   "lat": 21.01011,
+   "lng": 105.818793,
+   "address": "109/2 Trung Liệt",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-12",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 12",
+   "to_dan_pho": 12,
+   "lat": 21.012204,
+   "lng": 105.820763,
+   "address": "Số 8 ngõ 89 phố Thái Hà",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-13",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 13",
+   "to_dan_pho": 13,
+   "lat": 21.010388,
+   "lng": 105.819127,
+   "address": "E3, E4 Trung Liệt",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-14",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 14",
+   "to_dan_pho": 14,
+   "lat": 21.014928,
+   "lng": 105.817265,
+   "address": "165 Thái Hà",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-15",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 15",
+   "to_dan_pho": 15,
+   "lat": 21.015084,
+   "lng": 105.816459,
+   "address": "Ngõ 173 Thái Hà",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-16",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 16",
+   "to_dan_pho": 16,
+   "lat": 21.01141,
+   "lng": 105.811552,
+   "address": "Số 111 Láng Hạ",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-17",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 17",
+   "to_dan_pho": 17,
+   "lat": 21.010172,
+   "lng": 105.812957,
+   "address": "Số 470 đường Láng",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-18",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 18",
+   "to_dan_pho": 18,
+   "lat": 21.008663,
+   "lng": 105.817358,
+   "address": "Số 65A/67 phố Thái Thịnh",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-19",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 19",
+   "to_dan_pho": 19,
+   "lat": 21.009588,
+   "lng": 105.818702,
+   "address": "Khu D, ngõ 63 phố Thái Thịnh",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-20",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 20",
+   "to_dan_pho": 20,
+   "lat": 21.006745,
+   "lng": 105.820556,
+   "address": "B2, B3 phố Vĩnh Hồ",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-21",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 21",
+   "to_dan_pho": 21,
+   "lat": 21.005467,
+   "lng": 105.820837,
+   "address": "Khu tập thể A5 Vĩnh Hồ",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-22",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 22",
+   "to_dan_pho": 22,
+   "lat": 21.005732,
+   "lng": 105.819685,
+   "address": "Số 121 ngõ Thịnh Quang",
+   "approx": true
+  },
+  {
+   "id": "community/tdp-23",
+   "kind": "community",
+   "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 23",
+   "to_dan_pho": 23,
+   "lat": 21.006111,
+   "lng": 105.817592,
+   "address": "97 ngõ 167 Thái Thịnh",
+   "approx": true
+  },
+  {
+   "id": "social/nguoi-cao-tuoi",
+   "kind": "social",
+   "name": "Cơ sở Chăm sóc người cao tuổi ban ngày phường Đống Đa",
+   "to_dan_pho": 5,
+   "lat": 21.01475,
+   "lng": 105.82757,
+   "address": "194 Nguyễn Lương Bằng",
+   "approx": true
+  },
+  {
+   "id": "heritage/go-dong-da",
+   "osm": "way/29133247",
+   "kind": "heritage",
+   "name": "Gò Đống Đa",
+   "to_dan_pho": 9,
+   "lat": 21.012096,
+   "lng": 105.823793,
+   "address": "Số 4 Đặng Tiến Đông, phường Đống Đa, thành phố Hà Nội",
+   "phone": "0243 8573 709",
+   "email": "ditichquocgiadacbietgodongda@gmail.com",
+   "website": "https://godongda.vn"
+  },
+  {
+   "id": "way/884063648",
+   "osm": "way/884063648",
+   "kind": "worship",
+   "name": "Chùa Nam Đồng",
+   "to_dan_pho": 1,
+   "lat": 21.0176421,
+   "lng": 105.8282903
+  },
+  {
+   "id": "way/977375277",
+   "osm": "way/977375277",
+   "kind": "worship",
+   "name": "Đình Nam Đồng",
+   "to_dan_pho": 2,
+   "lat": 21.0169092,
+   "lng": 105.8293557
+  },
+  {
+   "id": "way/1110686331",
+   "osm": "way/1110686331",
+   "kind": "worship",
+   "name": "Chùa Xã Đàn",
+   "to_dan_pho": 3,
+   "lat": 21.0154045,
+   "lng": 105.8304732
+  },
+  {
+   "id": "way/630921540",
+   "osm": "way/630921540",
+   "kind": "worship",
+   "name": "Nhà thờ Thái Hà",
+   "to_dan_pho": 5,
+   "lat": 21.0148364,
+   "lng": 105.8268562
+  },
+  {
+   "id": "way/838426608",
+   "osm": "way/838426608",
+   "kind": "worship",
+   "name": "Đền thờ Quang Trung",
+   "to_dan_pho": 8,
+   "lat": 21.0129701,
+   "lng": 105.8238606
+  },
+  {
+   "id": "node/5485635750",
+   "osm": "node/5485635750",
+   "kind": "worship",
+   "name": "Miếu Trung Liệt",
+   "to_dan_pho": 8,
+   "lat": 21.0118709,
+   "lng": 105.8247833
+  },
+  {
+   "id": "way/826029905",
+   "osm": "way/826029905",
+   "kind": "worship",
+   "name": "Đình Ứng Thiên",
+   "to_dan_pho": 16,
+   "lat": 21.0114373,
+   "lng": 105.8121047
+  },
+  {
+   "id": "way/1527831362",
+   "osm": "way/1527831362",
+   "kind": "worship",
+   "name": "Đình Thịnh Quang",
+   "to_dan_pho": 19,
+   "lat": 21.0080108,
+   "lng": 105.8178675
+  },
+  {
+   "id": "way/1140667038",
+   "osm": "way/1140667038",
+   "kind": "worship",
+   "name": "Chùa Phúc Khánh",
+   "to_dan_pho": 21,
+   "lat": 21.004447,
+   "lng": 105.8211559
+  },
+  {
+   "id": "way/1557512912",
+   "osm": "way/1557512912",
+   "kind": "worship",
+   "name": "Chùa Cổ Miễu",
+   "to_dan_pho": 23,
+   "lat": 21.0078261,
+   "lng": 105.8159287
+  }
+ ]
+}

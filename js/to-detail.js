@@ -1,5 +1,7 @@
 // Detail page for one tổ dân phố: to.html?n=<to_dan_pho>
 import { shareLink } from "./share.js";
+import { POI_KINDS, poiHtml, poiMetaHtml } from "./poi-kinds.js";
+import { streetLayer } from "./basemap.js";
 
 const TDP_COLORS = [
   "#1E88E5", "#43A047", "#8E24AA", "#E53935", "#FB8C00",
@@ -8,12 +10,6 @@ const TDP_COLORS = [
   "#5C6BC0", "#FF7043", "#546E7A", "#9E9D24", "#26C6DA",
   "#FF8A65", "#8D6E63", "#66BB6A",
 ];
-
-const POI_KINDS = {
-  school: { label: "Trường học", icon: '<path d="M3 10l9-4 9 4-9 4z"/><path d="M7 12v4c3 2 7 2 10 0v-4"/>' },
-  health: { label: "Y tế", icon: '<path d="M12 5v14M5 12h14"/>' },
-  office: { label: "Công sở", icon: '<path d="M6 20V4h12v16M10 8h1M13 8h1M10 12h1M13 12h1M11 20v-3h2v3"/>' },
-};
 
 const ICON = {
   pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
@@ -24,7 +20,6 @@ const ICON = {
   note: '<path d="M4 5h16M4 12h16M4 19h10"/>',
 };
 const svg = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[name]}</svg>`;
-const poiHtml = (kind) => `<span class="poi poi--${kind}"><svg viewBox="0 0 24 24" aria-hidden="true">${POI_KINDS[kind].icon}</svg></span>`;
 
 function colorForTdp(num) {
   if (num != null && Number.isFinite(Number(num))) {
@@ -94,9 +89,9 @@ function mountMiniMap(geo, feature, color, inTdp) {
     zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
     boxZoom: false, keyboard: false, touchZoom: false, tap: false, zoomSnap: 0.25,
   });
-  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+  streetLayer(() => L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
     maxZoom: 20, maxNativeZoom: 16, attribution: "© OpenStreetMap · Esri",
-  }).addTo(map);
+  })).then((layer) => layer.addTo(map).bringToBack?.());
   L.geoJSON(geo, {
     interactive: false,
     filter: (f) => f !== feature,
@@ -211,8 +206,8 @@ async function boot() {
       <section class="card places" id="places">
         <h2>Địa điểm trong tổ</h2>
         ${inTdp.length
-          ? inTdp.map((p) => `<div class="place">${poiHtml(p.properties.kind)}<span class="place-text"><span>${escapeHtml(p.properties.name)}</span><small>${POI_KINDS[p.properties.kind].label}</small></span></div>`).join("")
-          : '<p class="muted">Chưa ghi nhận trường học, cơ sở y tế hay công sở nào trong tổ này.</p>'}
+          ? inTdp.map((p) => `<div class="place">${poiHtml(p.properties.kind)}<span class="place-text"><span>${escapeHtml(p.properties.name)}</span><small>${POI_KINDS[p.properties.kind].label}</small><span class="place-meta">${poiMetaHtml(p.properties)}</span></span></div>`).join("")
+          : '<p class="muted">Chưa ghi nhận địa điểm nào trong tổ này.</p>'}
       </section>
     </aside>
   `;

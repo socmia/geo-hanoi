@@ -4,9 +4,9 @@ BƯỚC 1: Chuẩn bị pháp lý, xác định yêu cầu và lựa chọn côn
 - [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: căn cứ pháp lý, gồm số, ngày và nội dung quyết định của UBND phường]
 - [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: đơn vị quản lý, vận hành ứng dụng; người giữ quyền quản trị các tài khoản GitHub và Google Sites]
 - Mục tiêu: xem ranh giới, số liệu và liên hệ từng tổ trên điện thoại và máy tính, không cần cài đặt.
-- Dữ liệu: 23 tổ dân phố và 42 địa điểm công cộng (22 trường học, 7 cơ sở y tế, 13 cơ quan).
-- Công nghệ: trang web tĩnh (HTML/CSS/JavaScript), Leaflet 1.9.4, bản đồ nền Esri; không cần máy chủ riêng.
-- Dịch vụ bên ngoài sử dụng: GitHub Pages (lưu trữ), Google Sites (trang nhúng), Esri (bản đồ nền, ảnh vệ tinh), unpkg (thư viện Leaflet), Google Fonts (phông chữ).
+- Dữ liệu: 23 tổ dân phố và 68 địa điểm: 23 nhà sinh hoạt cộng đồng, 20 trường học, 6 cơ sở y tế, 7 công sở, 10 đình, chùa, đền, nhà thờ, 1 di tích (Gò Đống Đa), 1 cơ sở chăm sóc người cao tuổi.
+- Công nghệ: trang web tĩnh (HTML/CSS/JavaScript), Leaflet 1.9.4, bản đồ nền OpenFreeMap (dữ liệu OpenStreetMap, đã ẩn tên phường, quận cũ), ảnh vệ tinh Esri; không cần máy chủ riêng.
+- Dịch vụ bên ngoài sử dụng: GitHub Pages (lưu trữ), Google Sites (trang nhúng), OpenFreeMap (bản đồ nền), Esri (ảnh vệ tinh), unpkg (thư viện Leaflet, MapLibre), Google Fonts (phông chữ).
 - [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: thời gian thực hiện, nhân sự tham gia, kinh phí (hiện không phát sinh chi phí hạ tầng)]
 
 BƯỚC 2: Thu thập dữ liệu
@@ -15,7 +15,9 @@ BƯỚC 2: Thu thập dữ liệu
 - Viền ranh giới phường lấy từ tệp data/hanoi.geojson của dự án.
 - [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: nguồn gốc dữ liệu viền ranh giới phường]
 - Địa điểm công cộng lấy từ OpenStreetMap (Overpass API) ngày 04/11/2026, chỉ giữ điểm nằm trong ranh giới tổ; dữ liệu OSM có thể thiếu hoặc chưa cập nhật.
-- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kết quả phường rà soát danh sách 42 địa điểm]
+- Ngày 07/11/2026 phường rà soát danh sách địa điểm: bỏ 9 điểm (trụ sở, công an, trạm y tế mang tên phường cũ, kho bạc, trung tâm tiếng Trung, cơ sở tại chức không rõ trường), sửa 7 tên (ghi rõ trường tư thục, phân hiệu, Trụ sở Ban Tiếp công dân, Trạm Y tế phường Đống Đa), thêm Gò Đống Đa và Cơ sở chăm sóc người cao tuổi ban ngày. Các sửa đổi lưu trong data/poi-curation.json.
+- Nhà sinh hoạt cộng đồng 23 tổ được đặt theo địa chỉ do phường cung cấp, vị trí gần đúng (ghi chú "Vị trí gần đúng theo địa chỉ" trên bản đồ).
+- [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: tọa độ chính xác nhà sinh hoạt cộng đồng từng tổ (lấy bằng nút "Lấy tọa độ")]
 - Số hộ, nhân khẩu và liên hệ theo tổ do phường cung cấp: toàn phường 24.639 hộ, 82.435 nhân khẩu (tổng của 23 tổ).
 - [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: cơ quan cung cấp và thời điểm chốt số liệu hộ dân, nhân khẩu]
 
@@ -32,12 +34,12 @@ BƯỚC 4: Phát triển phần mềm và giao diện
 - Trang bản đồ: bộ lọc, lớp vệ tinh, lấy tọa độ, mỗi tổ một màu; thông tin vắn tắt và chia sẻ.
 - Trang chi tiết: diện tích, số hộ, nhân khẩu, thông tin liên hệ UBND phường và Ban Tiếp công dân, danh sách địa điểm.
 - Giao diện thích ứng máy tính và điện thoại; mọi người dùng xem cùng một nội dung công khai.
-- Ghi nguồn bản đồ nền (Esri) trên bản đồ; nguồn OpenStreetMap cho địa điểm công cộng cần được ghi công theo giấy phép ODbL.
+- Ghi nguồn bản đồ nền (OpenFreeMap, OpenMapTiles, OpenStreetMap) trên bản đồ; nguồn OpenStreetMap cho địa điểm công cộng cần được ghi công theo giấy phép ODbL.
 - [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: văn bản đồng ý của từng cán bộ hoặc chỉ đạo của phường cho phép công bố họ tên, số điện thoại Bí thư, Tổ trưởng, Cảnh sát khu vực (theo Nghị định 13/2023/NĐ-CP)]
 - [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: quyết định có hiển thị câu "ranh giới chỉ mang tính tham khảo" trên giao diện hay không]
 
 BƯỚC 5: Thử nghiệm và đưa vào vận hành
-- Kiểm thử: 14 kịch bản test tự động kiểm tra 23 tổ, chọn tổ, địa điểm, bố cục máy tính và điện thoại.
+- Kiểm thử: 16 kịch bản test tự động kiểm tra 23 tổ, chọn tổ, địa điểm, bố cục máy tính và điện thoại.
 - [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kết quả chạy thử tại tổ dân phố và ý kiến góp ý của người dùng]
 - [CHƯA CÓ THÔNG TIN – chủ dự án bổ sung: kế hoạch hoặc kết quả tập huấn, tài liệu hướng dẫn sử dụng]
 - Địa chỉ truy cập: https://sites.google.com/view/phuongdongda (nhúng toàn trang từ https://socmia.github.io/geo-hanoi/).

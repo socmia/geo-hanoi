@@ -61,13 +61,19 @@ npm install
 npx playwright test
 ```
 
-## Địa điểm (trường học, y tế, công sở)
+## Địa điểm (trường học, y tế, công sở, nhà sinh hoạt, đình chùa...)
 
-Nguồn OpenStreetMap, lọc theo ranh giới các tổ:
+Nguồn OpenStreetMap, lọc theo ranh giới các tổ, rồi áp phần rà soát của phường trong `data/poi-curation.json`
+(`remove` / `rename` theo id OSM, `add` cho điểm đặt tay như nhà sinh hoạt cộng đồng — `approx: true` là vị trí gần đúng):
 
 ```bash
-python scripts/fetch_poi.py   # → data/poi.geojson
+python scripts/fetch_poi.py   # → data/poi.geojson (tự chạy curate_poi.py)
+python scripts/curate_poi.py  # chỉ áp lại data/poi-curation.json, không tải lại OSM
 ```
+
+Sửa tọa độ một nhà sinh hoạt: bấm "Lấy tọa độ" trên bản đồ, chép `lat, lng` vào mục `add` tương ứng, bỏ `approx`, chạy `curate_poi.py`.
+
+Bản đồ nền: OpenFreeMap (vector, `js/basemap.js`) — đã bỏ nhãn địa danh/POI vì còn tên phường, quận cũ. Không có WebGL thì rơi về Esri raster.
 
 ## Nhúng vào Google Sites
 

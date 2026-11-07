@@ -1,6 +1,7 @@
 """Fetch schools, health facilities and government offices inside Đống Đa TDP boundaries.
 
-Source: OpenStreetMap via the Overpass API. Output: data/poi.geojson
+Source: OpenStreetMap via the Overpass API. Output: data/poi.geojson, then
+data/poi-curation.json is applied (removals, renames, hand-placed points).
 (Point features with properties: kind = school|health|office, name, osm).
 
     python scripts/fetch_poi.py
@@ -9,6 +10,8 @@ import json
 import pathlib
 import urllib.parse
 import urllib.request
+
+import curate_poi
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TDP = ROOT / "data" / "to-dan-pho.geojson"
@@ -91,6 +94,7 @@ def main():
     OUT.write_text(json.dumps({"type": "FeatureCollection", "features": features}, ensure_ascii=False, indent=1), encoding="utf-8")
     counts = {k: sum(f["properties"]["kind"] == k for f in features) for k in KINDS}
     print(f"wrote {OUT.relative_to(ROOT)}: {len(features)} POIs {counts}")
+    curate_poi.main()  # re-apply hand edits (data/poi-curation.json)
 
 
 if __name__ == "__main__":

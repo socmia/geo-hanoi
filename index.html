@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Bản đồ tổ dân phố · Phường Đống Đa</title>
+  <title>Bản đồ số tổ dân phố · Phường Đống Đa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <link rel="stylesheet" href="css/map.css?v=15" />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" crossorigin="" />
+  <link rel="stylesheet" href="css/map.css?v=16" />
 </head>
 <body>
   <header class="topbar">
@@ -17,7 +18,7 @@
         <svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></svg>
       </span>
       <div class="brand-text">
-        <h1>Bản đồ Tổ dân phố</h1>
+        <h1>BẢN ĐỒ SỐ TỔ DÂN PHỐ</h1>
         <p>Phường Đống Đa, Hà Nội</p>
       </div>
     </div>
@@ -48,13 +49,13 @@
   <main class="stage">
     <div id="map" role="application" aria-label="Bản đồ tổ dân phố phường Đống Đa"></div>
 
-    <aside class="legend" aria-label="Chú thích">
-      <h2>Chú thích</h2>
-      <ul>
+    <details class="legend" id="legend" open>
+      <summary>Chú thích</summary>
+      <ul id="legend-list">
         <li><i class="sw sw--ward"></i>Phường</li>
         <li><i class="sw sw--tdp"></i>Mỗi tổ một màu</li>
       </ul>
-    </aside>
+    </details>
 
     <section class="info" id="info" aria-live="polite" hidden>
       <div class="info-hd">
@@ -91,6 +92,8 @@
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script type="module" src="js/app.js?v=40"></script>
+  <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js" crossorigin=""></script>
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.3/leaflet-maplibre-gl.js" crossorigin=""></script>
+  <script type="module" src="js/app.js?v=42"></script>
 </body>
 </html>

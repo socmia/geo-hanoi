@@ -3,18 +3,20 @@
  "features": [
   {
    "type": "Feature",
+   "properties": {
+    "id": "community/tdp-1",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 1",
+    "to_dan_pho": 1,
+    "address": "178E Nguyễn Lương Bằng",
+    "approx": true
+   },
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.819378,
-     21.008218
+     105.827574,
+     21.015545
     ]
-   },
-   "properties": {
-    "kind": "health",
-    "name": "Bệnh viện Châm cứu Trung ương",
-    "to_dan_pho": 19,
-    "osm": "way/1468500882"
    }
   },
   {
@@ -22,15 +24,15 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.815014,
-     21.012397
+     105.827967,
+     21.017896
     ]
    },
    "properties": {
-    "kind": "health",
-    "name": "Bệnh viện Nội tiết Trung ương",
-    "to_dan_pho": 17,
-    "osm": "way/136259226"
+    "kind": "school",
+    "name": "Trường Tiểu học Vietkids (Tư thục)",
+    "to_dan_pho": 1,
+    "osm": "way/884063651"
    }
   },
   {
@@ -38,15 +40,15 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.826795,
-     21.015556
+     105.828705,
+     21.018656
     ]
    },
    "properties": {
-    "kind": "health",
-    "name": "Bệnh viện Đa khoa Đống Đa",
-    "to_dan_pho": 5,
-    "osm": "way/163711327"
+    "kind": "school",
+    "name": "Trường Tiểu học Đống Đa",
+    "to_dan_pho": 1,
+    "osm": "way/840439575"
    }
   },
   {
@@ -54,79 +56,85 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.820999,
-     21.013589
+     105.827759,
+     21.017939
     ]
    },
    "properties": {
-    "kind": "health",
-    "name": "Bệnh viện đa khoa Nông nghiệp 2",
-    "to_dan_pho": 7,
-    "osm": "node/11949875397"
+    "kind": "school",
+    "name": "Trường Trung học cơ sở Tô Hiến Thành (Tư thục)",
+    "to_dan_pho": 1,
+    "osm": "node/9593574430"
    }
   },
   {
    "type": "Feature",
+   "properties": {
+    "id": "way/884063648",
+    "osm": "way/884063648",
+    "kind": "worship",
+    "name": "Chùa Nam Đồng",
+    "to_dan_pho": 1
+   },
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.820951,
-     21.00392
+     105.8282903,
+     21.0176421
     ]
-   },
-   "properties": {
-    "kind": "health",
-    "name": "Trạm Y tế phường Ngã Tư Sở",
-    "to_dan_pho": 21,
-    "osm": "node/8855590422"
    }
   },
   {
    "type": "Feature",
+   "properties": {
+    "id": "community/tdp-2",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 2",
+    "to_dan_pho": 2,
+    "address": "Số 5 ngõ 85 Nguyễn Lương Bằng",
+    "approx": true
+   },
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.818635,
-     21.004891
+     105.828861,
+     21.01501
     ]
-   },
-   "properties": {
-    "kind": "health",
-    "name": "Trạm Y tế phường Thịnh Quang",
-    "to_dan_pho": 22,
-    "osm": "way/956996523"
    }
   },
   {
    "type": "Feature",
+   "properties": {
+    "id": "way/977375277",
+    "osm": "way/977375277",
+    "kind": "worship",
+    "name": "Đình Nam Đồng",
+    "to_dan_pho": 2
+   },
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.821787,
-     21.012144
+     105.8293557,
+     21.0169092
     ]
-   },
-   "properties": {
-    "kind": "health",
-    "name": "Viện Y học dự phòng Quân đội",
-    "to_dan_pho": 9,
-    "osm": "way/1215063381"
    }
   },
   {
    "type": "Feature",
+   "properties": {
+    "id": "community/tdp-3",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 3",
+    "to_dan_pho": 3,
+    "address": "98 ngõ Xã Đàn 2",
+    "approx": true
+   },
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.819533,
-     21.009599
+     105.831131,
+     21.015663
     ]
-   },
-   "properties": {
-    "kind": "office",
-    "name": "Ban Quản lý dự án Đường Hồ Chí Minh",
-    "to_dan_pho": 11,
-    "osm": "way/136259020"
    }
   },
   {
@@ -150,15 +158,50 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.812585,
-     21.012543
+     105.831408,
+     21.015774
     ]
    },
    "properties": {
-    "kind": "office",
-    "name": "Công an phường Láng",
-    "to_dan_pho": 16,
-    "osm": "node/11590941891"
+    "kind": "school",
+    "name": "Trường Phổ thông cơ sở Xã Đàn",
+    "to_dan_pho": 3,
+    "osm": "way/839655655"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "way/1110686331",
+    "osm": "way/1110686331",
+    "kind": "worship",
+    "name": "Chùa Xã Đàn",
+    "to_dan_pho": 3
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.8304732,
+     21.0154045
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-4",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 4",
+    "to_dan_pho": 4,
+    "address": "Ngõ 10 Hồ Đắc Di",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.828355,
+     21.012989
+    ]
    }
   },
   {
@@ -166,15 +209,15 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.820065,
-     21.012587
+     105.828355,
+     21.015075
     ]
    },
    "properties": {
-    "kind": "office",
-    "name": "Công an phường Đống Đa (Cơ sở 2)",
-    "to_dan_pho": 12,
-    "osm": "way/1246762482"
+    "kind": "school",
+    "name": "Trường Mầm non Magic Star (Tư thục)",
+    "to_dan_pho": 4,
+    "osm": "node/4066099003"
    }
   },
   {
@@ -182,15 +225,118 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.815479,
-     21.008848
+     105.828883,
+     21.012955
     ]
    },
    "properties": {
-    "kind": "office",
-    "name": "Công an phường Đống Đa (Cơ sở 3)",
-    "to_dan_pho": 18,
-    "osm": "way/956996491"
+    "kind": "school",
+    "name": "Trường Tiểu học Bế Văn Đàn",
+    "to_dan_pho": 4,
+    "osm": "way/840066506"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.829101,
+     21.01391
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung học cơ sở Đống Đa",
+    "to_dan_pho": 4,
+    "osm": "way/840066509"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-5",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 5",
+    "to_dan_pho": 5,
+    "address": "Số 5 ngõ 180 Nguyễn Lương Bằng",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.827173,
+     21.014822
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.826795,
+     21.015556
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Bệnh viện Đa khoa Đống Đa",
+    "to_dan_pho": 5,
+    "osm": "way/163711327"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "social/nguoi-cao-tuoi",
+    "kind": "social",
+    "name": "Cơ sở Chăm sóc người cao tuổi ban ngày phường Đống Đa",
+    "to_dan_pho": 5,
+    "address": "194 Nguyễn Lương Bằng",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.82757,
+     21.01475
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "way/630921540",
+    "osm": "way/630921540",
+    "kind": "worship",
+    "name": "Nhà thờ Thái Hà",
+    "to_dan_pho": 5
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.8268562,
+     21.0148364
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-6",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 6",
+    "to_dan_pho": 6,
+    "address": "Số 12 ngõ 18 Võ Văn Dũng",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.824466,
+     21.015602
+    ]
    }
   },
   {
@@ -214,15 +360,49 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.826364,
-     21.014245
+     105.82503,
+     21.017518
     ]
    },
    "properties": {
     "kind": "office",
-    "name": "Kho bạc Nhà nước Đống Đa",
-    "to_dan_pho": 5,
-    "osm": "way/1040730411"
+    "name": "Đảng ủy - HĐND - UBND phường Đống Đa",
+    "to_dan_pho": 6,
+    "osm": "node/13136496644"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-7",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 7",
+    "to_dan_pho": 7,
+    "address": "48 ngõ 178 Tây Sơn",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.821063,
+     21.014594
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.820999,
+     21.013589
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Bệnh viện đa khoa Nông nghiệp 2",
+    "to_dan_pho": 7,
+    "osm": "node/11949875397"
    }
   },
   {
@@ -243,18 +423,20 @@
   },
   {
    "type": "Feature",
+   "properties": {
+    "id": "community/tdp-8",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 8",
+    "to_dan_pho": 8,
+    "address": "Số 92 phố Tây Sơn",
+    "approx": true
+   },
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.820844,
-     21.003905
+     105.825555,
+     21.011431
     ]
-   },
-   "properties": {
-    "kind": "office",
-    "name": "UBND phường Ngã Tư Sở",
-    "to_dan_pho": 21,
-    "osm": "way/851595054"
    }
   },
   {
@@ -262,79 +444,83 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.815426,
-     21.008368
-    ]
-   },
-   "properties": {
-    "kind": "office",
-    "name": "UBND phường Thịnh Quang",
-    "to_dan_pho": 18,
-    "osm": "way/956996513"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.82503,
-     21.017518
-    ]
-   },
-   "properties": {
-    "kind": "office",
-    "name": "Đảng ủy - HĐND - UBND phường Đống Đa",
-    "to_dan_pho": 6,
-    "osm": "node/13136496644"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.830318,
-     21.016257
-    ]
-   },
-   "properties": {
-    "kind": "office",
-    "name": "Đảng ủy - UBND phường Nam Đồng",
-    "to_dan_pho": 3,
-    "osm": "way/942107845"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.824875,
-     21.017168
-    ]
-   },
-   "properties": {
-    "kind": "office",
-    "name": "Đảng ủy - UBND phường Ô Chợ Dừa",
-    "to_dan_pho": 6,
-    "osm": "node/13136496645"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.823706,
-     21.011124
+     105.823412,
+     21.013338
     ]
    },
    "properties": {
     "kind": "school",
-    "name": "Cơ sở tại chức",
+    "name": "Trường Tiểu học Đống Đa (phân hiệu)",
+    "to_dan_pho": 8,
+    "osm": "way/570570399"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.823877,
+     21.013734
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung học cơ sở Đống Đa (phân hiệu)",
+    "to_dan_pho": 8,
+    "osm": "way/179998403"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "node/5485635750",
+    "osm": "node/5485635750",
+    "kind": "worship",
+    "name": "Miếu Trung Liệt",
+    "to_dan_pho": 8
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.8247833,
+     21.0118709
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "way/838426608",
+    "osm": "way/838426608",
+    "kind": "worship",
+    "name": "Đền thờ Quang Trung",
+    "to_dan_pho": 8
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.8238606,
+     21.0129701
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-9",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 9",
     "to_dan_pho": 9,
-    "osm": "way/1557512957"
+    "address": "Số 3 ngõ 178 phố Tây Sơn",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.824802,
+     21.010358
+    ]
    }
   },
   {
@@ -342,15 +528,277 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.818732,
-     21.012718
+     105.821787,
+     21.012144
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Viện Y học dự phòng Quân đội",
+    "to_dan_pho": 9,
+    "osm": "way/1215063381"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "heritage/go-dong-da",
+    "osm": "way/29133247",
+    "kind": "heritage",
+    "name": "Gò Đống Đa",
+    "to_dan_pho": 9,
+    "address": "Số 4 Đặng Tiến Đông, phường Đống Đa, thành phố Hà Nội",
+    "phone": "0243 8573 709",
+    "email": "ditichquocgiadacbietgodongda@gmail.com",
+    "website": "https://godongda.vn"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.823793,
+     21.012096
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-10",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 10",
+    "to_dan_pho": 10,
+    "address": "Số 60 ngõ 3 phố Thái Hà",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.822378,
+     21.009147
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.822608,
+     21.007324
     ]
    },
    "properties": {
     "kind": "school",
-    "name": "Tiếng Trung Cầm Xu - cs2",
+    "name": "Trường Trung cấp Nghiệp vụ và Dạy nghề Công đoàn Hà Nội",
+    "to_dan_pho": 10,
+    "osm": "way/1216451393"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.822384,
+     21.00747
+    ]
+   },
+   "properties": {
+    "kind": "school",
+    "name": "Trường Trung học phổ thông Anhxtanh Hà Nội (Tư thục)",
+    "to_dan_pho": 10,
+    "osm": "node/12552981505"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-11",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 11",
+    "to_dan_pho": 11,
+    "address": "109/2 Trung Liệt",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.818793,
+     21.01011
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.819533,
+     21.009599
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Ban Quản lý dự án Đường Hồ Chí Minh",
+    "to_dan_pho": 11,
+    "osm": "way/136259020"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-12",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 12",
+    "to_dan_pho": 12,
+    "address": "Số 8 ngõ 89 phố Thái Hà",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.820763,
+     21.012204
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.820065,
+     21.012587
+    ]
+   },
+   "properties": {
+    "kind": "office",
+    "name": "Công an phường Đống Đa (Cơ sở 2)",
+    "to_dan_pho": 12,
+    "osm": "way/1246762482"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-13",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 13",
     "to_dan_pho": 13,
-    "osm": "node/5398016422"
+    "address": "E3, E4 Trung Liệt",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.819127,
+     21.010388
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-14",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 14",
+    "to_dan_pho": 14,
+    "address": "165 Thái Hà",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.817265,
+     21.014928
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-15",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 15",
+    "to_dan_pho": 15,
+    "address": "Ngõ 173 Thái Hà",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.816459,
+     21.015084
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-16",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 16",
+    "to_dan_pho": 16,
+    "address": "Số 111 Láng Hạ",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.811552,
+     21.01141
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "way/826029905",
+    "osm": "way/826029905",
+    "kind": "worship",
+    "name": "Đình Ứng Thiên",
+    "to_dan_pho": 16
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.8121047,
+     21.0114373
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-17",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 17",
+    "to_dan_pho": 17,
+    "address": "Số 470 đường Láng",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.812957,
+     21.010172
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.815014,
+     21.012397
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Bệnh viện Nội tiết Trung ương",
+    "to_dan_pho": 17,
+    "osm": "way/136259226"
    }
   },
   {
@@ -406,15 +854,102 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.828355,
-     21.015075
+     105.815578,
+     21.010705
     ]
    },
    "properties": {
     "kind": "school",
-    "name": "Trường Mầm Non Magic Star",
-    "to_dan_pho": 4,
-    "osm": "node/4066099003"
+    "name": "Trường mầm non Hoa Hồng",
+    "to_dan_pho": 17,
+    "osm": "way/826029900"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-18",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 18",
+    "to_dan_pho": 18,
+    "address": "Số 65A/67 phố Thái Thịnh",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.817358,
+     21.008663
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-19",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 19",
+    "to_dan_pho": 19,
+    "address": "Khu D, ngõ 63 phố Thái Thịnh",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.818702,
+     21.009588
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.819378,
+     21.008218
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Bệnh viện Châm cứu Trung ương",
+    "to_dan_pho": 19,
+    "osm": "way/1468500882"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "way/1527831362",
+    "osm": "way/1527831362",
+    "kind": "worship",
+    "name": "Đình Thịnh Quang",
+    "to_dan_pho": 19
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.8178675,
+     21.0080108
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-20",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 20",
+    "to_dan_pho": 20,
+    "address": "B2, B3 phố Vĩnh Hồ",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.820556,
+     21.006745
+    ]
    }
   },
   {
@@ -435,18 +970,20 @@
   },
   {
    "type": "Feature",
+   "properties": {
+    "id": "community/tdp-21",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 21",
+    "to_dan_pho": 21,
+    "address": "Khu tập thể A5 Vĩnh Hồ",
+    "approx": true
+   },
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.831408,
-     21.015774
+     105.820837,
+     21.005467
     ]
-   },
-   "properties": {
-    "kind": "school",
-    "name": "Trường Phổ thông cơ sở Xã Đàn",
-    "to_dan_pho": 3,
-    "osm": "way/839655655"
    }
   },
   {
@@ -454,15 +991,67 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.828883,
-     21.012955
+     105.820844,
+     21.003905
     ]
    },
    "properties": {
-    "kind": "school",
-    "name": "Trường Tiểu học Bế Văn Đàn",
-    "to_dan_pho": 4,
-    "osm": "way/840066506"
+    "kind": "office",
+    "name": "Trụ sở Ban Tiếp công dân phường Đống Đa",
+    "to_dan_pho": 21,
+    "osm": "way/851595054",
+    "address": "420 Tây Sơn, phường Đống Đa, thành phố Hà Nội"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "way/1140667038",
+    "osm": "way/1140667038",
+    "kind": "worship",
+    "name": "Chùa Phúc Khánh",
+    "to_dan_pho": 21
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.8211559,
+     21.004447
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "community/tdp-22",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 22",
+    "to_dan_pho": 22,
+    "address": "Số 121 ngõ Thịnh Quang",
+    "approx": true
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.819685,
+     21.005732
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.818635,
+     21.004891
+    ]
+   },
+   "properties": {
+    "kind": "health",
+    "name": "Trạm Y tế phường Đống Đa",
+    "to_dan_pho": 22,
+    "osm": "way/956996523"
    }
   },
   {
@@ -486,70 +1075,6 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.827967,
-     21.017896
-    ]
-   },
-   "properties": {
-    "kind": "school",
-    "name": "Trường Tiểu học Vietkids",
-    "to_dan_pho": 1,
-    "osm": "way/884063651"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.828705,
-     21.018656
-    ]
-   },
-   "properties": {
-    "kind": "school",
-    "name": "Trường Tiểu học Đống Đa",
-    "to_dan_pho": 1,
-    "osm": "way/840439575"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.823412,
-     21.013338
-    ]
-   },
-   "properties": {
-    "kind": "school",
-    "name": "Trường Tiểu học Đống Đa (cơ sở 2)",
-    "to_dan_pho": 8,
-    "osm": "way/570570399"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.822608,
-     21.007324
-    ]
-   },
-   "properties": {
-    "kind": "school",
-    "name": "Trường Trung cấp Nghiệp vụ và Dạy nghề Công đoàn Hà Nội",
-    "to_dan_pho": 10,
-    "osm": "way/1216451393"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
      105.818325,
      21.005272
     ]
@@ -563,66 +1088,20 @@
   },
   {
    "type": "Feature",
+   "properties": {
+    "id": "community/tdp-23",
+    "kind": "community",
+    "name": "Nhà sinh hoạt cộng đồng Tổ dân phố 23",
+    "to_dan_pho": 23,
+    "address": "97 ngõ 167 Thái Thịnh",
+    "approx": true
+   },
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.827759,
-     21.017939
+     105.817592,
+     21.006111
     ]
-   },
-   "properties": {
-    "kind": "school",
-    "name": "Trường Trung học cơ sở Tô Hiến Thành",
-    "to_dan_pho": 1,
-    "osm": "node/9593574430"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.829101,
-     21.01391
-    ]
-   },
-   "properties": {
-    "kind": "school",
-    "name": "Trường Trung học cơ sở Đống Đa",
-    "to_dan_pho": 4,
-    "osm": "way/840066509"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.823877,
-     21.013734
-    ]
-   },
-   "properties": {
-    "kind": "school",
-    "name": "Trường Trung học cơ sở Đống Đa (phân hiệu)",
-    "to_dan_pho": 8,
-    "osm": "way/179998403"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.822384,
-     21.00747
-    ]
-   },
-   "properties": {
-    "kind": "school",
-    "name": "Trường Trung học phổ thông Anhxtanh Hà Nội",
-    "to_dan_pho": 10,
-    "osm": "node/12552981505"
    }
   },
   {
@@ -646,22 +1125,6 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     105.815578,
-     21.010705
-    ]
-   },
-   "properties": {
-    "kind": "school",
-    "name": "Trường mầm non Hoa Hồng",
-    "to_dan_pho": 17,
-    "osm": "way/826029900"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
      105.817365,
      21.006537
     ]
@@ -671,6 +1134,23 @@
     "name": "Trường Đào tạo Cán bộ Lê Hồng Phong",
     "to_dan_pho": 23,
     "osm": "way/698722897"
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "way/1557512912",
+    "osm": "way/1557512912",
+    "kind": "worship",
+    "name": "Chùa Cổ Miễu",
+    "to_dan_pho": 23
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     105.8159287,
+     21.0078261
+    ]
    }
   }
  ]
